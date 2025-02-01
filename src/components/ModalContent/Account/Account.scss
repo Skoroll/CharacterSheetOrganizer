@@ -21,10 +21,17 @@
       }
     }
   
-    .validate {
+    .validate,  .dangerous  {
       position: relative;
       top: unset;
       right: unset;
+    }
+
+    .dangerous {
+      color: red;
+      border: none;
+      
+      
     }
   }
   

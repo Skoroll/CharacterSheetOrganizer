@@ -30,7 +30,6 @@ const handleSubmit = async (e: React.FormEvent) => {
       if (!isSignUp && data.token) {
         localStorage.setItem("token", data.token);
         navigate("/menu")
-        console.log("Henlo")
       }
     } else {
       alert(`Erreur : ${data.message}`);

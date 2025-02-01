@@ -1,0 +1,48 @@
+@import "../../style/mixins.scss";
+@import "../../style/variables.scss";
+
+.character-details {
+    position: relative;
+    
+    &__content {
+        @include flex-col;
+        padding: $spacing-medium;
+
+        img{
+            width: 260px;
+            height: 260px;
+            margin: auto;
+        }
+    }
+
+    &__stats, &__health {
+        text-align: left;
+        p {
+            @include flex-row;
+            width: 120px;
+            justify-content: space-between;
+        }
+    }
+
+    
+    &__skills {
+        table {
+            padding: $spacing-medium;
+        }
+        .table-left {
+            text-align: left;
+            padding: $spacing-small;
+        }
+
+        .table-center {
+            text-align: center;
+        }
+    }
+
+}
+
+.character-mobile {
+    margin-top: 20px;
+    @include flex-row;
+    justify-content: space-around;
+}

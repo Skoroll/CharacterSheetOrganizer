@@ -4,21 +4,39 @@
 .modal__inside--content{
 
     .character-list{
+
         ul{
             @include ul-base;
+            @include flex-col;
+            gap: $spacing-small;
         }
     }
 
     .character{
         position: relative;
         @include flex-col; 
+        border: 1px solid;
+        padding: $spacing-small;
+        cursor: pointer;
+
+        &:hover {
+            background: rgba(red($text-color), green($text-color), blue($text-color), 0.2);
+            border: 1px solid transparent;            
+        }
+
+        h2 {
+            margin: 0;
+        }
 
         .fa-trash{
-            position: absolute
+            position: absolute;
+            top: 5px;
+            left: 5px
         }
 
         &__inside{
             @include flex-row;
+
             flex-direction: row-reverse;
 
             &--stats{

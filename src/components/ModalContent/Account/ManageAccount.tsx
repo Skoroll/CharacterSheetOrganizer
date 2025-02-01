@@ -11,6 +11,44 @@ export default function ManageAccount() {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
+  const handleDelete = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/api/user/delete", {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Erreur lors de la suppression du compte");
+      }
+  
+      setMessage("Compte supprimé avec succès !");
+      setError(null);
+  
+      // Optionnel : Déconnexion après suppression
+      localStorage.removeItem("token");
+      window.location.href = "/"; // Redirige l'utilisateur
+    } catch (error) {
+      console.error("Erreur :", error);
+      setError("Impossible de supprimer ce compte.");
+      setMessage(null);
+    }
+  };
+  
+  
+  
+
+  function areYouSure() {
+    // Affiche un message de confirmation
+    const confirmed = window.confirm("Vous êtes sûr de vouloir supprimer votre compte ?");
+    if (confirmed) {
+      // Appelle handleDelete() sans argument
+      handleDelete(); 
+    }
+  }
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,20 +57,20 @@ export default function ManageAccount() {
     formData.append("email", email);
     formData.append("password", password);
     formData.append("oldPassword", oldPassword);
-
+  
     try {
-      const response = await axios.put("/api/users/update", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      await axios.put("/api/users/update", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
-      setMessage("Compte mis à jour avec succès!");
-      setError(null); // Réinitialiser les erreurs
+  
+      setMessage("Compte mis à jour avec succès !");
+      setError(null);
     } catch (err) {
       setError("Une erreur est survenue lors de la mise à jour du compte.");
-      setMessage(null); // Réinitialiser le message de succès
+      setMessage(null);
     }
   };
+  
 
   return (
     <div className="manage-account">
@@ -84,9 +122,16 @@ export default function ManageAccount() {
           />
         </div>
 
-
-
         <button type="submit" className="validate">Mettre à jour</button>
+        
+        {/* Changer l'onClick pour appeler la fonction de confirmation */}
+        <button 
+          type="button" // Le bouton ne doit pas soumettre le formulaire
+          className="dangerous"
+          onClick={areYouSure} // Passe la fonction sans les parenthèses
+        >
+          Supprimer le compte
+        </button>
       </form>
     </div>
   );
