@@ -1,0 +1,16 @@
+@import "./style/mixins.scss";
+@import "./style/variables.scss";
+
+#root {
+  margin: 0 auto;
+  padding: $spacing-small;
+  text-align: center;
+}
+
+
+body{
+  background: $background-color;
+  color : $text-color;
+  @include  ul-base;
+}
+

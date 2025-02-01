@@ -1,0 +1,30 @@
+@import "../../../style/mixins.scss";
+@import "../../../style/variables.scss";
+
+.manage-account {
+    padding: $spacing-small;
+    
+    form {
+      @include flex-col;
+      gap: $spacing-medium;
+  
+      div {
+        @include flex-col;
+        text-align: left;
+        gap: $spacing-small;
+  
+        input {
+          width: 100%; // Utiliser 100% pour que l'élément prenne toute la largeur de son parent
+          box-sizing: border-box; // Assurer que le padding ne fasse pas dépasser l'input
+          padding: 8px; // Exemple de padding pour rendre les champs plus larges
+        }
+      }
+    }
+  
+    .validate {
+      position: relative;
+      top: unset;
+      right: unset;
+    }
+  }
+  

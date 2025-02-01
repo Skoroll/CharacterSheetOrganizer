@@ -1,0 +1,20 @@
+@import "../../style/mixins.scss";
+@import "../../style/variables.scss";
+
+.main-menu{
+    ul{
+        @include flex-col;
+        @include ul-base;
+        gap: $spacing-small;
+
+
+        li{
+            cursor: pointer;
+            transition: all 0.3s;
+            &:hover{
+                background: $primary-color;
+                color: $background-color;
+            }
+        }
+    }
+}

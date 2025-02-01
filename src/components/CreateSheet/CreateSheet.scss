@@ -1,0 +1,206 @@
+@import "../../style/mixins.scss";
+@import "../../style/variables.scss";
+
+.sheet {
+  @include flex-col;
+  position: relative;
+  margin-bottom: 50px;
+  input, textArea{
+    background: $background-dark;
+    color: $text-muted;
+  }
+
+  h3 {
+    margin: $spacing-small 0;
+    text-align: left;
+  }
+
+  label {
+    @include flex-col;
+    gap: 3px;
+    text-align: left;
+  }
+
+  &__top {
+    @include flex-col;
+    flex-wrap: wrap;
+    gap: $spacing-small;
+    justify-content: space-around;
+
+    @include media-query($breakpoint-sm, "min") {
+        @include flex-row;
+    }
+
+    * {
+      padding: $spacing-small;
+    }
+  }
+
+  &__bottom {
+    @include flex-col;
+    position: relative;
+    gap: $spacing-small;
+    justify-content: space-around;
+
+    @include media-query($breakpoint-sm, "min") {
+      @include flex-wrap;
+    }
+
+    &--fixed {
+      table{
+        tr{
+          
+          border-bottom: 1px solid white !important;
+        }
+        .table-left{
+          text-align: left;
+        }
+
+        .table-center{
+          text-align: center;
+        }
+      }
+    }
+
+    &--skills {
+   
+      .what-skil {
+        @include flex-wrap;
+        gap: $spacing-small;
+        padding: $spacing-small;
+
+        &--link {
+          @include flex-row;
+          gap: $spacing-small;
+          label {
+            input {
+              width: 50px !important;
+            }
+          }
+        }
+
+        input[type="text"] {
+          width: 240px;
+        }
+
+        input[type="number"] {
+          width: 50px;
+        }
+      }
+    }
+
+    &--inventory {
+      @include flex-col;
+      padding: $spacing-small;
+      flex: 1;
+
+      .item {
+        @include flex-wrap;
+        gap: $spacing-small;
+        padding: $spacing-small;
+
+        input[type="text"] {
+          width: 300px;
+        }
+
+        input[type="number"] {
+          width: 50px;
+        }
+      }
+    }
+  }
+
+  &__background {
+    textarea {
+      height: 450px;
+      resize: none;
+    }
+  }
+}
+
+.character__equipment {
+  &--weapon {
+    @include flex-wrap;
+
+    .input-weap-name {
+      width: 200px;
+    }
+
+    .input-weap-dmg {
+      width: 50px;
+    }
+  }
+}
+
+.character-identity {
+    @include flex-col;
+    
+    @include media-query($breakpoint-sm, "min") {
+        @include flex-row;
+    }
+
+  &--img {
+    @include flex-col;
+    position: relative;
+
+
+    img {
+        width: 260px;
+        height: 260px;
+        border-radius: 15px;
+        object-fit: cover
+    }
+    .img-container{
+    @include flex-center;
+    flex-grow: 1;
+      width: 260px;
+      height: 260px;
+      background-color: $background-dark;
+
+    }
+  }
+}
+
+.character-points{
+    @include flex-col;
+    label{
+      padding: (calc($spacing-small *2));
+    }
+
+    input{
+        width: 30px;
+    }
+}
+
+
+.character-stats{
+    
+    label{
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: $spacing-small;
+        max-width: 150px;
+    }
+
+    input{
+        width: 30px;
+    }
+}
+
+.btn-container{
+  @include flex-row;
+  justify-content: center;
+  gap: $spacing-large;
+  background: $background-dark;
+  position: sticky;
+  padding: $spacing-medium;
+  width: 100%;
+  margin-top: 5px;
+  box-sizing: border-box;
+  bottom: 0;
+
+  button{
+    @include button();
+  }
+}

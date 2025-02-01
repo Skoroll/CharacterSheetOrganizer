@@ -1,0 +1,31 @@
+// Couleurs principales
+$background-color: #242424;
+$text-color: #f0f0f0; // Couleur du texte pour contraste
+$primary-color: #3498db; // Bleu pour les boutons ou accents
+$secondary-color: #2ecc71; // Vert pour les validations
+$danger-color: #e74c3c; // Rouge pour les erreurs
+
+// Couleurs dérivées
+$background-light: lighten($background-color, 10%);
+$background-dark: darken($background-color, 10%);
+$text-muted: rgba($text-color, 0.7);
+
+// Typographie
+$font-family: "Arial", sans-serif;
+$font-size-base: 16px;
+
+// Espacements
+$spacing-small: 8px;
+$spacing-medium: 16px;
+$spacing-large: 32px;
+
+// Border-radius
+$border-radius: 5px;
+
+
+// Variables pour les breakpoints
+$breakpoint-xs: 480px;  // Très petits écrans (smartphones en portrait)
+$breakpoint-sm: 768px;  // Tablettes en portrait
+$breakpoint-md: 1024px; // Tablettes en paysage ou petits ordinateurs portables
+$breakpoint-lg: 1280px; // Ordinateurs de bureau ou grands écrans
+$breakpoint-xl: 1600px; // Très grands écrans

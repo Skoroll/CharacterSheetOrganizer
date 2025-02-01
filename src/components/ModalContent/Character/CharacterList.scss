@@ -1,0 +1,42 @@
+@import "../../../style/mixins.scss";
+@import "../../../style/variables.scss";
+
+.modal__inside--content{
+
+    .character-list{
+        ul{
+            @include ul-base;
+        }
+    }
+
+    .character{
+        position: relative;
+        @include flex-col; 
+
+        .fa-trash{
+            position: absolute
+        }
+
+        &__inside{
+            @include flex-row;
+            flex-direction: row-reverse;
+
+            &--stats{
+                width: 50%;
+
+                p{
+                    @include flex-row;
+                    width: 120px;
+                    justify-content: space-between;
+                }
+            }
+
+            &--image{
+                width: 50%;
+                img{
+                    width: 100px;
+                }
+            }
+        }
+    }
+}
