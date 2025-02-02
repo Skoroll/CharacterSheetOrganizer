@@ -1,0 +1,25 @@
+@import "../../../../style/mixins.scss";
+@import "../../../../style/variables.scss";
+
+.tabletop-creation {
+    form, label {
+        @include flex-col;
+        text-align: left;
+        gap: $spacing-small;
+       
+
+    }
+
+    form {
+        gap: $spacing-medium; 
+
+        button {
+            position: relative;
+            top: unset;
+            right: unset;
+        }
+        input {
+            padding: $spacing-small;
+        }
+    }
+}

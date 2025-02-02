@@ -4,6 +4,9 @@ import CharacterList from "../../components/ModalContent/Character/CharacterList
 import ManageAccount from "../../components/ModalContent/Account/ManageAccount";
 import Modal from "../../components/Modal/Modal";
 import Settings from "../../components/ModalContent/Account/Settings";
+import TableTopBrowse from "../../components/ModalContent/ModalTabletop/TableTopBrowse/TableTopBrowse";
+import TabletopCreation from "../../components/ModalContent/ModalTabletop/TabletopCreation/TabletopCreation";
+import TabletopJoin from "../../components/ModalContent/ModalTabletop/TabletopJoin/TabletopJoin";
 import "./Menu.scss";
 
 export default function Menu() {
@@ -42,8 +45,8 @@ export default function Menu() {
   ];
 
   const tableOptions: { label: string; component?: ReactNode; action?: () => void }[] = [
-    { label: "Créer une table de jeu", component: <ManageAccount /> },
-    { label: "Rejoindre une table", component: <Settings /> },
+    { label: "Créer une table de jeu", component: <TabletopCreation /> },
+    { label: "Rejoindre une table", component: <TableTopBrowse /> },
   ];
 
   const menuSections = [

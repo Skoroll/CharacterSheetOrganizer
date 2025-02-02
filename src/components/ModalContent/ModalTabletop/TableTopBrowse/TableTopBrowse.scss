@@ -1,0 +1,42 @@
+@import "../../../../style/mixins.scss";
+@import "../../../../style/variables.scss";
+
+.tabletop-browse {
+    ul {
+        @include ul-base;
+
+        li{
+            @include flex-row;
+            align-items: center;
+            gap: $spacing-small;
+            padding: $spacing-small;
+            transition: all 0.3s;
+
+            &:hover {
+                background: rgba(red($text-color), green($text-color), blue($text-color), 0.2);
+            }
+
+            .is-online{
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                border: 2px solid green;
+            }
+            p {
+                text-align: left;
+            }
+        }
+    }
+    .tabletop-browse__btn {
+margin: auto 5px auto auto;
+   
+    button {
+        position: relative !important;
+        top: unset !important;
+        right: unset !important;
+       
+        border: none;
+        background: none;
+    }
+}
+}

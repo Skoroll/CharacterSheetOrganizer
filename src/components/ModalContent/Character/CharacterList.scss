@@ -31,7 +31,12 @@
         .fa-trash{
             position: absolute;
             top: 5px;
-            left: 5px
+            left: 5px;
+            transition: all 0.5s;
+            &:hover {
+                color: rgb(194, 99, 99);
+                transform: scale(110%)
+            }
         }
 
         &__inside{
