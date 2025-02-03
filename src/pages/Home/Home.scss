@@ -1,0 +1,30 @@
+@import "../../style/mixins.scss";
+@import "../../style/variables.scss";
+
+.home {
+  &__tables-options {
+    @include flex-col;
+
+    &--div {
+      .tabletop-browse,
+      .tabletop-creation {
+ 
+        padding: $spacing-large
+      }
+
+      @include media-query($breakpoint-sm, "min") {
+        @include flex-row;
+
+        .table-top-browse-div,
+        .table-creation-div {
+          width: 50%;
+        }
+      }
+    }
+  }
+  .tabletop-browse__btn {
+    button {
+        color: $text-color;
+    }
+  }
+}

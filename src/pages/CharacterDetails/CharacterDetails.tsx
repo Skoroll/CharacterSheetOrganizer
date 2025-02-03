@@ -19,7 +19,10 @@ interface Character {
   pointsOfLife: number;
   protection: number;
   injuries: number;
-  skills: { name: string; link1: string; link2: string }[]; // Compétences spéciales ajoutées
+  skills: { name: string; link1: string; link2: string }[];
+  background: string;
+  inventory: { item: string; quantity: number }[];
+  weapons: {name: string; damage: string }[];
 }
 
 interface Skill {
@@ -126,22 +129,29 @@ export default function CharacterDetails() {
   return (
     <div className="character-details">
       <div className="character-details__content">
-        <img
-          src={
-            character.image
-              ? `${API_URL}/${character.image.replace("\\", "/")}`
-              : defaultImg
-          }
-          alt={character.name}
-        />
+        <div className="character-details__identity">
+          <img
+            src={
+              character.image
+                ? `${API_URL}/${character.image.replace("\\", "/")}`
+                : defaultImg
+            }
+            alt={character.name}
+          />
+          <div className="character-details__identity--text">
+            <h2>{character.name}</h2>
+            <div className="text-container">
+              <p className="character--class">
+                Classe : <span>{character.className}</span>
+              </p>
+              <p>
+                Âge : <span>{character.age}</span>
+              </p>
+            </div>
+          </div>
+        </div>
         <div className="character-mobile">
-          <div className="character-details__stats">
-            <p>
-              Classe : <span>{character.className}</span>
-            </p>
-            <p>
-              Âge : <span>{character.age}</span>
-            </p>
+          <div className="character-details__content--stats">
             <p>
               Force : <span>{character.strength}</span>
             </p>
@@ -159,7 +169,7 @@ export default function CharacterDetails() {
             </p>
           </div>
 
-          <div className="character-details__health">
+          <div className="character-details__content--health">
             <p>
               Point de vie : <span>{character.pointsOfLife}</span>
             </p>
@@ -175,32 +185,34 @@ export default function CharacterDetails() {
 
       {/* Compétences du personnage */}
       <div className="character-details__skills">
-        <h3>Compétences</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Compétence</th>
-              <th>Lien</th>
-              <th>Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            {baseSkills.map(({ name, link1, link2 }, index) => {
-              const score = calculateScore(link1, link2); // Calcul du score pour chaque compétence
-              return (
-                <tr key={index}>
-                  <td className="table-left">{name}</td>
-                  <td className="table-center">{`${getStatAbbreviation(
-                    link1
-                  )} / ${getStatAbbreviation(link2)}`}</td>
-                  <td className="table-center">{score}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <div className="character-details__skills--regular">
+          <h3>Compétences basiques</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Compétence</th>
+                <th>Lien</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              {baseSkills.map(({ name, link1, link2 }, index) => {
+                const score = calculateScore(link1, link2); // Calcul du score pour chaque compétence
+                return (
+                  <tr key={index}>
+                    <td className="table-left">{name}</td>
+                    <td className="table-center">{`${getStatAbbreviation(
+                      link1
+                    )} / ${getStatAbbreviation(link2)}`}</td>
+                    <td className="table-center">{score}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
 
-        <div className="character-details__special-skills">
+        <div className="character-details__skills--special">
           <h3>Compétences spéciales</h3>
           <table>
             <thead>
@@ -225,6 +237,44 @@ export default function CharacterDetails() {
               })}
             </tbody>
           </table>
+        </div>
+      </div>
+      <div className="character-details__infos">
+        <div className="character-details__infos--back-story">
+          <h3>Histoire du personnage</h3>
+          <p 
+            dangerouslySetInnerHTML={{ __html: character.background }
+            }
+            className="character-story">
+          </p>
+        </div>
+
+        <div className="character-details__infos--inventory">
+          <h3>Inventaire</h3>
+          <table>
+            <th>
+              <tr>
+                <th className="item">Objet</th>
+                <th className="quantity">Quantité</th>
+              </tr>
+            </th>
+            <tbody>
+              {character.inventory.map((item, index) => (
+                <tr key={index}>
+                  <td className="item">{item.item}</td>
+                  <td className="quantity">{item.quantity}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="weapons">
+            <h2>Armes</h2>
+            <ul>
+              {character.weapons.map((weapon, index) => (
+                <li key={index}>{weapon.name} <span>{weapon.damage}</span></li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </div>

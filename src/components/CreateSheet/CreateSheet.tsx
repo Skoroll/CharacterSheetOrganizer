@@ -104,13 +104,12 @@ function CreateSheet() {
   
 
   const API_URL = import.meta.env.VITE_API_URL; 
-
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
   
-    // Vérification de tous les champs
+    // Vérification de tous les champs obligatoires
     const missingFields = [];
-  
     if (!name) missingFields.push("Nom");
     if (!className) missingFields.push("Classe");
     if (!age) missingFields.push("Âge");
@@ -120,23 +119,20 @@ function CreateSheet() {
     if (!intelligence) missingFields.push("Intelligence");
     if (!charisma) missingFields.push("Charisme");
     if (!pointsOfLife) missingFields.push("Points de vie");
+    if (injuries === "") missingFields.push("Blessures");
+    if (protection === "") missingFields.push("Protection");
   
-    // Vérification des champs "Blessures" et "Protection", on les considère valides si leur valeur est 0 ou plus
-    if (injuries === "" || injuries === null) missingFields.push("Blessures");
-    if (protection === "" || protection === null) missingFields.push("Protection");
-  
-    // Vérification des armes
-    const filledWeapons = weapons.filter((weapon) => weapon.name);
-    filledWeapons.forEach((weapon, index) => {
-      if (!weapon.damage) {
+    // Vérification des armes (nom et dégâts)
+    weapons.forEach((weapon, index) => {
+      if (weapon.name && !weapon.damage) {
         missingFields.push(`Arme ${index + 1} (Dégâts manquants)`);
       }
     });
   
-    // Vérification des compétences spéciales uniquement si elles sont renseignées
+    // Vérification des compétences (seulement si la compétence est renseignée)
     skills.forEach((skill, index) => {
-      if (skill.specialSkill && !skill.link1 && !skill.link2 && !skill.score) {
-        missingFields.push(`Compétence spéciale ${index + 1}`);
+      if (skill.specialSkill && (!skill.link1 || !skill.link2 || !skill.score)) {
+        missingFields.push(`Compétence spéciale ${index + 1} (Liens ou score manquants)`);
       }
     });
   
@@ -144,18 +140,18 @@ function CreateSheet() {
     inventory.forEach((item, index) => {
       const quantity = Number(item.quantity);
       if ((item.item && (isNaN(quantity) || quantity <= 0)) || (!item.item && quantity > 0)) {
-        missingFields.push(`Objet ${index + 1} (Quantité manquante ou invalide)`);
+        missingFields.push(`Objet ${index + 1} (Quantité invalide)`);
       }
     });
-    
   
+    // Afficher un message d'erreur si des champs sont manquants
     if (missingFields.length > 0) {
       alert(`Veuillez remplir les champs suivants : ${missingFields.join(", ")}`);
       console.log("Champs manquants :", missingFields);
       return;
     }
   
-    // Préparation des données pour l'envoi
+    // Préparation des données à envoyer
     const formData = new FormData();
     formData.append("name", name);
     formData.append("className", className);
@@ -170,27 +166,12 @@ function CreateSheet() {
     formData.append("protection", String(protection));
     formData.append("background", background || "");
   
-    skills.forEach((skill, index) => {
-      if (skill.specialSkill) {
-        formData.append(`skills[${index}].specialSkill`, skill.specialSkill || "");
-        formData.append(`skills[${index}].link1`, skill.link1 || "");
-        formData.append(`skills[${index}].link2`, skill.link2 || "");
-        formData.append(`skills[${index}].score`, skill.score || "");
-      }
-    });
+    // Ajout des tableaux sous forme de JSON
+    formData.append("weapons", JSON.stringify(weapons.filter(w => w.name))); // On enlève les entrées vides
+    formData.append("skills", JSON.stringify(skills.filter(s => s.specialSkill))); // Filtre les compétences vides
+    formData.append("inventory", JSON.stringify(inventory.filter(i => i.item))); // Filtre les objets vides
   
-    inventory.forEach((item, index) => {
-      if (item.item) {
-        formData.append(`inventory[${index}].item`, item.item || "");
-        formData.append(`inventory[${index}].quantity`, item.quantity || "0");
-      }
-    });
-  
-    weapons.forEach((weapon, index) => {
-      formData.append(`weapons[${index}].name`, weapon.name || "");
-      formData.append(`weapons[${index}].damage`, weapon.damage || "");
-    });
-  
+    // Ajout de l'image si elle est présente
     if (image) {
       formData.append("image", image);
     }
@@ -204,12 +185,14 @@ function CreateSheet() {
       const data = await response.json();
   
       if (response.ok) {
-        navigate("/menu");
-        console.log("Feuille créée avec succès");
+        console.log("Feuille créée avec succès :", data);
+        navigate("/");
       } else {
+        console.error("Erreur du serveur :", data);
         alert(`Erreur : ${data.message}`);
       }
     } catch (error) {
+      console.error("Erreur lors de l'envoi :", error);
       alert("Une erreur est survenue lors de la création de la feuille.");
     }
   };
@@ -436,56 +419,60 @@ function CreateSheet() {
   </table>
 </div>
 
-        <form className="sheet__bottom--skills">
-          <h3>Vos compétences spéciales</h3>
-          {skills.map((skill, index) => (
-            <div key={index}>
-              <div className="what-skil">
-                <label>
-                  Compétence spéciale
-                  <input
-                    type="text"
-                    value={skill.specialSkill}
-                    onChange={(e) =>
-                      handleSkillChange(index, "specialSkill", e.target.value)
-                    }
-                  />
-                </label>
-                <div className="what-skil--link">
-                  <label>
-                    Lien 1
-                    <input
-                      type="text"
-                      value={skill.link1}
-                      onChange={(e) =>
-                        handleSkillChange(index, "link1", e.target.value)
-                      }
-                    />
-                  </label>
-                  <label>
-                    Lien 2
-                    <input
-                      type="text"
-                      value={skill.link2}
-                      onChange={(e) =>
-                        handleSkillChange(index, "link2", e.target.value)
-                      }
-                    />
-                  </label>
-                </div>
 
-                <label>
-                  Score
-                  <input
-                    type="number"
-                    value={calculateScore(skill.link1, skill.link2)}
-                    disabled
-                  />
-                </label>
-              </div>
-            </div>
-          ))}
-        </form>
+<form className="sheet__bottom--skills">
+  <h3>Vos compétences spéciales</h3>
+  {skills.map((skill, index) => (
+    <div key={index}>
+      <div className="what-skil">
+        <label>
+          Compétence spéciale
+          <input
+            type="text"
+            value={skill.specialSkill}
+            onChange={(e) =>
+              handleSkillChange(index, "specialSkill", e.target.value)
+            }
+          />
+        </label>
+        <div className="what-skil--link">
+          <label>
+            Lien 1
+            <input
+              type="text"
+              value={skill.link1}
+              onChange={(e) =>
+                handleSkillChange(index, "link1", e.target.value)
+              }
+            />
+          </label>
+          <label>
+            Lien 2
+            <input
+              type="text"
+              value={skill.link2}
+              onChange={(e) =>
+                handleSkillChange(index, "link2", e.target.value)
+              }
+            />
+          </label>
+        </div>
+
+        <label>
+          Score
+          <input
+            type="number"
+            value={skill.score || calculateScore(skill.link1, skill.link2)}
+            onChange={(e) =>
+              handleSkillChange(index, "score", e.target.value)
+            }
+          />
+        </label>
+      </div>
+    </div>
+  ))}
+</form>
+
 
       </div>
         <div className="sheet__bottom--inventory">

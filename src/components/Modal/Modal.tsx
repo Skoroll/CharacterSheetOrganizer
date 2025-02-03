@@ -4,13 +4,14 @@ import "./Modal.scss";
 interface ModalProps {
   title: string;
   content: ReactNode;
-  onClose: () => void; // Ajout d'une prop pour fermer la modal
+  onClose: () => void; 
 }
 
 export default function Modal({ title, content, onClose }: ModalProps): JSX.Element {
   return (
-    <div className="modal">
-      <div className="modal__inside">
+    <div className="modal-overlay" onClick={onClose}>
+      {/* Bloque la propagation du clic pour éviter la fermeture */}
+      <div className="modal__inside" onClick={(e) => e.stopPropagation()}>
         <button onClick={onClose} className="modal__close-btn">X</button>
         <h2>{title}</h2>
         <div className="modal__inside--content">{content}</div>

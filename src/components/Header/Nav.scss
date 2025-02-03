@@ -1,0 +1,36 @@
+@import "../../style/mixins.scss";
+@import "../../style/variables.scss";
+
+
+nav {
+    @include flex-col;
+    gap: $spacing-medium;
+    background: $background-color;
+    z-index: 800;
+    position: absolute;
+    right: 0;
+    top: 70px;
+    padding: $spacing-small;
+
+    h2 {
+        margin: 0;
+        text-align: left;
+    }
+
+    ul{
+        @include flex-col;
+        @include ul-base;
+        text-align: left;
+
+        li{
+            cursor: pointer;
+            padding: $spacing-small;
+            transition: all 0.3s;
+            &:hover{
+                background: $primary-color;
+                color: $background-color;
+            }
+        }
+    }
+    
+}

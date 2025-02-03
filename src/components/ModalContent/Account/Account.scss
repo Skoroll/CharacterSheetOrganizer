@@ -35,3 +35,25 @@
     }
   }
   
+  .settings {
+    .cGagUr {
+      @include flex-col;
+      background: none !important;
+      max-width: 200px;
+      margin: auto;
+      gap: $spacing-large;
+
+      label {
+        @include flex-col;
+        text-align: left;
+        gap: $spacing-small;
+        input {
+          width: 100%;
+          margin: 0;
+        }
+      }
+      button {
+        width: 200px;
+      }
+    }
+  }

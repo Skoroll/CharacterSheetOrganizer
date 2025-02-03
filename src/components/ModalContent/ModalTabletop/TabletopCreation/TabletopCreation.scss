@@ -17,6 +17,7 @@
             position: relative;
             top: unset;
             right: unset;
+            @include button;
         }
         input {
             padding: $spacing-small;

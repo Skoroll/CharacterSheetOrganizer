@@ -1,99 +1,122 @@
-import { useState, ReactNode, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import CharacterList from "../../components/ModalContent/Character/CharacterList";
-import ManageAccount from "../../components/ModalContent/Account/ManageAccount";
-import Modal from "../../components/Modal/Modal";
-import Settings from "../../components/ModalContent/Account/Settings";
-import TableTopBrowse from "../../components/ModalContent/ModalTabletop/TableTopBrowse/TableTopBrowse";
-import TabletopCreation from "../../components/ModalContent/ModalTabletop/TabletopCreation/TabletopCreation";
-import TabletopJoin from "../../components/ModalContent/ModalTabletop/TabletopJoin/TabletopJoin";
-import "./Menu.scss";
+import { BeatLoader } from "react-spinners";
+import defaultImg from "../../assets/default-people.webp";
+import "../../components/ModalContent/Character/CharacterList.scss";
+import "./Menu.scss"
+
+interface Character {
+  _id: string;
+  name: string;
+  className: string;
+  age: number;
+  image: string;
+  pointsOfLife: number;
+}
 
 export default function Menu() {
+  const [characters, setCharacters] = useState<Character[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [modalTitle, setModalTitle] = useState<string | null>(null);
-  const [selectedContent, setSelectedContent] = useState<ReactNode | null>(null);
 
-  // Vérifie si l'utilisateur est connecté
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/");
+    async function fetchCharacters() {
+      try {
+        const response = await fetch(`${API_URL}/api/characters`);
+
+        if (!response.ok) {
+          throw new Error("Erreur lors de la récupération des personnages");
+        }
+
+        const data = await response.json();
+        setCharacters(data);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Une erreur inconnue est survenue.");
+        }
+      } finally {
+        setLoading(false);
+      }
     }
-  }, [navigate]);
 
-  // Fonction pour gérer la déconnexion
-  const handleLogout = () => {
-    localStorage.removeItem("token"); // Supprime le token
-    navigate("/"); // Redirige vers l'accueil
+    fetchCharacters();
+  }, []);
+
+  const handleDelete = async (id: string) => {
+    try {
+      const response = await fetch(`${API_URL}/api/characters/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la suppression du personnage");
+      }
+
+      setCharacters((prevCharacters) =>
+        prevCharacters.filter((character) => character._id !== id)
+      );
+    } catch (error) {
+      console.error("Erreur :", error);
+      setError("Impossible de supprimer ce personnage.");
+    }
   };
 
-  const goCreateSheet = () => {
-    navigate("/creation-de-personnage");
-  };
-
-  const userOptions: { label: string; component?: ReactNode; action?: () => void }[] = [
-    { label: "Gérer le compte", component: <ManageAccount /> },
-    { label: "Préférences", component: <Settings /> },
-    { label: "Se déconnecter", action: handleLogout }, // Appelle `handleLogout`
-  ];
-
-  const characterOptions: { label: string; component?: ReactNode; action?: () => void }[] = [
-    { label: "Créer un personnage", action: goCreateSheet },
-    { label: "Gérer les personnages", component: <CharacterList /> },
-  ];
-
-  const tableOptions: { label: string; component?: ReactNode; action?: () => void }[] = [
-    { label: "Créer une table de jeu", component: <TabletopCreation /> },
-    { label: "Rejoindre une table", component: <TableTopBrowse /> },
-  ];
-
-  const menuSections = [
-    {
-      title: "Votre compte",
-      options: userOptions,
-    },
-    {
-      title: "Les personnages",
-      options: characterOptions,
-    },
-    {
-      title: "Les tables de jeux",
-      options: tableOptions,
-    },
-  ];
-
-  // Ouvrir la modale avec un composant spécifique
-  const handleOptionClick = (title: string, content: ReactNode) => {
-    setModalTitle(title);
-    setSelectedContent(content);
-    setModalOpen(true);
-  };
+  if (loading) return <BeatLoader />;
+  if (error) return <div>
+          <h2>Vos personnages </h2>
+      <p>Erreur : Le serveur semble inatteignable</p>
+      <p>Réessayez plus tard</p>
+    </div>;
 
   return (
-    <>
-      <div className="main-menu">
-        <h2>Que voulez-vous faire ?</h2>
-
-        {menuSections.map(({ title, options }, index) => (
-          <section key={index}>
-            <h3>{title}</h3>
-            <ul>
-              {options.map(({ label, component, action }, idx) => (
-                <li key={idx} onClick={() => (action ? action() : component && handleOptionClick(label, component))}>
-                  {label}
-                </li>
-              ))}
-            </ul>
-          </section>
+    <div className="menu">
+      <h2>Vos personnages </h2>
+      <div className="character-list">
+      <ul>
+        <li 
+          className="character-list__create-new"
+          onClick={() => navigate("/creation-de-personnage")}          
+          >
+          <i className="fa-solid fa-plus"></i>
+          <p>Créer un personnage</p>
+        </li>
+        {characters.map((character) => (
+          <li key={character._id}>
+            <div
+              className="character"
+              onClick={() => navigate(`/personnage/${character._id}`)}
+              style={{ cursor: "pointer" }}
+            >
+                  <i
+                    className="fa-solid fa-trash"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(character._id);
+                    }}
+                  />
+              <h2>{character.name}</h2>
+              <div className="character__inside">
+                <div className="character__inside--stats">
+                  <p>PV: <span>{character.pointsOfLife}</span></p>
+                  <p>Classe: <span>{character.className}</span></p>
+                </div>
+                <div className="character__inside--image">
+                  <img
+                    src={character.image ? `${API_URL}/${character.image.replace("\\", "/")}` : defaultImg}
+                    alt={character.name}
+                  />
+                </div>
+              </div>
+            </div>
+          </li>
         ))}
-      </div>
+      </ul>
+    </div>
 
-      {/* Affichage de la modal */}
-      {isModalOpen && modalTitle && selectedContent && (
-        <Modal title={modalTitle} content={selectedContent} onClose={() => setModalOpen(false)} />
-      )}
-    </>
-  );
+    </div>
+  )
 }

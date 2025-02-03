@@ -1,7 +1,7 @@
 @import "../../style/mixins.scss";
 @import "../../style/variables.scss";
 
-.modal {
+.modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -11,7 +11,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
+    z-index: 10000;
   
   &__inside {
     position: relative;
@@ -20,6 +20,7 @@
     border-radius: 10px;
     min-width: 300px;
     text-align: center;
+    z-index: 10001;
   }
   
   button {

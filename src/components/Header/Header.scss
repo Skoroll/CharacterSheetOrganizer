@@ -1,0 +1,15 @@
+@import "../../style/mixins.scss";
+@import "../../style/variables.scss";
+
+.header {
+    @include flex-row;
+
+    button {
+        margin: auto $spacing-medium auto auto;
+        background: none;
+        color: $text-color;
+        padding: $spacing-medium;
+        border: none;
+    }
+
+}

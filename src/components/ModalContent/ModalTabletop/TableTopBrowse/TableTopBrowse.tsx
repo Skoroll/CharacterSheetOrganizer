@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
+import { BeatLoader } from "react-spinners";
 import "./TableTopBrowse.scss";
 
 export default function TableTopBrowse() {
-  const [tables, setTables] = useState<{ id: string; name: string }[]>([]);
+  const [tables, setTables] = useState<{ _id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const API_URL = import.meta.env.VITE_API_URL;
@@ -36,15 +37,18 @@ export default function TableTopBrowse() {
 
   return (
     <div className="tabletop-browse">
-      {loading && <p>Chargement des tables ...</p>}
-      {error && <p>{error}</p>}
+      {loading && <BeatLoader/>}
+      {error && <div>
+          <p>Erreur : Le serveur semble inatteignable</p>
+          <p>Réessayez plus tard</p>
+        </div>}
 
       {!loading && !error && tables.length === 0 && <p>Aucune table</p>}
 
       {!loading && !error && tables.length > 0 && (
         <ul>
           {tables.map((table) => (
-            <li key={table.id}>
+            <li key={table._id}>
               <div className="is-online" />
               <p>{table.name}</p>
 

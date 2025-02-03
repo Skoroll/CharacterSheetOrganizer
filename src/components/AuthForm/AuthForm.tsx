@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import "./AuthForm.scss";
 
 export default function AuthForm() {
@@ -7,7 +6,6 @@ export default function AuthForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
 
   const API_URL = import.meta.env.VITE_API_URL; // Récupère l'URL du backend
 
@@ -29,7 +27,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     if (response.ok) {
       if (!isSignUp && data.token) {
         localStorage.setItem("token", data.token);
-        navigate("/menu")
+        window.location.reload();
       }
     } else {
       alert(`Erreur : ${data.message}`);

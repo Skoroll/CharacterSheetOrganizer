@@ -4,45 +4,138 @@
 .character-details {
     position: relative;
     
+    &__identity {
+        border: 1px solid;
+        padding: $spacing-small;
+        @include flex-col;
+        text-align: left;
+
+        &--text {
+            @include flex-col;
+            p {
+                margin: 0
+            }
+
+            .text-container {
+                @include flex-row;
+                gap: $spacing-medium;
+
+                @include media-query($breakpoint-sm, "min") {
+                    @include flex-col;
+                }
+            }
+        }
+    }
+
     &__content {
         @include flex-col;
-        padding: $spacing-medium;
+        padding: $spacing-large;
+        
+
 
         img{
             width: 260px;
             height: 260px;
             margin: auto;
         }
+        
+        &--stats, &--health {
+            text-align: left;
+            p {
+                @include flex-row;
+                width: 120px;
+                justify-content: space-between;
+                align-items: baseline;
+            }
+
+            span {
+                @include flex-center;
+                border: 1px solid;
+                width: 15px;
+                padding: $spacing-small;
+                border-radius: 50%
+            }
+        }
+
+        @include media-query($breakpoint-sm, "min") {
+            @include flex-row;
+            gap: $spacing-large;
+            justify-content: space-around;
+
+            img {
+                margin: 0;
+            }
+        }
+
     }
 
-    &__stats, &__health {
-        text-align: left;
-        p {
-            @include flex-row;
-            width: 120px;
-            justify-content: space-between;
-        }
-    }
 
     
-    &__skills {
-        table {
-            padding: $spacing-medium;
-        }
-        .table-left {
-            text-align: left;
-            padding: $spacing-small;
+    &__skills, &__infos {
+        @include flex-col;
+        @include media-query($breakpoint-sm, "min") {
+            @include flex-row;
+
+            &--regular, &--special,  &--back-story, &--inventory{
+                width: 50%;
+                
+            }
         }
 
-        .table-center {
-            text-align: center;
+ 
+
+        &--regular, &--special {
+
+            table {
+                padding: $spacing-medium;
+            }
+            .table-left {
+                text-align: left;
+                padding: $spacing-small;
+            }
+    
+            .table-center {
+                text-align: center;
+            }        
+        }
+
+    }
+    
+    &__infos {
+        &--inventory {
+            table {
+                margin: auto;
+            }
+            .item {
+                text-align: left;
+                padding: $spacing-small;
+            }
+
+            .weapons {
+                ul {
+                    @include ul-base;
+                }
+                li {
+                    @include flex-row;
+                    gap: $spacing-large;
+                    justify-content: center;
+                }
+            }
         }
     }
-
+p{
+    text-align: left;
+}
 }
 
 .character-mobile {
     margin-top: 20px;
     @include flex-row;
     justify-content: space-around;
+    gap: $spacing-large;
+}
+
+
+.character-story {
+    width: 100%;
 }
