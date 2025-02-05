@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
 import defaultImg from "../../assets/default-people.webp";
 import "../../components/ModalContent/Character/CharacterList.scss";
-import "./Menu.scss"
+import "./Menu.scss";
 
 interface Character {
   _id: string;
@@ -23,8 +23,25 @@ export default function Menu() {
 
   useEffect(() => {
     async function fetchCharacters() {
+      setLoading(true);
+      setError(null);
+
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        setError("Utilisateur non authentifié");
+        setLoading(false);
+        return;
+      }
+
       try {
-        const response = await fetch(`${API_URL}/api/characters`);
+        const response = await fetch(`${API_URL}/api/characters/user`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!response.ok) {
           throw new Error("Erreur lors de la récupération des personnages");
@@ -33,6 +50,7 @@ export default function Menu() {
         const data = await response.json();
         setCharacters(data);
       } catch (err: unknown) {
+        console.error("Erreur lors de la récupération des personnages", err);
         if (err instanceof Error) {
           setError(err.message);
         } else {
@@ -44,12 +62,21 @@ export default function Menu() {
     }
 
     fetchCharacters();
-  }, []);
+  }, [API_URL]);
 
   const handleDelete = async (id: string) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Utilisateur non authentifié");
+      return;
+    }
+
     try {
       const response = await fetch(`${API_URL}/api/characters/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) {
@@ -60,63 +87,74 @@ export default function Menu() {
         prevCharacters.filter((character) => character._id !== id)
       );
     } catch (error) {
-      console.error("Erreur :", error);
+      console.error("Erreur lors de la suppression du personnage", error);
       setError("Impossible de supprimer ce personnage.");
     }
   };
 
   if (loading) return <BeatLoader />;
-  if (error) return <div>
-          <h2>Vos personnages </h2>
-      <p>Erreur : Le serveur semble inatteignable</p>
-      <p>Réessayez plus tard</p>
-    </div>;
+  if (error)
+    return (
+      <div>
+        <h2>Vos personnages </h2>
+        <p>Erreur : Le serveur semble inatteignable</p>
+        <p>Réessayez plus tard</p>
+      </div>
+    );
 
   return (
     <div className="menu">
       <h2>Vos personnages </h2>
       <div className="character-list">
-      <ul>
-        <li 
-          className="character-list__create-new"
-          onClick={() => navigate("/creation-de-personnage")}          
+        <ul>
+          <li
+            className="character-list__create-new"
+            onClick={() => navigate("/creation-de-personnage")}
           >
-          <i className="fa-solid fa-plus"></i>
-          <p>Créer un personnage</p>
-        </li>
-        {characters.map((character) => (
-          <li key={character._id}>
-            <div
-              className="character"
-              onClick={() => navigate(`/personnage/${character._id}`)}
-              style={{ cursor: "pointer" }}
-            >
-                  <i
-                    className="fa-solid fa-trash"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(character._id);
-                    }}
-                  />
-              <h2>{character.name}</h2>
-              <div className="character__inside">
-                <div className="character__inside--stats">
-                  <p>PV: <span>{character.pointsOfLife}</span></p>
-                  <p>Classe: <span>{character.className}</span></p>
-                </div>
-                <div className="character__inside--image">
-                  <img
-                    src={character.image ? `${API_URL}/${character.image.replace("\\", "/")}` : defaultImg}
-                    alt={character.name}
-                  />
+            <i className="fa-solid fa-plus"></i>
+            <p>Créer un personnage</p>
+          </li>
+          {characters.map((character) => (
+            <li key={character._id}>
+              <div
+                className="character"
+                onClick={() => navigate(`/personnage/${character._id}`)}
+                style={{ cursor: "pointer" }}
+              >
+                <i
+                  className="fa-solid fa-trash"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(character._id);
+                  }}
+                />
+
+                <h2>{character.name}</h2>
+                <div className="character__inside">
+                  <div className="character__inside--stats">
+                    <p>
+                      PV: <span>{character.pointsOfLife}</span>
+                    </p>
+                    <p>
+                      Classe: <span>{character.className}</span>
+                    </p>
+                  </div>
+                  <div className="character__inside--image">
+                    <img
+                      src={
+                        character.image
+                          ? `${API_URL}/${character.image.replace("\\", "/")}`
+                          : defaultImg
+                      }
+                      alt={character.name}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
-
-    </div>
-  )
+  );
 }

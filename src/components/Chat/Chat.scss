@@ -1,0 +1,88 @@
+.chat {
+    position: fixed;
+    bottom: 150px;
+    left: -350px; // Chat initialement caché (avec juste le bouton visible)
+    background: $secondary-color;
+    padding: 15px;
+    height: 280px;
+    width: 390px;
+    border-radius: $pannel-radius;
+    display: flex;
+    flex-direction: column;
+    gap: $pannel-gap;
+    transition: $pannel-slide; // Transition pour l'effet glissant
+
+    &__label{
+        position: absolute;
+        top: 70px;
+        right: 10px;
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        color: $text-color-light;
+    }
+
+    // Quand le chat est ouvert, il revient à sa position normale
+    &.chat--open {
+        transform: translateX(350px); // Fait glisser le chat vers la droite
+
+        .chat__label{
+            display: none;
+        }
+    }
+    
+
+    &__header {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    &__messages {
+        overflow-y: auto;
+        overflow-x: hidden;
+        margin: 20px auto 0 auto;
+        width: 350px;
+        height: 200px;
+        background-color: $accent-color;
+        border: 1px solid;
+        border-radius: $pannel-inside-radius;
+        
+        &--player{
+            text-decoration: underline;
+        }
+        
+        p {
+            padding: 5px;
+            width: 100%;
+            word-break: break-all;
+            color: $text-color-light;
+        }
+    }
+
+    &__box {
+        margin: 0 auto 0 auto;
+        input,
+        button {
+            background: $background-color;
+            border: none;
+        }
+
+        input {
+            width: 320px;
+            border-radius: 5px 0 0 5px;
+        }
+
+        button {
+            width: 30px;
+            border-radius: 0 5px 5px 0;
+        }
+    }
+
+    &__header {
+        position: absolute;
+        display: flex;
+        flex-direction: row-reverse;
+        gap: $pannel-gap;
+        top: 5px;
+        right: 10px;
+    }
+}

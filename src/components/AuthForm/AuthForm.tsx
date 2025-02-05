@@ -7,6 +7,7 @@ export default function AuthForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+
   const API_URL = import.meta.env.VITE_API_URL; // Récupère l'URL du backend
 
 const handleSubmit = async (e: React.FormEvent) => {

@@ -3,7 +3,25 @@
 
 .character-details {
     position: relative;
-    
+    table {
+        border-collapse: collapse; 
+        padding: $spacing-medium;
+        margin: auto;
+        tr {
+            border-bottom: 1px solid;
+        }
+
+        .table-left  {
+            text-align: left;
+            padding: $spacing-small;
+        }
+
+        .table-center { 
+            text-align: center;
+            padding: $spacing-small;
+        }
+    }
+
     &__identity {
         border: 1px solid;
         padding: $spacing-small;
@@ -12,8 +30,9 @@
 
         &--text {
             @include flex-col;
+            
             p {
-                margin: 0
+                margin: 0;
             }
 
             .text-container {
@@ -30,10 +49,8 @@
     &__content {
         @include flex-col;
         padding: $spacing-large;
-        
 
-
-        img{
+        img {
             width: 260px;
             height: 260px;
             margin: auto;
@@ -41,10 +58,9 @@
         
         &--stats, &--health {
             text-align: left;
+            
             p {
                 @include flex-row;
-                width: 120px;
-                justify-content: space-between;
                 align-items: baseline;
             }
 
@@ -53,89 +69,145 @@
                 border: 1px solid;
                 width: 15px;
                 padding: $spacing-small;
-                border-radius: 50%
+                border-radius: 50%;
             }
         }
 
         @include media-query($breakpoint-sm, "min") {
             @include flex-row;
-            gap: $spacing-large;
-            justify-content: space-around;
+            gap: 20%;
 
             img {
                 margin: 0;
+
+
             }
         }
-
     }
 
+    &--button-list {
+        @include flex-row;
+        padding: $spacing-large;
+        gap: $spacing-large;
+        justify-content: center;
 
+        button {
+            background: none;
+            color: $text-color;
+            font-size: 30px;
+            padding: $spacing-small;
+            border: none;
+
+            &:hover {
+                transform: scale(110%);
+            }
+        }
+    }
     
     &__skills, &__infos {
         @include flex-col;
+
         @include media-query($breakpoint-sm, "min") {
             @include flex-row;
-
-            &--regular, &--special,  &--back-story, &--inventory{
-                width: 50%;
-                
-            }
         }
 
- 
 
-        &--regular, &--special {
+        &--back-story, &--inventory {
+            width: 50%;
 
-            table {
-                padding: $spacing-medium;
+           .character-story__container {
+            padding: $spacing-large;
+
+            &--text {
+                padding: $spacing-large;
+                white-space: pre-line;
             }
-            .table-left {
-                text-align: left;
-                padding: $spacing-small;
-            }
-    
-            .table-center {
-                text-align: center;
-            }        
+           }
+            
+        @include media-query($breakpoint-sm, "min") {
+            width: 100%;
         }
-
+        }
     }
-    
+
+    &__skills {
+        div {
+            margin: 0 auto;
+        }
+    }
     &__infos {
         &--inventory {
-            table {
-                margin: auto;
-            }
             .item {
                 text-align: left;
                 padding: $spacing-small;
+                min-width: 200px;
             }
 
-            .weapons {
-                ul {
-                    @include ul-base;
-                }
-                li {
-                    @include flex-row;
-                    gap: $spacing-large;
-                    justify-content: center;
+            @include media-query($breakpoint-sm, "min") {
+                @include flex-row;
+                width: 100%;
+                justify-content: space-evenly;
+                table {
+                    margin-top: 0;
                 }
             }
         }
     }
-p{
-    text-align: left;
-}
+
+    p {
+        text-align: left;
+    }
 }
 
 .character-mobile {
     margin-top: 20px;
-    @include flex-row;
+    @include flex-col;
     justify-content: space-around;
     gap: $spacing-large;
-}
 
+    .character-details__content--stats, 
+    .character-details__content--health {
+        @include flex-wrap;
+        gap: $spacing-medium;
+        justify-content: center;
+
+        p {
+            @include flex-row;
+            align-items: center;
+            gap: $spacing-small;
+
+            .fa-solid {
+                font-size: 35px;
+            }
+        }
+    }
+
+    @include media-query($breakpoint-sm, "min") {
+        @include flex-row;
+
+        .character-details__content--health {
+            justify-content: initial;
+        }
+
+        .character-details__content--stats, 
+        .character-details__content--health {
+            @include flex-col;
+
+            p {
+                width: 120px;
+                justify-content: space-between;
+            }
+        }
+    }
+}
 
 .character-story {
     width: 100%;
+}
+
+.loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }

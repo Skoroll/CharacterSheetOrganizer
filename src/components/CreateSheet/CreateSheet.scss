@@ -5,7 +5,8 @@
   @include flex-col;
   position: relative;
   margin-bottom: 50px;
-  input, textArea{
+  input,
+  textArea {
     background: $background-dark;
     color: $text-muted;
   }
@@ -28,7 +29,7 @@
     justify-content: space-around;
 
     @include media-query($breakpoint-sm, "min") {
-        @include flex-row;
+      @include flex-row;
     }
 
     * {
@@ -47,20 +48,18 @@
     }
 
     &--fixed {
-      table{
-
-        .table-left{
+      table {
+        .table-left {
           text-align: left;
         }
 
-        .table-center{
+        .table-center {
           text-align: center;
         }
       }
     }
 
     &--skills {
-   
       .what-skil {
         @include flex-wrap;
         gap: $spacing-small;
@@ -91,6 +90,14 @@
       padding: $spacing-small;
       flex: 1;
 
+      .gold {
+        @include flex-row;
+        padding: $spacing-small;
+        gap: $spacing-small;
+        input {
+          width: 55px;
+        }
+      }
       .item {
         @include flex-wrap;
         gap: $spacing-small;
@@ -130,62 +137,66 @@
 }
 
 .character-identity {
-    @include flex-col;
-    
-    @include media-query($breakpoint-sm, "min") {
-        @include flex-row;
-    }
+  @include flex-col;
+
+  @include media-query($breakpoint-sm, "min") {
+    @include flex-row;
+  }
 
   &--img {
     @include flex-col;
     position: relative;
 
+    input {
+      display: none;
+    }
 
     img {
-        width: 260px;
-        height: 260px;
-        border-radius: 15px;
-        object-fit: cover
+      width: 260px;
+      height: 260px;
+      border-radius: 15px;
+      object-fit: cover;
     }
-    .img-container{
-    @include flex-center;
-    flex-grow: 1;
+    .img-container {
+      @include flex-center;
+      flex-grow: 1;
       width: 260px;
       height: 260px;
       background-color: $background-dark;
 
+      .image-placeholder {
+        filter: invert(1);
+      }
     }
   }
 }
 
-.character-points{
-    @include flex-col;
-    label{
-      padding: (calc($spacing-small *2));
-    }
+.character-points {
+  @include flex-col;
+  label {
+    padding: (calc($spacing-small * 2));
+  }
 
-    input{
-        width: 30px;
-    }
+  input {
+    width: 30px;
+  }
 }
 
+.character-stats {
+  label {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: $spacing-small;
+    max-width: 150px;
+  }
 
-.character-stats{
-    
-    label{
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: baseline;
-        gap: $spacing-small;
-        max-width: 150px;
-    }
-
-    input{
-        width: 30px;
-    }
+  input {
+    width: 30px;
+  }
 }
 
-.btn-container{
+.btn-container {
   @include flex-row;
   justify-content: center;
   gap: $spacing-large;
@@ -197,7 +208,7 @@
   box-sizing: border-box;
   bottom: 0;
 
-  button{
+  button {
     @include button();
   }
 }

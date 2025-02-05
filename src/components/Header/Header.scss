@@ -4,12 +4,21 @@
 .header {
     @include flex-row;
 
+    h1 {
+        text-align: left;
+        margin-left: 5px;
+        font-size: 20px;
+        cursor: pointer;
+    }
+
     button {
         margin: auto $spacing-medium auto auto;
         background: none;
         color: $text-color;
         padding: $spacing-medium;
         border: none;
+        font-size: 30px;
+        cursor: pointer;
     }
 
 }

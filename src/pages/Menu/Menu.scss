@@ -13,10 +13,10 @@
                 flex-grow: 1;
                 padding: $spacing-medium;
                 height: 350px;
-                width: max(45%, 300px );
+                width: max(30%, 300px );
                 cursor: pointer;
 
-                @include media-query($breakpoint-sm, "min") {
+                @include media-query($breakpoint-md, "min") {
                     flex-grow: 0;
                 }
 

@@ -10,16 +10,26 @@ export default function TabletopCreation() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    
+    const token = localStorage.getItem("token");
+  
+    if (!token) {
+      alert("Vous devez être connecté pour créer une table.");
+      return;
+    }
+  
     try {
       const response = await fetch(`${API_URL}/api/tabletop/tableCreate`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Ajoute le token pour l'identification
+        },
         body: JSON.stringify({ name, password }),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
         alert("Table créée avec succès !");
         navigate(`/table/${data.table.id}`);
@@ -30,6 +40,7 @@ export default function TabletopCreation() {
       alert("Une erreur est survenue.");
     }
   };
+  
 
   return (
     <div className="tabletop-creation">
@@ -38,20 +49,27 @@ export default function TabletopCreation() {
           Nom de la table
           <input
             type="text"
+            name="table-name"
             placeholder="Nom de la table"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
+            autoComplete="off"
+            onFocus={(e) => e.target.setAttribute("autocomplete", "new-name")}
           />
         </label>
         <label>
           Mot de passe
           <input
             type="password"
+            name="table-password"
             placeholder="Mot de passe de la table"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            autoComplete="new-password"
+            readOnly
+            onFocus={(e) => e.target.removeAttribute("readOnly")}
           />
         </label>
         <button type="submit">

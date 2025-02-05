@@ -7,6 +7,7 @@ import Footer from './components/Footer/Footer';
 import Header from './components/Header/Header';
 import Home from "./pages/Home/Home";
 import Tabletop from "./pages/Tabletop/Tabletop";
+import { UserProvider} from "./Context/UserContext"
 import './App.scss';
 
 import Settings from "./components/ModalContent/Account/Settings";
@@ -22,6 +23,7 @@ function App() {
       <ThemeProvider theme={theme}>
         {/* Appliquer les styles globaux */}
         <GlobalStyle />
+        <UserProvider>
         <BrowserRouter>
           <Header />
           <main>
@@ -35,6 +37,7 @@ function App() {
           </main>
           <Footer />
         </BrowserRouter>
+        </UserProvider>
       </ThemeProvider>
     </>
   );

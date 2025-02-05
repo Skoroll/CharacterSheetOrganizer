@@ -8,6 +8,7 @@ const diceTypes = {
   d8: 8,
   d12: 12,
   d20: 20,
+  d100: 100,
 };
 
 function DiceRoller() {
