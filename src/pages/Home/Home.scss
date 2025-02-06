@@ -2,6 +2,14 @@
 @import "../../style/variables.scss";
 
 .home {
+  @include flex-row;
+  flex: 1;
+
+  &-wrapper {
+    @include flex-col;
+    flex: 1;
+  }
+
   &__tables-options {
     @include flex-col;
 

@@ -69,9 +69,8 @@ function DiceRoller() {
 
       {results.length > 0 && (
         <div>
-          <h3>Résultats :</h3>
-          <p>Résultats de chaque dé : {results.join(', ')}</p>
-          <p>Total du jet : {total}</p>
+           <p>Résultats : {total} {numDice > 1 ? `(${results.join(', ')})` : ""}</p>
+          <p>Total du jet :</p>
         </div>
       )}
     </div>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Collapses from "../../../Collapses/Collapses";
 import "./TabletopCreation.scss";
 
 export default function TabletopCreation() {
@@ -10,8 +11,9 @@ export default function TabletopCreation() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+  
     const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
   
     if (!token) {
       alert("Vous devez être connecté pour créer une table.");
@@ -23,12 +25,18 @@ export default function TabletopCreation() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Ajoute le token pour l'identification
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ name, password }),
+        body: JSON.stringify({
+          name,
+          password,
+          gameMaster: user.id,        // ID du créateur
+          gameMasterName: user.name,  // NOM du créateur
+        }),
       });
   
       const data = await response.json();
+      console.log("Table créée par :", user.name); // Debug
   
       if (response.ok) {
         alert("Table créée avec succès !");
@@ -40,10 +48,11 @@ export default function TabletopCreation() {
       alert("Une erreur est survenue.");
     }
   };
-  
 
   return (
     <div className="tabletop-creation">
+      <Collapses title="Créer une table"
+      content={
       <form onSubmit={handleSubmit}>
         <label>
           Nom de la table
@@ -76,6 +85,8 @@ export default function TabletopCreation() {
           Créer la table
         </button>
       </form>
+
+      }/>
     </div>
   );
 }

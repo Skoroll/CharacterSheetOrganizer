@@ -43,6 +43,7 @@ export default function CharacterDetails() {
   const [isSkillOpen, setIsSkillOpen] = useState(false);
   const [isInventoryOpen, setIsInventoryOpen] = useState(false);
   const [isStoryOpen, setIsStoryOpen] = useState(false);
+    const [characters, setCharacters] = useState<Character[]>([]);
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -156,10 +157,39 @@ export default function CharacterDetails() {
     { name: "Voler", link1: "intelligence", link2: "charisma" },
   ];
   console.log("🔹 Image reçue pour", character.name, ":", character.image);
+
+
+  const handleDelete = async (id: string) => {
+    try {
+      const response = await fetch(`${API_URL}/api/characters/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la suppression du personnage");
+      }
+
+      setCharacters((prevCharacters) =>
+        prevCharacters.filter((character) => character._id !== id)
+      );
+    } catch (error) {
+      console.error("Erreur :", error);
+      setError("Impossible de supprimer ce personnage.");
+    }
+  };
+
+
   return (
     <div className="character-details">
       <div className="character-details__content">
         <div className="character-details__identity">
+        <i
+                    className="fa-solid fa-trash"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(character._id);
+                    }}
+                  />
           <img
             src={
               character.image

@@ -14,3 +14,7 @@ body{
   @include  ul-base;
 }
 
+main {
+  @include flex-col;
+  position: relative;
+}

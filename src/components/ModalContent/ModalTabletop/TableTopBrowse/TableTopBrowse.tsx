@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
+import Collapses from "../../../Collapses/Collapses";
 import Modal from "../../../Modal/Modal";
-import TabletopJoin from "../TabletopJoin/TabletopJoin"; // Importer le composant
+import TabletopJoin from "../TabletopJoin/TabletopJoin";
 import "./TableTopBrowse.scss";
 
 export default function TableTopBrowse() {
@@ -16,20 +17,27 @@ export default function TableTopBrowse() {
 
   const deleteTable = async (id: string) => {
     try {
-      const token = localStorage.getItem("token"); // Récupère le token de l'utilisateur connecté
-  
-      const response = await fetch(`${API_URL}/api/tabletop/table/${id}`, {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(`${API_URL}/api/tabletop/tables/${id}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json", // ✅ Ajout de l’en-tête manquant
         },
       });
-  
+
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || "Erreur lors de la suppression de la table.");
+        let errorMessage = "Erreur lors de la suppression de la table.";
+        try {
+          const data = await response.json();
+          errorMessage = data.message || errorMessage;
+        } catch {
+          // Si la réponse n'est pas JSON, garder le message par défaut
+        }
+        throw new Error(errorMessage);
       }
-  
+
       alert("Table supprimée avec succès !");
       setTables((prevTables) => prevTables.filter((table) => table._id !== id));
     } catch (err: unknown) {
@@ -53,18 +61,12 @@ export default function TableTopBrowse() {
     const fetchTables = async () => {
       try {
         const response = await fetch(`${API_URL}/api/tabletop/getTables`);
+        if (!response.ok) throw new Error("Erreur lors de la récupération des tables");
+
         const data = await response.json();
-        if (response.ok) {
-          setTables(data.tables);
-        } else {
-          throw new Error(data.message || "Erreur lors de la récupération des tables");
-        }
+        setTables(data.tables);
       } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("Une erreur inconnue est survenue.");
-        }
+        setError(err instanceof Error ? err.message : "Une erreur inconnue est survenue.");
       } finally {
         setLoading(false);
       }
@@ -75,51 +77,60 @@ export default function TableTopBrowse() {
 
   return (
     <div className="tabletop-browse">
-      {loading && <BeatLoader />}
-      {error && <div><p>Erreur : Le serveur semble inatteignable</p><p>Réessayez plus tard</p></div>}
-
-      {!loading && !error && tables.length === 0 && <p>Aucune table</p>}
-
-      {!loading && !error && tables.length > 0 && (
-        <ul>
-          {tables.map((table) => (
-            <li key={table._id}>
-              <div className="is-online" />
-              <p>{table.name}</p>
-              <div className="tabletop-browse__btn">
-                <button
-                  className="tabletop-browse--join"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteTable(table._id);
-                  }}
-                >
-                  <i className="fa-solid fa-trash" />
-                </button>
-
-                <button
-                  className="tabletop-browse--join"
-                  onClick={() => handleJoinTable(table._id)}
-                >
-                  <i className="fa-solid fa-right-to-bracket" />
-                </button>
+      <Collapses
+        title="Rejoindre une table"
+        content={
+          <>
+            {loading && <BeatLoader />}
+            {error && (
+              <div>
+                <p>Erreur : Le serveur semble inatteignable</p>
+                <p>Réessayez plus tard</p>
               </div>
-            </li>
-          ))}
-        </ul>
-      )}
+            )}
+            {!loading && !error && tables.length === 0 && <p>Aucune table</p>}
+            {!loading && !error && tables.length > 0 && (
+              <ul>
+                {tables.map((table) => (
+                  <li key={table._id}>
+                    <div className="is-online" />
+                    <p>{table.name}</p>
+                    <div className="tabletop-browse__btn">
+                      <button
+                        className="tabletop-browse--join"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteTable(table._id);
+                        }}
+                      >
+                        <i className="fa-solid fa-trash" />
+                      </button>
+                      <button
+                        className="tabletop-browse--join"
+                        onClick={() => handleJoinTable(table._id)}
+                      >
+                        <i className="fa-solid fa-right-to-bracket" />
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
+        }
+      />
 
       {isJoinModalOpen && selectedTableId && (
-        <Modal 
+        <Modal
           title="Sélectionnez votre personnage"
           onClose={() => setIsJoinModalOpen(false)}
-          content={(
+          content={
             <TabletopJoin
               tableId={selectedTableId}
               onClose={() => setIsJoinModalOpen(false)}
               onJoin={handleJoinSuccess}
             />
-          )}
+          }
         />
       )}
     </div>

@@ -216,6 +216,7 @@ function CreateSheet() {
                   className="image-placeholder"
                   />
                 )}
+                <p>Ajouter votre photo</p>
                 {image && (
                   <img
                     src={URL.createObjectURL(image)}
@@ -366,6 +367,7 @@ function CreateSheet() {
       </div>
 
       <div className="sheet__bottom">
+
       <div className="sheet__bottom--fixed">
   <h3>Compétences</h3>
   <table>
@@ -462,8 +464,8 @@ function CreateSheet() {
   ))}
 </form>
 
-
       </div>
+<div className="sheet__last-section">
         <div className="sheet__bottom--inventory">
           <h3>Inventaire de base</h3>
           <label 
@@ -509,11 +511,11 @@ function CreateSheet() {
           />
         </label>
       </div>
+      </div>
       <div className="btn-container">
       <button onClick={refreshPage}>Recommencer</button>
       <button onClick={handleSubmit}>Créer le personnage</button>
       </div>
-
     </div>
   );
 }

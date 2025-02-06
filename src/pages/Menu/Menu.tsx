@@ -12,6 +12,7 @@ interface Character {
   age: number;
   image: string;
   pointsOfLife: number;
+  gold: number;
 }
 
 export default function Menu() {
@@ -104,8 +105,8 @@ export default function Menu() {
 
   return (
     <div className="menu">
-      <h2>Vos personnages </h2>
       <div className="character-list">
+      <h2>Vos personnages </h2>
         <ul>
           <li
             className="character-list__create-new"
@@ -127,13 +128,14 @@ export default function Menu() {
                     e.stopPropagation();
                     handleDelete(character._id);
                   }}
+                  style={{display: "none"}}
                 />
 
                 <h2>{character.name}</h2>
                 <div className="character__inside">
                   <div className="character__inside--stats">
                     <p>
-                      PV: <span>{character.pointsOfLife}</span>
+                      Pièces: <span>{character.gold}</span>
                     </p>
                     <p>
                       Classe: <span>{character.className}</span>

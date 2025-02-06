@@ -2,90 +2,96 @@
 @import "../../style/variables.scss";
 
 .menu {
-    .character-list {
-        ul{
-            @include flex-wrap;
-            @include ul-base;
-            gap: $spacing-small;
+  .character-list {
+    ul {
+      @include flex-col;
+      @include ul-base;
+      gap: $spacing-small;
 
-            li {
-                border: 1px solid;
-                flex-grow: 1;
-                padding: $spacing-medium;
-                height: 350px;
-                width: max(30%, 300px );
-                cursor: pointer;
+      li {
+        border: 1px solid;
+        flex-grow: 1;
+        padding: $spacing-medium;
+        border-radius: $spacing-medium;
 
-                @include media-query($breakpoint-md, "min") {
-                    flex-grow: 0;
-                }
+        cursor: pointer;
 
-                &:hover {
-                    background: rgba(red($text-color), green($text-color), blue($text-color), 0.2);
-                    border: 1px solid transparent;            
-                }
-
-                .character {
-                    position: relative;
-                    border-radius: 15px;
-                    height: 100%;
-                
-                    .fa-trash {
-                        position: absolute;
-                        top: 5px;
-                        right: 10px;
-                    }
-                    h2 {
-                        margin: 0 0 5px 0;
-                        text-align: left;
-                    }
-
-                    &__inside {
-                        height: 100%;
-                        display: flex;
-                        flex-direction: column;
-                        gap: $spacing-small;
-
-                        p { 
-                            margin: 0;
-                            margin: 0 0 5px 0;
-                        }
-                        &--image {
-                            display: flex; // Permet d'ajuster le contenu
-                            align-items: center;
-                            justify-content: center;
-                            height: 100%;
-                
-                            img {
-                                width: 250px; // Ajustement pour qu'il prenne toute la largeur
-                                height: 250px; // Ajustement pour qu'il prenne toute la hauteur
-                                object-fit: cover;
-                                box-sizing: border-box;
-                            }
-                        }
-                
-
-                
-                        &--stats {
-                            @include flex-row;
-                            justify-content: space-evenly
-                        }
-                    }
-                }
-                
-            }
+        @include media-query($breakpoint-md, "min") {
+          flex-grow: 0;
         }
+
+        &:hover {
+          background: rgba(
+            red($text-color),
+            green($text-color),
+            blue($text-color),
+            0.2
+          );
+          border: 1px solid transparent;
+        }
+
+        .character {
+          position: relative;
+          border-radius: 15px;
+          min-height: 225px;
+          width: 150px;
+          @include flex-col;
+
+          .fa-trash {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+          }
+          h2 {
+            margin: 15px 0 5px 0;
+            text-align: left;
+          }
+
+          &__inside {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-small;
+            margin-bottom: 0;
+
+            p {
+              margin: 0;
+              margin: 0 0 5px 0;
+            }
+            &--image {
+              display: flex; // Permet d'ajuster le contenu
+              align-items: center;
+              justify-content: center;
+              margin-bottom: 0;
+
+              img {
+                width: 150px; // Ajustement pour qu'il prenne toute la largeur
+                height: 150px; // Ajustement pour qu'il prenne toute la hauteur
+                object-fit: cover;
+                box-sizing: border-box;
+              }
+            }
+
+            &--stats {
+              display: flex;
+              flex-direction: column-reverse;
+              text-align: left;
+            }
+          }
+        }
+      }
     }
+  }
 }
 
-.character-list__create-new { 
-    @include flex-col;
-    .fa-plus {
-        font-size: 90px;
-        margin: auto;
-    }
+.character-list__create-new {
+  @include flex-col;
+  .fa-plus {
+    font-size: 40px;
+    margin: auto;
+  }
 
-    p{
-        margin: 0 0 10px 0;
-    }
+  p {
+    margin: 0 0 10px 0;
+  }
 }

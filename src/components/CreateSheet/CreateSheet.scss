@@ -89,6 +89,15 @@
       @include flex-col;
       padding: $spacing-small;
       flex: 1;
+      
+
+
+      @include media-query($breakpoint-sm, "min") {
+        &--inventory {
+          max-width: 50%;
+          
+        }
+      }
 
       .gold {
         @include flex-row;
@@ -99,10 +108,10 @@
         }
       }
       .item {
-        @include flex-wrap;
+        @include flex-row;
         gap: $spacing-small;
         padding: $spacing-small;
-
+        width: 100%;
         input[type="text"] {
           width: 300px;
         }
@@ -115,10 +124,18 @@
   }
 
   &__background {
+    width: 100%;
+    margin: 0 60px 0 auto;
     textarea {
       height: 450px;
       resize: none;
     }
+
+    @include media-query($breakpoint-sm, "min") {
+
+        max-width: 50%;
+        
+      
   }
 }
 
@@ -158,11 +175,21 @@
       object-fit: cover;
     }
     .img-container {
+      position: relative;
       @include flex-center;
       flex-grow: 1;
       width: 260px;
       height: 260px;
       background-color: $background-dark;
+
+      &:hover {
+        background: rgba(red($text-color), green($text-color), blue($text-color), 0.2);
+      }
+
+      p {
+        position: absolute;
+        bottom: 5px;
+      }
 
       .image-placeholder {
         filter: invert(1);
@@ -201,6 +228,7 @@
   justify-content: center;
   gap: $spacing-large;
   background: $background-dark;
+
   position: sticky;
   padding: $spacing-medium;
   width: 100%;
@@ -211,4 +239,13 @@
   button {
     @include button();
   }
+}
+
+.sheet__last-section {
+  @include flex-col;
+  justify-content: space-evenly;
+  @include media-query($breakpoint-sm, "min") {
+    @include flex-row;
+  }
+}
 }

@@ -1,0 +1,26 @@
+@import "../../style/mixins.scss";
+@import "../../style/variables.scss";
+
+.table {
+    @include flex-col;
+    &__notes-pannel-GM {
+        @include flex-row;
+        position: absolute;
+        height: 100%;
+        &--slide-btn {
+            height: 100%;
+            @include flex-center;  
+            
+            .fa-solid {
+                margin: auto
+            }
+        }
+        
+        ul {
+            @include ul-base;
+            @include flex-row;
+            gap: $spacing-medium;
+            justify-content: center;
+        }
+    }
+}

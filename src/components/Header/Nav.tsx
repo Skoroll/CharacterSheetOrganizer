@@ -50,7 +50,9 @@ export default function Nav({ className, toggleNav }: NavProps) {
   // Fonction pour gérer la déconnexion
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user")
     navigate("/");
+    window.location.reload();
   };
 
   const goCreateSheet = () => {
