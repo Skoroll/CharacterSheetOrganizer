@@ -11,7 +11,7 @@ import { UserProvider} from "./Context/UserContext"
 import './App.scss';
 
 import Settings from "./components/ModalContent/Account/Settings";
-import GlobalStyle from './style/GlobalStyle'; // Importer les styles globaux
+import GlobalStyle from './style/GlobalStyle.js'; // Importer les styles globaux
 
 function App() {
   // Récupérer le thème depuis le store

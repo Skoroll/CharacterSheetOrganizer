@@ -2,25 +2,106 @@
 @import "../../style/variables.scss";
 
 .table {
-    @include flex-col;
-    &__notes-pannel-GM {
-        @include flex-row;
-        position: absolute;
-        height: 100%;
-        &--slide-btn {
-            height: 100%;
-            @include flex-center;  
-            
-            .fa-solid {
-                margin: auto
-            }
-        }
-        
-        ul {
-            @include ul-base;
-            @include flex-row;
-            gap: $spacing-medium;
-            justify-content: center;
-        }
+
+  &__header {
+    h2, p {
+      margin: 0;
     }
+
+    h2 {
+      font-size: 40px;
+    }
+
+    p {
+      font-style: italic;
+    }
+  }
+
+  position: relative;
+  @include flex-col;
+  &__notes-pannel {
+    @include flex-row;
+    position: absolute;
+    height: 100vh;
+    max-height: 450px;
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+
+    &--divider {
+      border-right: 1px solid;
+    }
+
+    &--inside {
+        @include flex-col;
+      height: 100%;
+
+      h3 {
+        margin: 5px;
+      }
+
+      .notes-title {
+        transform: rotate(-90deg);
+        margin: auto;
+      }
+
+      ul {
+        padding: $spacing-large !important;
+        .fa-solid {
+          border: 1px solid;
+          width: 15px;
+          padding: $spacing-small;
+          border-radius: 50%;
+          cursor: pointer;
+
+          &:hover {
+            transform: scale(115%);
+          }
+        }
+      }
+    }
+
+    &--slide-btn {
+      height: 100%;
+      @include flex-center;
+      border-right: 1px solid;
+      cursor: pointer;
+
+      &:hover {
+        background: $background-dark;
+      }
+      .fa-solid {
+        padding: $spacing-medium;
+        margin: auto;
+      }
+    }
+
+    ul {
+      @include ul-base;
+      @include flex-row;
+      gap: $spacing-medium;
+      justify-content: center;
+    }
+  }
+}
+
+.notes-section {
+  @include flex-col;
+  height: 300px;
+  padding: $spacing-small;
+
+  label {
+    text-align: left;
+    margin-bottom: 5px;
+  }
+
+  textarea {
+    resize: none;
+    height: 100%;
+    border-radius: 5px
+  }
+
+  button {
+    @include button;
+    margin: 5px 0;
+  }
 }

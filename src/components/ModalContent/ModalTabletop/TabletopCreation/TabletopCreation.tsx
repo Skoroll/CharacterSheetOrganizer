@@ -32,11 +32,11 @@ export default function TabletopCreation() {
           password,
           gameMaster: user.id,        // ID du créateur
           gameMasterName: user.name,  // NOM du créateur
+          players: [],                // Liste des joueurs vide au départ
         }),
       });
   
       const data = await response.json();
-      console.log("Table créée par :", user.name); // Debug
   
       if (response.ok) {
         alert("Table créée avec succès !");
@@ -48,6 +48,8 @@ export default function TabletopCreation() {
       alert("Une erreur est survenue.");
     }
   };
+  
+  
 
   return (
     <div className="tabletop-creation">

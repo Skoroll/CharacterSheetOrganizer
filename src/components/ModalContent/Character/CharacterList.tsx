@@ -22,7 +22,7 @@ export default function CharacterList() {
   useEffect(() => {
     async function fetchCharacters() {
       try {
-        const response = await fetch(`${API_URL}/api/characters`);
+        const response = await fetch(`${API_URL}/api/characters/user`);
 
         if (!response.ok) {
           throw new Error("Erreur lors de la récupération des personnages");

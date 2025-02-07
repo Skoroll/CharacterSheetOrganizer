@@ -3,6 +3,7 @@ import AuthForm from "../../components/AuthForm/AuthForm";
 import NextSession from "../../components/NextSession/NextSession";
 import TableTopBrowse from "../../components/ModalContent/ModalTabletop/TableTopBrowse/TableTopBrowse";
 import TabletopCreation from "../../components/ModalContent/ModalTabletop/TabletopCreation/TabletopCreation";
+import MyComponent from "../../components/test";
 import Menu from "../Menu/Menu";
 import "./Home.scss";
 
@@ -28,6 +29,7 @@ export default function Home() {
         <>
           <Menu />
           <div className="home-wrapper">
+            <MyComponent/>
             <NextSession />
             <div className="home__tables-options">
               <h2>Les Tables de jeux </h2>

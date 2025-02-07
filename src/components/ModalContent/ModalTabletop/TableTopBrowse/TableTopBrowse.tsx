@@ -47,9 +47,11 @@ export default function TableTopBrowse() {
   };
 
   const handleJoinTable = (tableId: string) => {
+    console.log("Table sélectionnée pour rejoindre :", tableId);
     setSelectedTableId(tableId);
     setIsJoinModalOpen(true);
   };
+  
 
   const handleJoinSuccess = (characterId: string, tableId: string) => {
     alert(`Vous avez rejoint la table ${tableId} avec le personnage ${characterId}`);
@@ -121,15 +123,18 @@ export default function TableTopBrowse() {
       />
 
       {isJoinModalOpen && selectedTableId && (
+        
         <Modal
           title="Sélectionnez votre personnage"
           onClose={() => setIsJoinModalOpen(false)}
           content={
-            <TabletopJoin
-              tableId={selectedTableId}
-              onClose={() => setIsJoinModalOpen(false)}
-              onJoin={handleJoinSuccess}
-            />
+<TabletopJoin
+  tableId={selectedTableId}
+  onClose={() => setIsJoinModalOpen(false)}
+  onJoin={handleJoinSuccess}
+  gameMasterId={""} // ⚠️ À récupérer depuis les données de la table
+/>
+
           }
         />
       )}
