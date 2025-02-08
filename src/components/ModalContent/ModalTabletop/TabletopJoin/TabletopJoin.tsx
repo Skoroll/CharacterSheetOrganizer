@@ -71,6 +71,7 @@ const TabletopJoin = ({ tableId, onClose, gameMasterId }: TabletopJoinProps) => 
   }, [isAuthenticated, tableId, password]);
 
   const handleJoinClick = async () => {
+    // Récupérer les données utilisateur depuis le localStorage
     const userData = localStorage.getItem("user");
     if (!userData) {
       console.error("Aucune donnée utilisateur trouvée dans localStorage.");
@@ -78,33 +79,44 @@ const TabletopJoin = ({ tableId, onClose, gameMasterId }: TabletopJoinProps) => 
     }
     const parsedUserData = JSON.parse(userData);
     const playerId = parsedUserData?.id;
-    const playerName = parsedUserData?.name;
-
+    const playerName = parsedUserData?.name; // Nom de l'utilisateur
+    
     if (!playerId || !playerName) {
       console.error("Données utilisateur manquantes !");
       return;
     }
-
+  
     const token = localStorage.getItem("token");
     if (!token) {
       console.error("Token manquant, utilisateur non authentifié !");
       return;
     }
-
+  
+    if (!selectedCharacter) {
+      console.error("Aucun personnage sélectionné !");
+      return;
+    }
+  
     console.log("Données utilisateur récupérées : ", parsedUserData);
     
+    // Préparer la requête pour ajouter le joueur avec le personnage sélectionné
     const response = await fetch(`${API_URL}/api/tabletop/addPlayer/${tableId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
       },
-      body: JSON.stringify({ playerId, playerName, password }),
+      body: JSON.stringify({
+        playerId,
+        playerName,  // Envoi du nom de l'utilisateur dans la requête
+        selectedCharacter,
+        password,
+      }),
     });
-
+  
     const responseData = await response.json();
     console.log("Réponse serveur :", responseData);
-
+  
     if (response.ok) {
       alert(responseData.message || "Vous avez rejoint la table !");
       
@@ -114,7 +126,9 @@ const TabletopJoin = ({ tableId, onClose, gameMasterId }: TabletopJoinProps) => 
       alert(responseData.message || "Erreur lors de l'ajout du joueur");
     }
   };
-
+  
+  
+  
   return (
     <div className="tabletop-join-modal">
       {loading && <p>Chargement...</p>}

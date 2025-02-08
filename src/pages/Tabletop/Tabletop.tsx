@@ -20,6 +20,10 @@ interface Table {
   };
 }
 
+interface Player {
+  _id: string;
+}
+
 export default function TableComponent() {
   const { id } = useParams();
   const [error, setError] = useState<string | null>(null);
@@ -37,18 +41,16 @@ export default function TableComponent() {
 
   useEffect(() => {
     if (!id) return;
-
     async function fetchTable() {
       try {
         const response = await fetch(`${API_URL}/api/tabletop/tables/${id}`);
         if (!response.ok) throw new Error("Erreur lors de la récupération de la table.");
         const data = await response.json();
-        console.log("Table data reçue :", table);
-        console.log("Données brutes des joueurs :", table?.players);
         setTable(data);
-        table?.players?.forEach((player, index) => {
-          console.log(`Joueur ${index} :`, player);
+
+        data.players?.forEach((player: Player, index: number) => {
         });
+
         const user = JSON.parse(localStorage.getItem("user") || "{}");
         const userId = user?.id;
 
@@ -64,13 +66,15 @@ export default function TableComponent() {
     fetchTable();
   }, [id, API_URL]);
 
-  // Correction du typage de playerIds
-  const playerIds = (table?.players?.map((player) => player._id) || []).filter((id) => id);
+  // Si id est undefined, on l'assigne à une chaîne vide
+  const tableId = id ?? ""; 
 
-  console.log("Player IDs filtrés:", playerIds);
+  // Correction du typage de playerIds
+  const playerIds = (table?.players?.map((player: any) => player._id) || []).filter((id) => id);
 
   if (loading) return <p>Chargement...</p>;
   if (error) return <p>Erreur : {error}</p>;
+  if (!table) return <p>Table non trouvée.</p>;
 
   return (
     <div className="table">
@@ -93,7 +97,6 @@ export default function TableComponent() {
             if (!response.ok) throw new Error("Erreur lors de la mise à jour des notes");
 
             const data = await response.json();
-            console.log("Notes mises à jour :", data);
           } catch (error) {
             console.error(error);
           }
@@ -105,7 +108,7 @@ export default function TableComponent() {
 
       <div className="table__main-container">
         <DiceRoller />
-        <PlayerAtTable playerIds={playerIds} API_URL={API_URL} />
+        <PlayerAtTable playerIds={playerIds} tableId={tableId} API_URL={API_URL} />
 
       </div>
       <div>

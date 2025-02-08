@@ -156,7 +156,7 @@ export default function CharacterDetails() {
     { name: "Survie", link1: "endurance", link2: "intelligence" },
     { name: "Voler", link1: "intelligence", link2: "charisma" },
   ];
-  console.log("🔹 Image reçue pour", character.name, ":", character.image);
+
 
 
   const handleDelete = async (id: string) => {
@@ -178,6 +178,7 @@ export default function CharacterDetails() {
     }
   };
 
+  console.log(`${API_URL}/${character.image.replace(/\\/g, "/")}`);
 
   return (
     <div className="character-details">

@@ -1,52 +1,80 @@
 import { useEffect, useState } from "react";
+import "./PlayersAtTable.scss";
 
-const PlayerAtTable = ({ playerIds, API_URL }: { playerIds: string[]; API_URL: string }) => {
-  const [playersDetails, setPlayersDetails] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true); // Pour indiquer le chargement des données
-  const [error, setError] = useState<string | null>(null); // Pour gérer les erreurs
+// Définir l'interface Character
+interface Character {
+  name: string;
+  image: string;
+}
+
+interface Player {
+  _id: string;
+  playerName: string;
+  selectedCharacter: Character | null; // selectedCharacter est maintenant un objet ou null
+}
+
+interface PlayerAtTableProps {
+  tableId: string;
+  API_URL: string;
+  playerIds: string[]; // Ajout de playerIds dans les props
+}
+
+const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchPlayerDetails() {
-      setLoading(true); // Début du chargement
-      setError(null); // Réinitialiser les erreurs
-
+    const fetchPlayersDetails = async () => {
       try {
-        const details = await Promise.all(
-          playerIds.map(async (id) => {
-            const response = await fetch(`${API_URL}/api/users/${id}`);
-            if (!response.ok) throw new Error(`Erreur lors de la récupération du joueur ${id}`);
-            return response.json();
-          })
+        const response = await fetch(
+          `${API_URL}/api/tabletop/tables/${tableId}/players`
         );
-        setPlayersDetails(details);
-      } catch (error: any) {
-        setError(error.message); // Capturer l'erreur
-        console.error("Erreur lors de la récupération des détails des joueurs", error);
-      } finally {
-        setLoading(false); // Fin du chargement
+
+        if (!response.ok) {
+          console.error("Erreur API :", response);
+          throw new Error("Erreur lors de la récupération des joueurs.");
+        }
+
+        const playersData = await response.json();
+        if (Array.isArray(playersData) && playersData.length > 0) {
+          setPlayers(playersData);
+        } else {
+          setError("Aucun joueur trouvé.");
+        }
+      } catch (err: unknown) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Une erreur inconnue est survenue."
+        );
       }
+    };
+
+    if (tableId) {
+      fetchPlayersDetails();
     }
+  }, [tableId, API_URL]);
 
-    fetchPlayerDetails();
-  }, [playerIds, API_URL]);
-
-  if (loading) {
-    return <p>Chargement des détails des joueurs...</p>;
-  }
-
-  if (error) {
-    return <p style={{ color: "red" }}>Erreur: {error}</p>;
-  }
+  if (error) return <p>Erreur : {error}</p>;
 
   return (
-    <div>
-      {playersDetails.map((player) => (
-        <div key={player._id}>
-          <h3>{player.name}</h3>
-          <p>{player.email}</p>
-          {/* Afficher d'autres informations sur le joueur ici */}
-        </div>
-      ))}
+    <div className="players-at-table">
+      <div className="players-at-table--container">
+        {players.map((player) => (
+          <div key={player._id} className="player">
+            {player.selectedCharacter && player.selectedCharacter.image && (
+              <>
+                {console.log("Image URL:", player.selectedCharacter.image)}{" "}
+                <img
+                  src={`${API_URL}/${player.selectedCharacter.image}`}
+                  alt={player.selectedCharacter.name}
+                />
+                <p>{player.selectedCharacter.name}</p>
+              </>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
