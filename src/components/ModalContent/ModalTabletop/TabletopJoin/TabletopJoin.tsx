@@ -1,5 +1,6 @@
-import { useState, useEffect, useContext } from "react";
-import { useUser } from "../../../../Context/UserContext"; // Import du contexte utilisateur
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; 
+import { useUser } from "../../../../Context/UserContext";
 import "./TabletopJoin.scss";
 
 interface Character {
@@ -14,9 +15,9 @@ interface TabletopJoinProps {
   gameMasterId: string;
 }
 
-const TabletopJoin = ({ tableId, onClose, onJoin, gameMasterId }: TabletopJoinProps) => {
+const TabletopJoin = ({ tableId, onClose, gameMasterId }: TabletopJoinProps) => {
   const { user } = useUser();
-  const { userPseudo, isAuthenticated, _id: userId, token } = user;
+  const {  isAuthenticated, _id: userId, token } = user;
   const [characters, setCharacters] = useState<Character[]>([]);
   const [selectedCharacter, setSelectedCharacter] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -24,6 +25,9 @@ const TabletopJoin = ({ tableId, onClose, onJoin, gameMasterId }: TabletopJoinPr
   const [password, setPassword] = useState<string | null>(null);
   const [hasEnteredPassword, setHasEnteredPassword] = useState<boolean>(false);
   const API_URL = import.meta.env.VITE_API_URL;
+  
+  // Utilisation du hook useNavigate
+  const navigate = useNavigate();  
 
   useEffect(() => {
     async function fetchCharacters() {
@@ -67,48 +71,47 @@ const TabletopJoin = ({ tableId, onClose, onJoin, gameMasterId }: TabletopJoinPr
   }, [isAuthenticated, tableId, password]);
 
   const handleJoinClick = async () => {
-    console.log("Tentative de rejoindre la table", tableId, "avec le personnage", selectedCharacter);
-    if (!selectedCharacter || !userPseudo) {
-      setError("Veuillez sélectionner un personnage.");
+    const userData = localStorage.getItem("user");
+    if (!userData) {
+      console.error("Aucune donnée utilisateur trouvée dans localStorage.");
       return;
     }
+    const parsedUserData = JSON.parse(userData);
+    const playerId = parsedUserData?.id;
+    const playerName = parsedUserData?.name;
+
+    if (!playerId || !playerName) {
+      console.error("Données utilisateur manquantes !");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
     if (!token) {
-      setError("Utilisateur non authentifié.");
+      console.error("Token manquant, utilisateur non authentifié !");
       return;
     }
-    try {
-      const requestBody: Record<string, unknown> = {
-        playerPseudo: userPseudo,
-        characterId: selectedCharacter,
-        playerId: userId,
-      };
-      console.log("Requête envoyée à :", `${API_URL}/api/tabletop/addPlayer/${tableId}`);
 
-      if (!hasEnteredPassword && password) {
-        requestBody.password = password;
-      }
-      const response = await fetch(`${API_URL}/api/tabletop/addPlayer/${tableId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify(requestBody),
-        
-      });
-      console.log("Requête envoyée à :", `${API_URL}/api/tabletop/addPlayer/${tableId}`);
+    console.log("Données utilisateur récupérées : ", parsedUserData);
+    
+    const response = await fetch(`${API_URL}/api/tabletop/addPlayer/${tableId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({ playerId, playerName, password }),
+    });
 
-      const data = await response.json();
-      console.log("Réponse serveur :", data);
+    const responseData = await response.json();
+    console.log("Réponse serveur :", responseData);
 
-      if (!response.ok) {
-        setError(data.message || "Erreur lors de la connexion à la table.");
-        console.log("Redirection après connexion réussie :", selectedCharacter, tableId);
-
-      } else {
-        console.log("Redirection après connexion réussie :", selectedCharacter, tableId);
-
-        onJoin(selectedCharacter, tableId, password || undefined);
-      }
-    } catch (err) {
-      setError("Une erreur inconnue est survenue.");
+    if (response.ok) {
+      alert(responseData.message || "Vous avez rejoint la table !");
+      
+      // Redirection vers la table après ajout du joueur
+      navigate(`/table/${tableId}`);  // Rediriger vers la page de la table
+    } else {
+      alert(responseData.message || "Erreur lors de l'ajout du joueur");
     }
   };
 

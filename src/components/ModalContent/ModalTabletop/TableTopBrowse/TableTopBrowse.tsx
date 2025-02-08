@@ -1,14 +1,21 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
 import Collapses from "../../../Collapses/Collapses";
 import Modal from "../../../Modal/Modal";
 import TabletopJoin from "../TabletopJoin/TabletopJoin";
 import "./TableTopBrowse.scss";
 
+type Table = {
+  _id: string;
+  name: string;
+  gameMaster: string;
+  // Ajoute ici d'autres propriétés si nécessaire (ex: password, players, etc.)
+};
+
+
+
 export default function TableTopBrowse() {
-  const navigate = useNavigate();
-  const [tables, setTables] = useState<{ _id: string; name: string }[]>([]);
+  const [tables, setTables] = useState<Table[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
@@ -53,10 +60,8 @@ export default function TableTopBrowse() {
   };
   
 
-  const handleJoinSuccess = (characterId: string, tableId: string) => {
-    alert(`Vous avez rejoint la table ${tableId} avec le personnage ${characterId}`);
-    setIsJoinModalOpen(false);
-    navigate(`/table/${tableId}`);
+  const handleJoinSuccess = () => {
+    console.log("Succès")
   };
 
   useEffect(() => {
@@ -122,22 +127,23 @@ export default function TableTopBrowse() {
         }
       />
 
-      {isJoinModalOpen && selectedTableId && (
-        
-        <Modal
-          title="Sélectionnez votre personnage"
-          onClose={() => setIsJoinModalOpen(false)}
-          content={
-<TabletopJoin
-  tableId={selectedTableId}
-  onClose={() => setIsJoinModalOpen(false)}
-  onJoin={handleJoinSuccess}
-  gameMasterId={""} // ⚠️ À récupérer depuis les données de la table
-/>
+{isJoinModalOpen && selectedTableId && (
+  <Modal
+    title="Sélectionnez votre personnage"
+    onClose={() => setIsJoinModalOpen(false)}
+    content={
+      <TabletopJoin
+        tableId={selectedTableId}
+        onClose={() => setIsJoinModalOpen(false)}
+        onJoin={handleJoinSuccess}
+        gameMasterId={
+          tables.find((table) => table._id === selectedTableId)?.gameMaster || ""
+        } 
+      />
+    }
+  />
+)}
 
-          }
-        />
-      )}
     </div>
   );
 }
