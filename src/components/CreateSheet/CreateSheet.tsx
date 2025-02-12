@@ -127,25 +127,12 @@ function CreateSheet() {
     formData.append("protection", protection.toString());
     formData.append("background", background);
     formData.append("gold", gold.toString());
-    formData.append("origin", origin.toString());
+    formData.append("origin", origin);
 
-    // Ajouter les armes, compétences et inventaire
-    weapons.forEach((weapon, index) => {
-      formData.append(`weapons[${index}][name]`, weapon.name);
-      formData.append(`weapons[${index}][damage]`, weapon.damage);
-    });
+    formData.append("weapons", JSON.stringify(weapons));
+    formData.append("skills", JSON.stringify(skills));
+    formData.append("inventory", JSON.stringify(inventory));
 
-    skills.forEach((skill, index) => {
-      formData.append(`skills[${index}][specialSkill]`, skill.specialSkill);
-      formData.append(`skills[${index}][link1]`, skill.link1);
-      formData.append(`skills[${index}][link2]`, skill.link2);
-      formData.append(`skills[${index}][score]`, skill.score);
-    });
-
-    inventory.forEach((item, index) => {
-      formData.append(`inventory[${index}][item]`, item.item);
-      formData.append(`inventory[${index}][quantity]`, item.quantity);
-    });
     for (let pair of formData.entries()) {
       console.log(`🔹 ${pair[0]}:`, pair[1]);
     }
@@ -163,7 +150,6 @@ function CreateSheet() {
       });
 
       if (response.ok) {
-        alert("Personnage créé avec succès !");
         navigate("/");
       } else {
         alert("Erreur lors de la création du personnage.");

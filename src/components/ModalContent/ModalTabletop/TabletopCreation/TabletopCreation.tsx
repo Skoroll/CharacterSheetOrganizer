@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import Collapses from "../../../Collapses/Collapses";
 import "./TabletopCreation.scss";
 
+
 export default function TabletopCreation() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [game, setGame] = useState("Aria");
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -17,6 +19,11 @@ export default function TabletopCreation() {
   
     if (!token) {
       alert("Vous devez être connecté pour créer une table.");
+      return;
+    }
+  
+    if (!game) {
+      alert("Veuillez sélectionner un jeu.");
       return;
     }
   
@@ -33,13 +40,13 @@ export default function TabletopCreation() {
           gameMaster: user.id,        // ID du créateur
           gameMasterName: user.name,  // NOM du créateur
           players: [],                // Liste des joueurs vide au départ
+          game,
         }),
       });
   
       const data = await response.json();
   
       if (response.ok) {
-        alert("Table créée avec succès !");
         navigate(`/table/${data.table.id}`);
       } else {
         alert(`Erreur : ${data.message}`);
@@ -49,46 +56,53 @@ export default function TabletopCreation() {
     }
   };
   
-  
 
   return (
     <div className="tabletop-creation">
       <Collapses title="Créer une table"
-      content={
-      <form onSubmit={handleSubmit}>
-        <label>
-          Nom de la table
-          <input
-            type="text"
-            name="table-name"
-            placeholder="Nom de la table"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            autoComplete="off"
-            onFocus={(e) => e.target.setAttribute("autocomplete", "new-name")}
-          />
-        </label>
-        <label>
-          Mot de passe
-          <input
-            type="password"
-            name="table-password"
-            placeholder="Mot de passe de la table"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            autoComplete="new-password"
-            readOnly
-            onFocus={(e) => e.target.removeAttribute("readOnly")}
-          />
-        </label>
-        <button type="submit">
-          Créer la table
-        </button>
-      </form>
-
-      }/>
+        content={
+          <form onSubmit={handleSubmit}>
+            <label>
+              Nom de la table
+              <input
+                type="text"
+                name="table-name"
+                placeholder="Nom de la table"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                autoComplete="off"
+                onFocus={(e) => e.target.setAttribute("autocomplete", "new-name")}
+              />
+            </label>
+            <label>
+              Mot de passe
+              <input
+                type="password"
+                name="table-password"
+                placeholder="Mot de passe de la table"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoComplete="new-password"
+                readOnly
+                onFocus={(e) => e.target.removeAttribute("readOnly")}
+              />
+            </label>
+            <label>
+              Jeu
+              <select name="game"
+              value={game}
+              onChange={(e) => setGame(e.target.value)}
+              >
+<option value="Aria">Aria</option>
+              </select>
+            </label>
+            <button type="submit">
+              Créer la table
+            </button>
+          </form>
+        } />
     </div>
   );
 }

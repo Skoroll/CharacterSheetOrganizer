@@ -2,9 +2,17 @@
 @import "../../style/variables.scss";
 
 .table {
+  &__content {
+    width: 70%;
+    margin: auto
+  }
 
-  &__header {
-    h2, p {
+  &__content--header {
+    @include flex-row;
+
+    gap: $spacing-medium;
+    h2,
+    p {
       margin: 0;
     }
 
@@ -12,20 +20,145 @@
       font-size: 40px;
     }
 
-    p {
+    .container {
+      @include flex-col;
+      gap: $spacing-small;
       font-style: italic;
+      font-size: 12px;
+      text-align: left;
+      margin: auto auto 0px 0;
+
+      p {
+        margin-bottom: 0;
+      }
+    }
+
+
+  }
+
+  
+  &__gm-options {
+    @include flex-row;
+    width: 95%;
+    margin: 15px 0;
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+    padding: $spacing-small;
+    gap: $spacing-large;
+
+  }
+
+
+  &__container {
+    position: relative;
+    width: calc(100vw - 81px - 140px);
+
+
+    &--main-container {
+      position: relative;
+      width: 80vw;
+      margin: auto;
+    }
+
+    position: relative;
+    @include flex-col;
+  }
+
+  .notes-section {
+    @include flex-col;
+    height: 300px;
+    padding: $spacing-small;
+
+    label {
+      text-align: left;
+      margin-bottom: 5px;
+    }
+
+    textarea {
+      resize: none;
+      height: 100%;
+      border-radius: 5px;
+    }
+
+    button {
+      @include button;
+      margin: 5px 0;
     }
   }
 
-  position: relative;
-  @include flex-col;
+  .table__notes-pannel {
+    @include flex-row;
+    position: absolute;
+    height: 100vh;
+    left: 0;
+    max-height: 450px;
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+
+    &--divider {
+      border-right: 1px solid;
+    }
+
+    &--inside {
+      @include flex-col;
+      height: 100%;
+
+      h3 {
+        margin: 5px;
+      }
+
+      .notes-title {
+        transform: rotate(-90deg);
+        margin:  auto 0;
+      }
+
+      ul {
+        padding: $spacing-large !important;
+        .fa-solid {
+          border: 1px solid;
+          width: 15px;
+          padding: $spacing-small;
+          border-radius: 50%;
+          cursor: pointer;
+
+          &:hover {
+            transform: scale(115%);
+          }
+        }
+      }
+    }
+
+    &--slide-btn {
+      height: 100%;
+      @include flex-center;
+      border-right: 1px solid;
+      cursor: pointer;
+
+      &:hover {
+        background: $background-dark;
+      }
+      .fa-solid {
+        padding: $spacing-medium;
+        margin: auto;
+      }
+    }
+
+    ul {
+      @include ul-base;
+      @include flex-row;
+      gap: $spacing-medium;
+      justify-content: center;
+    }
+  }
   &__notes-pannel {
     @include flex-row;
     position: absolute;
     height: 100vh;
+    left: 0;
     max-height: 450px;
     border-top: 1px solid;
     border-bottom: 1px solid;
+    background: $background-color;
 
     &--divider {
       border-right: 1px solid;
@@ -81,27 +214,5 @@
       gap: $spacing-medium;
       justify-content: center;
     }
-  }
-}
-
-.notes-section {
-  @include flex-col;
-  height: 300px;
-  padding: $spacing-small;
-
-  label {
-    text-align: left;
-    margin-bottom: 5px;
-  }
-
-  textarea {
-    resize: none;
-    height: 100%;
-    border-radius: 5px
-  }
-
-  button {
-    @include button;
-    margin: 5px 0;
   }
 }

@@ -70,7 +70,7 @@
           gap: $spacing-small;
           label {
             input {
-              width: 50px !important;
+              width: 70px !important;
             }
           }
         }
@@ -80,7 +80,7 @@
         }
 
         input[type="number"] {
-          width: 50px;
+          width: 70px;
         }
       }
     }
@@ -104,7 +104,7 @@
         padding: $spacing-small;
         gap: $spacing-small;
         input {
-          width: 55px;
+          width: 70px;
         }
       }
       .item {
@@ -205,7 +205,7 @@
   }
 
   input {
-    width: 30px;
+    width: 50px;
   }
 }
 
@@ -215,11 +215,11 @@
     justify-content: space-between;
     align-items: baseline;
     gap: $spacing-small;
-    max-width: 150px;
+    width: 185px;
   }
 
   input {
-    width: 30px;
+    width: 70px;
   }
 }
 

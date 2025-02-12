@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
 import defaultImg from "../../../assets/default-people.webp";
 import "./CharacterList.scss";
+import "../../../types/Character"
 
 interface Character {
   _id: string;

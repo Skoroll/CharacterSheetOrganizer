@@ -1,0 +1,29 @@
+@import "../../style//mixins.scss";
+@import "../../style/variables.scss";
+
+.share-pannel {
+    width: 300px;
+    margin: auto;
+  &__buttons {
+    @include flex-row;
+    justify-content: center;
+    gap: $spacing-medium;
+    padding: $spacing-medium;
+
+    button {
+      @include button;
+    }
+  }
+  &__container {
+
+    label {
+      @include flex-col;
+    }
+
+    textarea {
+        resize: none;
+        height: 160px;
+        margin: auto;
+    }
+  }
+}

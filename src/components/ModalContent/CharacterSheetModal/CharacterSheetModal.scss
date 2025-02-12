@@ -1,0 +1,87 @@
+@import "../../../style/mixins.scss";
+@import "../../../style/variables.scss";
+
+.character-sheet-modal {
+    position: relative;
+    width: 80vw;
+    height: 80vh;
+    margin-bottom: 20px;
+  ul {
+    @include ul-base;
+  }
+
+  &__main-block {
+    @include flex-row;
+    justify-content: space-around;
+
+    &--infos {
+        padding: $spacing-medium;
+
+      img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+
+      p {
+        text-align: left
+      }
+    }
+
+    &--stats {
+      ul {
+        @include flex-col;
+        gap: $spacing-small;
+
+        li {
+          @include flex-row;
+          justify-content: space-between;
+          width: 105px;
+        }
+      }
+    }
+
+    
+  }
+
+
+  
+  &__skills {
+    .skills-wrapper {
+        @include flex-row;
+        justify-content: space-evenly;
+    }
+}
+&--button-list {
+    @include flex-row;
+    padding: $spacing-large;
+    gap: $spacing-large;
+    justify-content: center;
+
+    button {
+        position: relative;
+        background: none;
+        color: $text-color;
+        font-size: 30px;
+        padding: $spacing-small;
+        border: none;
+
+        &:hover {
+            transform: scale(110%);
+        }
+    }
+}
+&__possession {
+    @include flex-row;
+    justify-content: space-evenly;
+}
+}
+table {
+    min-width: 300px;
+    border-spacing: $spacing-small;
+    .table-left {
+        text-align: left;
+        min-width: 150px;
+    }
+}

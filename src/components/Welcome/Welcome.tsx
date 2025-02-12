@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import { UserContext } from "../Context/UserContext";
+import { UserContext } from "../../Context/UserContext";
 
-const MyComponent = () => {
+const Welcome = () => {
   const { user } = useContext(UserContext);
 
   if (!user.isAuthenticated) {
@@ -11,10 +11,10 @@ const MyComponent = () => {
   return (
     <div>
       <h1>Bienvenue, {user.userPseudo}!</h1>
-      {/* Le reste de ton contenu */}
+      <p>Retourner sur une table</p>
     </div>
   );
 };
 
 
-export default MyComponent
+export default Welcome

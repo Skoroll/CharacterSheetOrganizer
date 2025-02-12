@@ -5,14 +5,23 @@ import Modal from "../../../Modal/Modal";
 import TabletopJoin from "../TabletopJoin/TabletopJoin";
 import "./TableTopBrowse.scss";
 
+type Player = {
+  playerId: string; // ID du joueur
+  playerName: string; // Nom du joueur
+  selectedCharacter: string | null; // ID du personnage sélectionné
+  isGameMaster: boolean; // Si le joueur est le Game Master
+};
+
 type Table = {
   _id: string;
   name: string;
   gameMaster: string;
-  // Ajoute ici d'autres propriétés si nécessaire (ex: password, players, etc.)
+  game: string;
+  players: Player[]; // Ajout de la propriété players avec les informations des joueurs
+  gameMasterNotes?: {
+    notes: string;
+  };
 };
-
-
 
 export default function TableTopBrowse() {
   const [tables, setTables] = useState<Table[]>([]);
@@ -29,7 +38,7 @@ export default function TableTopBrowse() {
       const response = await fetch(`${API_URL}/api/tabletop/tables/${id}`, {
         method: "DELETE",
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json", // ✅ Ajout de l’en-tête manquant
         },
       });
@@ -38,6 +47,7 @@ export default function TableTopBrowse() {
         let errorMessage = "Erreur lors de la suppression de la table.";
         try {
           const data = await response.json();
+          console.log(data)
           errorMessage = data.message || errorMessage;
         } catch {
           // Si la réponse n'est pas JSON, garder le message par défaut
@@ -45,7 +55,6 @@ export default function TableTopBrowse() {
         throw new Error(errorMessage);
       }
 
-      alert("Table supprimée avec succès !");
       setTables((prevTables) => prevTables.filter((table) => table._id !== id));
     } catch (err: unknown) {
       console.error("Erreur:", err);
@@ -58,22 +67,28 @@ export default function TableTopBrowse() {
     setSelectedTableId(tableId);
     setIsJoinModalOpen(true);
   };
-  
 
   const handleJoinSuccess = () => {
-    console.log("Succès")
+    console.log("Succès");
+    setIsJoinModalOpen(false); // Ferme le modal
   };
 
   useEffect(() => {
     const fetchTables = async () => {
       try {
         const response = await fetch(`${API_URL}/api/tabletop/getTables`);
-        if (!response.ok) throw new Error("Erreur lors de la récupération des tables");
+        if (!response.ok)
+          throw new Error("Erreur lors de la récupération des tables");
 
         const data = await response.json();
+        console.log(data);
         setTables(data.tables);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Une erreur inconnue est survenue.");
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Une erreur inconnue est survenue."
+        );
       } finally {
         setLoading(false);
       }
@@ -97,53 +112,57 @@ export default function TableTopBrowse() {
             )}
             {!loading && !error && tables.length === 0 && <p>Aucune table</p>}
             {!loading && !error && tables.length > 0 && (
-              <ul>
-                {tables.map((table) => (
-                  <li key={table._id}>
-                    <div className="is-online" />
-                    <p>{table.name}</p>
-                    <div className="tabletop-browse__btn">
-                      <button
-                        className="tabletop-browse--join"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteTable(table._id);
-                        }}
-                      >
-                        <i className="fa-solid fa-trash" />
-                      </button>
-                      <button
-                        className="tabletop-browse--join"
-                        onClick={() => handleJoinTable(table._id)}
-                      >
-                        <i className="fa-solid fa-right-to-bracket" />
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
+  <ul>
+    {tables.map((table) => (
+      <li key={table._id}>
+        <div className="is-online" />
+        <div className="table-infos">
+          <p>{table.name}</p>
+          <p>
+            <i className="fa-regular fa-user"></i>{" "}
+            {table.players?.length || 0}
+          </p>
+          <p>{table.game || "Système de jeu non défini"}</p> {/* Message par défaut ici */}
+        </div>
+        <div className="tabletop-browse__btn">
+          <button
+            className="tabletop-browse--join"
+            onClick={() => deleteTable(table._id)}
+          >
+            <i className="fa-solid fa-trash" />
+          </button>
+          <button
+            className="tabletop-browse--join"
+            onClick={() => handleJoinTable(table._id)}
+          >
+            <i className="fa-solid fa-right-to-bracket" />
+          </button>
+        </div>
+      </li>
+    ))}
+  </ul>
+)}
+
           </>
         }
       />
 
-{isJoinModalOpen && selectedTableId && (
-  <Modal
-    title="Sélectionnez votre personnage"
-    onClose={() => setIsJoinModalOpen(false)}
-    content={
-      <TabletopJoin
-        tableId={selectedTableId}
-        onClose={() => setIsJoinModalOpen(false)}
-        onJoin={handleJoinSuccess}
-        gameMasterId={
-          tables.find((table) => table._id === selectedTableId)?.gameMaster || ""
-        } 
-      />
-    }
-  />
-)}
-
+      {isJoinModalOpen && selectedTableId && (
+        <Modal
+          title="Sélectionnez votre personnage"
+          onClose={() => setIsJoinModalOpen(false)}
+        >
+          <TabletopJoin
+            tableId={selectedTableId}
+            onClose={() => setIsJoinModalOpen(false)}
+            onJoin={handleJoinSuccess}
+            gameMasterId={
+              tables.find((table) => table._id === selectedTableId)
+                ?.gameMaster || ""
+            }
+          />
+        </Modal>
+      )}
     </div>
   );
 }

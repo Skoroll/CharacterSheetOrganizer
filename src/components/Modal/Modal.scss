@@ -21,6 +21,9 @@
     min-width: 300px;
     text-align: center;
     z-index: 10001;
+    max-height: 90vh;
+    max-width: 80vw;
+    overflow-y: auto;
   }
   
   button {

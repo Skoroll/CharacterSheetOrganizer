@@ -4,6 +4,8 @@ import Chat from "../../components/Chat/Chat";
 import DiceRoller from "../../components/DiceRoller/DiceRoller";
 import NotesPanel from "../../components/NotesPanel/NotesPannel";
 import PlayerAtTable from "../../components/PlayersAtTable/PlayerAtTable";
+import PlayerList from "../../components/PlayerList/PlayerList";
+import SendDocs from "../../components/SendDocs/SendDocs";
 import "./Tabletop.scss";
 
 interface Table {
@@ -11,7 +13,8 @@ interface Table {
   name: string;
   gameMaster: string;
   gameMasterName: string;
-  players: { _id: string }[];  // Mise à jour pour utiliser _id
+  game: string;
+  players: Player[];
   gameMasterNotes: {
     characters: string;
     quest: string;
@@ -22,6 +25,8 @@ interface Table {
 
 interface Player {
   _id: string;
+  playerName: string;
+  selectedCharacter: string | null;
 }
 
 export default function TableComponent() {
@@ -31,6 +36,8 @@ export default function TableComponent() {
   const [loading, setLoading] = useState(true);
   const API_URL = import.meta.env.VITE_API_URL;
   const [isSideOpen, setIsSideOpen] = useState(false);
+  const [isSendDocOpen, setIsSendDocOpen] = useState(true);
+  const [isPlayerListOpen, setIsPlayerListOpen] = useState(false);
   const [notes, setNotes] = useState({
     characters: "",
     quest: "",
@@ -39,25 +46,49 @@ export default function TableComponent() {
   });
   const [isGameMaster, setIsGameMaster] = useState(false);
 
+  const toggleSendDoc = () => {
+    setIsSendDocOpen((prev) => !prev);
+  };
+
+  const togglePlayerList = () => {
+    setIsPlayerListOpen((prev) => !prev);
+  };
+
   useEffect(() => {
     if (!id) return;
+
     async function fetchTable() {
       try {
         const response = await fetch(`${API_URL}/api/tabletop/tables/${id}`);
-        if (!response.ok) throw new Error("Erreur lors de la récupération de la table.");
+        if (!response.ok)
+          throw new Error("Erreur lors de la récupération de la table.");
+
         const data = await response.json();
         setTable(data);
 
-        data.players?.forEach((player: Player, index: number) => {
-        });
+        // Vérifie si l'utilisateur est le maître du jeu
+        const storedUser = localStorage.getItem("user");
+        const user = storedUser ? JSON.parse(storedUser) : null;
+        const userId = user?.id || "";
 
-        const user = JSON.parse(localStorage.getItem("user") || "{}");
-        const userId = user?.id;
+        if (data.gameMaster === userId) {
+          setIsGameMaster(true);
+        }
 
-        if (data.gameMaster === userId) setIsGameMaster(true);
-        setNotes(data.gameMasterNotes || { characters: "", quest: "", other: "", items: "" });
+        setNotes(
+          data.gameMasterNotes || {
+            characters: "",
+            quest: "",
+            other: "",
+            items: "",
+          }
+        );
       } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : "Une erreur inconnue est survenue.");
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Une erreur inconnue est survenue."
+        );
       } finally {
         setLoading(false);
       }
@@ -66,53 +97,75 @@ export default function TableComponent() {
     fetchTable();
   }, [id, API_URL]);
 
-  // Si id est undefined, on l'assigne à une chaîne vide
-  const tableId = id ?? ""; 
-
-  // Correction du typage de playerIds
-  const playerIds = (table?.players?.map((player: any) => player._id) || []).filter((id) => id);
-
   if (loading) return <p>Chargement...</p>;
   if (error) return <p>Erreur : {error}</p>;
   if (!table) return <p>Table non trouvée.</p>;
 
+  // Mise à jour des joueurs avec les informations nécessaires
+  const players: Player[] = table.players.map((player) => ({
+    _id: player._id,
+    playerName: player.playerName || "Nom inconnu", // Vous pouvez ici récupérer le vrai nom du joueur si possible
+    selectedCharacter: player.selectedCharacter || null,
+  }));
+
   return (
     <div className="table">
-      <div className="table__header">
-        <h2>{table?.name}</h2>
-        <p>Maître du Jeu : {table?.gameMasterName}</p>
-      </div>
-
-      <NotesPanel
-        notes={notes}
-        handleNotesChange={(e) => setNotes({ ...notes, [e.target.name]: e.target.value })}
-        handleSaveNotes={async () => {
-          try {
-            const response = await fetch(`${API_URL}/api/tabletop/tables/${id}/notes`, {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(notes),
-            });
-
-            if (!response.ok) throw new Error("Erreur lors de la mise à jour des notes");
-
-            const data = await response.json();
-          } catch (error) {
-            console.error(error);
-          }
-        }}
-        isGameMaster={isGameMaster}
-        isSideOpen={isSideOpen}
-        setIsSideOpen={setIsSideOpen}
+      <PlayerAtTable
+        tableId={table._id}
+        API_URL={API_URL}
+        gameMaster={table.gameMaster}
       />
 
-      <div className="table__main-container">
-        <DiceRoller />
-        <PlayerAtTable playerIds={playerIds} tableId={tableId} API_URL={API_URL} />
+      <div className="table__content">
+        <div className="table__content--header">
+          <h2>{table?.name}</h2>
+          <div className="container">
+            <p>Maître du Jeu : {table?.gameMasterName}</p>
+            <p>Système de jeu : {table.game}</p>
+          </div>
+        </div>
+        <NotesPanel
+          notes={notes}
+          handleNotesChange={(e) =>
+            setNotes({ ...notes, [e.target.name]: e.target.value })
+          }
+          handleSaveNotes={async () => {
+            try {
+              const response = await fetch(
+                `${API_URL}/api/tabletop/tables/${id}/notes`,
+                {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(notes),
+                }
+              );
 
-      </div>
-      <div>
-        <Chat />
+              if (!response.ok)
+                throw new Error("Erreur lors de la mise à jour des notes");
+            } catch (error) {
+              console.error(error);
+            }
+          }}
+          isGameMaster={isGameMaster}
+          isSideOpen={isSideOpen}
+          setIsSideOpen={setIsSideOpen}
+        />
+        {isGameMaster && (
+          <div className="table__gm-options">
+            <i onClick={toggleSendDoc} className="fa-solid fa-file-import"></i>
+            <i onClick={togglePlayerList} className="fa-solid fa-user"></i>
+            <i className="fa-solid fa-music"></i>
+          </div>
+        )}
+        {!isSendDocOpen && <SendDocs />}
+        {isPlayerListOpen && <PlayerList players={players} tableId={table._id} />}
+
+        <div className="table__content--main-container">
+          <DiceRoller />
+        </div>
+        <div>
+          <Chat />
+        </div>
       </div>
     </div>
   );

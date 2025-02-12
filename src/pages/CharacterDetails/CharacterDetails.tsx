@@ -43,7 +43,7 @@ export default function CharacterDetails() {
   const [isSkillOpen, setIsSkillOpen] = useState(false);
   const [isInventoryOpen, setIsInventoryOpen] = useState(false);
   const [isStoryOpen, setIsStoryOpen] = useState(false);
-    const [characters, setCharacters] = useState<Character[]>([]);
+  {/*const [characters, setCharacters] = useState<Character[]>([]);*/} //Commenté pour voir si la fonction de delete fonctionne encore
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -164,20 +164,18 @@ export default function CharacterDetails() {
       const response = await fetch(`${API_URL}/api/characters/${id}`, {
         method: "DELETE",
       });
-
+  
       if (!response.ok) {
         throw new Error("Erreur lors de la suppression du personnage");
       }
-
-      setCharacters((prevCharacters) =>
-        prevCharacters.filter((character) => character._id !== id)
-      );
+  
+      // Ici, on ne met pas à jour characters car il n'existe pas dans ce composant.
     } catch (error) {
       console.error("Erreur :", error);
       setError("Impossible de supprimer ce personnage.");
     }
   };
-
+  
   console.log(`${API_URL}/${character.image.replace(/\\/g, "/")}`);
 
   return (

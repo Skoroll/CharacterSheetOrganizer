@@ -1,33 +1,35 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../../Context/UserContext";
 import "./TabletopJoin.scss";
 
 interface Character {
   _id: string;
   name: string;
+  image?: string;
 }
 
 interface TabletopJoinProps {
   tableId: string;
   onClose: () => void;
-  onJoin: (characterId: string, tableId: string, password?: string) => void;
+  onJoin?: () => void;
   gameMasterId: string;
 }
 
+
 const TabletopJoin = ({ tableId, onClose, gameMasterId }: TabletopJoinProps) => {
   const { user } = useUser();
-  const {  isAuthenticated, _id: userId, token } = user;
+  const { isAuthenticated, _id: playerId, userPseudo: playerName, token } = user;
+
   const [characters, setCharacters] = useState<Character[]>([]);
-  const [selectedCharacter, setSelectedCharacter] = useState<string | null>(null);
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [password, setPassword] = useState<string | null>(null);
+  const [password, setPassword] = useState<string>("");
   const [hasEnteredPassword, setHasEnteredPassword] = useState<boolean>(false);
+
   const API_URL = import.meta.env.VITE_API_URL;
-  
-  // Utilisation du hook useNavigate
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchCharacters() {
@@ -39,96 +41,107 @@ const TabletopJoin = ({ tableId, onClose, gameMasterId }: TabletopJoinProps) => 
       try {
         const response = await fetch(`${API_URL}/api/characters/user`, {
           method: "GET",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         });
+
         if (!response.ok) throw new Error("Erreur lors de la récupération des personnages");
-        setCharacters(await response.json());
+
+        const fetchedCharacters = await response.json();
+        setCharacters(fetchedCharacters);
+
+        // Sélection automatique du premier personnage s'il y en a un
+        if (fetchedCharacters.length > 0) {
+          setSelectedCharacter(fetchedCharacters[0]);
+        }
       } catch (err) {
         setError("Impossible de récupérer les personnages.");
       } finally {
         setLoading(false);
       }
     }
+
     fetchCharacters();
   }, [API_URL, isAuthenticated, token]);
 
-  useEffect(() => {
-    async function checkPasswordStatus() {
-      if (!isAuthenticated || !password) return;
+  const handleJoinClick = async () => {
+    console.log("🔍 Données utilisateur récupérées avant l'envoi :");
+    console.log("playerId:", playerId);
+    console.log("playerName:", playerName);
+    console.log("token:", token);
+    console.log("selectedCharacter:", selectedCharacter);
+    console.log("password:", password);
+    if (!playerId || !playerName) {
+      setError("Données utilisateur manquantes !");
+      return;
+    }
+
+    if (!token) {
+      setError("Token manquant, utilisateur non authentifié !");
+      return;
+    }
+
+    if (!selectedCharacter) {
+      setError("Aucun personnage sélectionné !");
+      return;
+    }
+
+    // 🔹 Vérifier le mot de passe UNIQUEMENT quand l'utilisateur clique sur "Rejoindre la partie"
+    if (gameMasterId !== playerId && password.length > 0 && !hasEnteredPassword) {
       try {
-        const response = await fetch(`${API_URL}/api/tabletop/verifyPassword/${tableId}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ password })
-        });
+        const response = await fetch(
+          `${API_URL}/api/tabletop/verifyPassword/${tableId}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password }),
+          }
+        );
+
         if (!response.ok) throw new Error("Erreur lors de la vérification du mot de passe");
-        setHasEnteredPassword((await response.json()).hasEnteredPassword);
+
+        setHasEnteredPassword(true);
       } catch (err) {
-        console.error("Erreur vérification mot de passe", err);
+        setError("Mot de passe incorrect.");
+        return; // 🔹 Stoppe la suite du code si le mot de passe est faux
       }
     }
-    checkPasswordStatus();
-  }, [isAuthenticated, tableId, password]);
 
-  const handleJoinClick = async () => {
-    // Récupérer les données utilisateur depuis le localStorage
-    const userData = localStorage.getItem("user");
-    if (!userData) {
-      console.error("Aucune donnée utilisateur trouvée dans localStorage.");
-      return;
-    }
-    const parsedUserData = JSON.parse(userData);
-    const playerId = parsedUserData?.id;
-    const playerName = parsedUserData?.name; // Nom de l'utilisateur
-    
-    if (!playerId || !playerName) {
-      console.error("Données utilisateur manquantes !");
-      return;
-    }
-  
-    const token = localStorage.getItem("token");
-    if (!token) {
-      console.error("Token manquant, utilisateur non authentifié !");
-      return;
-    }
-  
-    if (!selectedCharacter) {
-      console.error("Aucun personnage sélectionné !");
-      return;
-    }
-  
-    console.log("Données utilisateur récupérées : ", parsedUserData);
-    
-    // Préparer la requête pour ajouter le joueur avec le personnage sélectionné
-    const response = await fetch(`${API_URL}/api/tabletop/addPlayer/${tableId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        playerId,
-        playerName,  // Envoi du nom de l'utilisateur dans la requête
-        selectedCharacter,
-        password,
-      }),
-    });
-  
-    const responseData = await response.json();
-    console.log("Réponse serveur :", responseData);
-  
-    if (response.ok) {
-      alert(responseData.message || "Vous avez rejoint la table !");
-      
-      // Redirection vers la table après ajout du joueur
-      navigate(`/table/${tableId}`);  // Rediriger vers la page de la table
-    } else {
-      alert(responseData.message || "Erreur lors de l'ajout du joueur");
+    // 🔹 Ajouter le joueur après vérification du mot de passe
+    try {
+      const response = await fetch(
+        `${API_URL}/api/tabletop/addPlayer/${tableId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            playerId,
+            playerName,
+            selectedCharacter,
+            password,
+          }),
+        }
+      );
+
+      const responseData = await response.json();
+      console.log("Réponse serveur :", responseData);
+
+      if (response.ok) {
+        navigate(`/table/${tableId}`);
+      } else {
+        setError(responseData.message || "Erreur lors de l'ajout du joueur");
+      }
+    } catch (err) {
+      setError("Erreur lors de l'envoi de la requête.");
     }
   };
-  
-  
-  
+  console.log("📌 Table ID envoyé :", tableId);
+
   return (
     <div className="tabletop-join-modal">
       {loading && <p>Chargement...</p>}
@@ -138,33 +151,42 @@ const TabletopJoin = ({ tableId, onClose, gameMasterId }: TabletopJoinProps) => 
           <ul>
             {characters.map((character) => (
               <li key={character._id}>
-                <label>
-                  <input
-                    type="radio"
-                    name="character"
-                    value={character._id}
-                    checked={selectedCharacter === character._id}
-                    onChange={() => setSelectedCharacter(character._id)}
-                  />
-                  {character.name}
+                <input
+                  type="radio"
+                  id={`character-${character._id}`}
+                  name="character"
+                  value={character._id}
+                  checked={selectedCharacter?._id === character._id}
+                  onChange={() => setSelectedCharacter(character)}
+                />
+                <label htmlFor={`character-${character._id}`}>
+                  {character.image ? (
+                    <img src={`${API_URL}/${character.image}`} alt={character.name} />
+                  ) : (
+                    <p>{character.name}</p>
+                  )}
                 </label>
               </li>
             ))}
           </ul>
-          {gameMasterId !== userId && !hasEnteredPassword && (
-            <div>
-              <label>
-                Mot de passe :
-                <input
-                  type="password"
-                  value={password || ""}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </label>
-            </div>
+
+          {gameMasterId !== playerId && !hasEnteredPassword && (
+            <label>
+              Mot de passe :
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </label>
           )}
-          <button onClick={handleJoinClick} disabled={!selectedCharacter}>Rejoindre la partie</button>
-          <button onClick={onClose}>Annuler</button>
+
+          <div className="button-container">
+            <button onClick={handleJoinClick} disabled={!selectedCharacter}>
+              Rejoindre la partie
+            </button>
+            <button onClick={onClose}>Annuler</button>
+          </div>
         </>
       )}
     </div>

@@ -41,15 +41,18 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   
     if (savedUser && token) {
       const parsedUser = JSON.parse(savedUser);
+      console.log("🔍 parsedUser dans UserContext :", parsedUser);
       setUser({
-        _id: parsedUser._id,
+        _id: parsedUser.id || parsedUser._id, 
         userPseudo: parsedUser.name,
         isAuthenticated: true,
-        token, // Stocke le token
+        token,
       });
+      
     }
   }, []);
   
+
 
   return (
     <UserContext.Provider value={{ user, setUser }}>

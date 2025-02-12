@@ -131,15 +131,9 @@ export default function Menu() {
                   style={{display: "none"}}
                 />
 
-                <h2>{character.name}</h2>
                 <div className="character__inside">
                   <div className="character__inside--stats">
-                    <p>
-                      Pièces: <span>{character.gold}</span>
-                    </p>
-                    <p>
-                      Classe: <span>{character.className}</span>
-                    </p>
+
                   </div>
                   <div className="character__inside--image">
                     <img
