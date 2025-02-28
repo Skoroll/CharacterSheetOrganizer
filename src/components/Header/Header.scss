@@ -3,7 +3,10 @@
 
 .header {
     @include flex-row;
-
+    position: fixed;
+    backdrop-filter: blur(5px);
+    z-index: 999;
+    width: 100%;
     h1 {
         text-align: left;
         margin-left: 5px;
@@ -11,7 +14,7 @@
         cursor: pointer;
     }
 
-    button {
+    .menu-toggle {
         margin: auto $spacing-medium auto auto;
         background: none;
         color: $text-color;

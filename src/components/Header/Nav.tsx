@@ -55,10 +55,6 @@ export default function Nav({ className, toggleNav }: NavProps) {
     window.location.reload();
   };
 
-  const goCreateSheet = () => {
-    navigate("/creation-de-personnage");
-  };
-
   const userOptions: Option[] = [
     { label: "Gérer le compte", component: <ManageAccount /> },
     { label: "Préférences", component: <Settings /> },
@@ -66,7 +62,6 @@ export default function Nav({ className, toggleNav }: NavProps) {
   ];
 
   const characterOptions: Option[] = [
-    { label: "Créer un personnage", action: goCreateSheet },
     { label: "Gérer les personnages", component: <CharacterList /> },
   ];
 
@@ -126,12 +121,12 @@ export default function Nav({ className, toggleNav }: NavProps) {
       </nav>
 
       {isModalOpen && modalTitle && selectedContent && (
-        <Modal
-          title={modalTitle}
-          content={selectedContent}
-          onClose={() => setModalOpen(false)}
-        />
-      )}
+  <Modal title={modalTitle} onClose={() => setModalOpen(false)}>
+    {selectedContent}
+  </Modal>
+)}
+
+
     </>
   );
 }

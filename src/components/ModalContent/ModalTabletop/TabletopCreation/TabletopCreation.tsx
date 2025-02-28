@@ -89,7 +89,7 @@ export default function TabletopCreation() {
                 onFocus={(e) => e.target.removeAttribute("readOnly")}
               />
             </label>
-            <label>
+            <label  className="select-game">
               Jeu
               <select name="game"
               value={game}

@@ -1,32 +1,59 @@
-
-
 import { Link } from "react-router-dom";
 import "./Footer.scss";
+import kofiLogo from "../../assets/kofi-logo.webp";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-gray-200 py-6 text-center">
-      <div className="container mx-auto">
-        <p>© {new Date().getFullYear()} Skorol Web - Tous droits réservés.</p>
-        <div className="mt-2">
-          <Link to="/mentions-legales" className="text-blue-400 hover:underline mx-2">
-            Mentions Légales
-          </Link>
-          <Link to="/contact" className="text-blue-400 hover:underline mx-2">
-            Contact
-          </Link>
-        </div>
-        <div className="flex justify-center gap-4 mt-4">
-          <a href="#" className="text-gray-400 hover:text-blue-400">
-            
-          </a>
-          <a href="#" className="text-gray-400 hover:text-blue-400">
-            
-          </a>
-          <a href="#" className="text-gray-400 hover:text-blue-400">
-            
+    <footer className="footer">
+      <div className="footer__cta">
+        <div className="footer__cta--kofi">
+          <a
+            className="kofi-link"
+            href="https://ko-fi.com/manage/index?method=externallogin#"
+          >
+            <img src={kofiLogo} alt="Logo Ko-fi" loading="lazy"/>
+            <p>
+              Vous voulez soutenir l'application ?
+              <br />
+              Vous pouvez faire un don sur Kofi.
+            </p>
           </a>
         </div>
+        <div className="footer-wrapper">
+          <div className="footer__cta--social">
+            <ul>
+              <li>
+                <a href="https://www.instagram.com/skoroll_/">
+                  <i className="fa-brands fa-instagram"></i> Instagram
+                </a>
+              </li>
+              <li>
+                <a href="https://discord.gg/ypsABckuDt">
+                  <i className="fa-brands fa-discord"></i> Discord
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div className="container">
+            <div className="footer__important">
+              <Link
+                to="/mentions-legales"
+                className="text-blue-400 hover:underline mx-2"
+              >
+                Mentions Légales
+              </Link>
+              <Link
+                to="/contact"
+                className="text-blue-400 hover:underline mx-2"
+              >
+                Contact
+              </Link>
+            </div>
+          </div>
+        </div>
+        <p className="footer--CR">
+          © {new Date().getFullYear()} Skorol Web - Tous droits réservés.
+        </p>
       </div>
     </footer>
   );

@@ -1,0 +1,128 @@
+@import "../../style/mixins.scss";
+@import "../../style/variables.scss";
+
+  .table__notes-pannel {
+    background: $background-dark;
+    z-index: 900;
+    @include flex-row;
+    position: absolute;
+    max-height: 120px;
+    left: -15px;
+    bottom: 50px;
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+    padding-left: $spacing-medium;
+    overflow: hidden;
+    transition: height 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0 15px 15px 0;
+
+    &.open {
+      max-height: 450px;
+        width: 300px;
+
+      .notes--opacity {
+        opacity: 1;
+        transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: none;
+        height: 100%;
+      }
+
+      .notes--opacity.visible {
+        opacity: 1;
+        pointer-events: auto;
+        padding: 0 $spacing-small;
+      }
+
+      .table__notes-pannel--inside {
+        width: 100%;
+
+      }
+    }
+
+    .notes--opacity {
+      opacity: 0;
+      transition: all 0.1s;
+
+
+      .notes-section {
+        @include flex-col;
+        height: 265px;
+
+        textarea {
+            resize: none;
+            margin: $spacing-small auto;
+            height: 100%;
+            width: 100%;
+        }
+        button {
+            @include button;
+            margin: auto auto $spacing-small auto;
+        }
+      }
+    }
+
+    &--divider {
+      border-right: 1px solid;
+    }
+
+    &--inside {
+      @include flex-col;
+      height: 100%;
+      width: 20px;
+      justify-content: space-between;
+
+      p {
+        text-align: center;
+      }
+
+      h3 {
+        margin: 5px 0;
+      }
+
+      .notes-title {
+        transform: rotate(-90deg);
+        margin: 20px 0;
+      }
+
+      .notes__btns {
+        padding: $spacing-small !important;
+        @include ul-base;
+        @include flex-row;
+        justify-content: space-between;
+
+        .fa-person,
+        .fa-exclamation,
+        .fa-sack-dollar,
+        .fa-box {
+          @include flex-center;
+          border: 1px solid;
+          width: 15px;
+          padding: $spacing-small;
+          border-radius: 50%;
+          cursor: pointer;
+
+          &:hover {
+            transform: scale(115%);
+          }
+        }
+      }
+    }
+
+    &--slide-btn {
+      border-radius: 0 15px 15px 0;
+      max-height: 100%;
+      @include flex-center;
+      border-right: 1px solid;
+      cursor: pointer;
+
+
+      &:hover {
+        background: $background-dark;
+      }
+      .fa-solid {
+        padding: $spacing-medium;
+        margin: auto;
+      }
+    }
+  }
+

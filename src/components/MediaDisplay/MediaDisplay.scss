@@ -1,0 +1,23 @@
+@import "../../style/variables.scss";
+@import "../../style/mixins.scss";
+
+.table-content__media-container {
+    .displayed-text {
+        white-space: pre-line;
+    }
+
+.media-container {
+    position: relative;
+
+    .remove-btn{
+        position: absolute;
+        background: rgba(0, 0, 0, 0.178);
+        border: none;
+        color: white;
+        top: 0;
+        left: 0;
+        padding: $spacing-small;
+        cursor: pointer;
+    }
+}
+}

@@ -4,12 +4,24 @@
 .auth-container {
     @include flex-col;
     max-width: 300px;
+    width: 100%;
     margin: auto;
     padding: 20px;
     text-align: center;
     border: 1px solid #ddd;
     border-radius: 8px;
     
+    &__btns {
+      @include flex-row;
+      gap: $spacing-small;
+
+      button.selected {
+        background: #ccc; // Couleur grisée
+        color: #666;
+        cursor: default; // Facultatif : désactiver le curseur pointer
+      }
+    }
+
   form{
     @include flex-col;
   }

@@ -6,6 +6,7 @@
     width: 80vw;
     height: 80vh;
     margin-bottom: 20px;
+    @include flex-col;
   ul {
     @include ul-base;
   }
@@ -45,8 +46,6 @@
     
   }
 
-
-  
   &__skills {
     .skills-wrapper {
         @include flex-row;
@@ -85,3 +84,5 @@ table {
         min-width: 150px;
     }
 }
+
+

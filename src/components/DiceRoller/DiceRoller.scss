@@ -1,0 +1,40 @@
+@import "../../style/mixins.scss";
+@import "../../style/variables.scss";
+
+.dice-roller {
+    @include flex-row;
+    gap: $spacing-medium;
+    justify-content: space-between;
+
+    button {
+        @include button;
+        font-size: 35px;
+    }
+    
+    .roller-panel {
+        @include flex-col;
+        justify-content: baseline;
+        align-items: baseline;
+        width: 170px;
+
+        label {
+            display: flex;
+            justify-content: center;
+            align-items: center
+        }
+
+        div {
+            @include flex-row;
+            gap: $spacing-small;
+            justify-content: space-between;
+
+            select, input {
+                padding: $spacing-small;
+            }
+
+            input {
+                width: 25px;
+            }
+        }
+    }
+}

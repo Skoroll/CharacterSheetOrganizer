@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
+
 import AuthForm from "../../components/AuthForm/AuthForm";
-import NextSession from "../../components/NextSession/NextSession";
 import TableTopBrowse from "../../components/ModalContent/ModalTabletop/TableTopBrowse/TableTopBrowse";
 import TabletopCreation from "../../components/ModalContent/ModalTabletop/TabletopCreation/TabletopCreation";
 import Welcome from "../../components/Welcome/Welcome";
@@ -30,7 +30,7 @@ export default function Home() {
           <Menu />
           <div className="home-wrapper">
             <Welcome/>
-            <NextSession />
+            {/*{user.isAdmin && <p>Admin</p>}*/}
             <div className="home__tables-options">
               <h2>Les Tables de jeux </h2>
 

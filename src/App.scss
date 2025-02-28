@@ -2,19 +2,33 @@
 @import "./style/variables.scss";
 
 #root {
-  margin: 0 auto;
-  padding: $spacing-small;
-  text-align: center;
+  @include flex-col;
+  width: 100%;
+  min-height: 100vh;
 }
 
 
-body{
+html, body{
   background: $background-color;
   color : $text-color;
   @include  ul-base;
+  margin: 0;
+  padding: 0;
+  @include flex-col;
+
 }
 
 main {
   @include flex-col;
+  padding: $spacing-medium;
+  flex: 1;
   position: relative;
+  margin-top: 75px;
+}
+
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; // Garantir que la mise en page fonctionne correctement
 }

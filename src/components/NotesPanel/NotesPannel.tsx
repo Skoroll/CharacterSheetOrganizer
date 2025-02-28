@@ -1,117 +1,192 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import "./NotePannel.scss";
 
 interface NotesPanelProps {
+  notes: {
+    characters: string;
+    quest: string;
+    other: string;
+    items: string;
+  };
+  handleNotesChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  handleSaveNotes: () => Promise<void>;
+  isGameMaster: boolean;
+  currentTableId: string;
+  userId: string;
+}
+
+interface NoteSectionProps {
+  activeNote: string | null;
   notes: any;
   handleNotesChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   handleSaveNotes: () => void;
-  isGameMaster: boolean;
-  isSideOpen: boolean;
-  setIsSideOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  noteName: string;
+  label: string;
 }
 
-const NotesPanel = ({
+const NoteSection = ({
+  activeNote,
   notes,
   handleNotesChange,
   handleSaveNotes,
-  isGameMaster,
-  isSideOpen,
-  setIsSideOpen,
-}: NotesPanelProps) => {
-  const [activeNote, setActiveNote] = useState<string | null>(null);
+  noteName,
+  label,
+}: NoteSectionProps) => {
+  if (activeNote !== noteName) return null;
+  return (
+    <div className="notes-section">
+      <label>{label}</label>
+      <textarea
+  name={noteName}
+  value={notes[noteName] || ""} // 📌 Associe la valeur aux notes actuelles
+  onChange={handleNotesChange}
+/>
 
-  const NotesSection = ({
-    activeNote,
-    notes,
-    handleNotesChange,
-    handleSaveNotes,
-    noteName,
-    label,
-  }: {
-    activeNote: string | null;
-    notes: any;
-    handleNotesChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-    handleSaveNotes: () => void;
-    noteName: string;
-    label: string;
-  }) => {
-    if (activeNote !== noteName) return null;
+      <button onClick={handleSaveNotes}>Sauvegarder</button>
+    </div>
+  );
+};
 
-    return (
-      <div className="notes-section">
-        <label>{label}</label>
-        <textarea
-        
-          name={noteName}
-          value={notes[noteName]}
-          onChange={handleNotesChange}
-        ></textarea>
-        <button onClick={handleSaveNotes}>Sauvegarder</button>
-      </div>
-    );
+const NotesPanel = ({ currentTableId, userId, isGameMaster }: NotesPanelProps) => {
+  const [activeNote, setActiveNote] = useState<string | null>("characters");
+  const [isSideOpen, setIsSideOpen] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  const [notes, setNotes] = useState({
+    characters: "",
+    quest: "",
+    other: "",
+    items: ""
+  });
+  
+  
+
+  // 📌 Gestion du changement de texte
+  const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setNotes((prevNotes) => ({
+      ...prevNotes,
+      [name]: value,
+    }));
+  };
+  
+
+  // 📌 Sauvegarde des notes en fonction du rôle
+  const handleSaveNotes = async () => {
+    if (!currentTableId) return;
+
+    try {
+      const response = await fetch(`${API_URL}/api/tabletop/tables/${currentTableId}/notes`, {
+
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(notes),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Erreur lors de l'enregistrement des notes");
+      }
+  
+      alert("Notes sauvegardées !");
+    } catch (error) {
+      console.error("Erreur lors de la sauvegarde des notes :", error);
+      alert("Impossible de sauvegarder les notes.");
+    }
+  };
+  
+  // 📌 Chargement des notes au montage du composant
+// 📌 Chargement des notes au montage du composant
+useEffect(() => {
+  const fetchNotes = async () => {
+    try {
+      const url = isGameMaster
+        ? `${API_URL}/api/tabletop/tables/${currentTableId}/notes`
+        : `${API_URL}/api/tabletop/tables/${currentTableId}/player-notes?playerId=${userId}`;
+
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Erreur lors du chargement des notes");
+
+      const data = await response.json();
+
+      setNotes(data?.gameMasterNotes || { characters: "", quest: "", items: "", other: "" });
+    } catch (error) {
+      console.error("Erreur lors du chargement des notes :", error);
+    }
   };
 
+  fetchNotes();
+}, [currentTableId, userId, isGameMaster]); // 📌 Recharge les notes si la table ou l'utilisateur change  
+
   return (
-    <div className="table__notes-pannel">
-
+    <div className={`table__notes-pannel ${isSideOpen ? "open" : ""}`}>
       <div className="table__notes-pannel--inside">
-        <p><i className="fa-solid fa-pen"></i></p>
-        {!isSideOpen &&(
-          <p className="notes-title">Notes</p>
-        )}
-        {isSideOpen && (
-          <>
-            <ul>
-              <li onClick={() => setActiveNote("characters")}><i className="fa-solid fa-person"></i></li>
-              <li onClick={() => setActiveNote("quest")}><i className="fa-solid fa-exclamation"></i></li>
-              <li onClick={() => setActiveNote("items")}><i className="fa-solid fa-sack-dollar"></i></li>
-              <li onClick={() => setActiveNote("other")}><i className="fa-solid fa-box"></i></li>
-            </ul>
+        <p>
+          <i className="fa-solid fa-pen"></i>
+        </p>
+        {!isSideOpen && <p className="notes-title">Notes</p>}
+        <div className={`notes--opacity ${isSideOpen ? "visible" : ""}`}>
+          <ul className="notes__btns">
+            <li onClick={() => setActiveNote("characters")}>
+              <i className="fa-solid fa-person"></i>
+            </li>
+            <li onClick={() => setActiveNote("quest")}>
+              <i className="fa-solid fa-exclamation"></i>
+            </li>
+            <li onClick={() => setActiveNote("items")}>
+              <i className="fa-solid fa-sack-dollar"></i>
+            </li>
+            <li onClick={() => setActiveNote("other")}>
+              <i className="fa-solid fa-box"></i>
+            </li>
+          </ul>
 
-            <h3>Notes du {isGameMaster ? "MJ" : "Joueur"}</h3>
+          <h3>Notes du {isGameMaster ? "MJ" : "Joueur"}</h3>
 
-            <NotesSection
-              activeNote={activeNote}
-              notes={notes}
-              handleNotesChange={handleNotesChange}
-              handleSaveNotes={handleSaveNotes}
-              noteName="characters"
-              label="Personnages"
-            />
-            <NotesSection
-              activeNote={activeNote}
-              notes={notes}
-              handleNotesChange={handleNotesChange}
-              handleSaveNotes={handleSaveNotes}
-              noteName="quest"
-              label="Quêtes"
-            />
-            <NotesSection
-              activeNote={activeNote}
-              notes={notes}
-              handleNotesChange={handleNotesChange}
-              handleSaveNotes={handleSaveNotes}
-              noteName="items"
-              label="Objets"
-            />
-            <NotesSection
-              activeNote={activeNote}
-              notes={notes}
-              handleNotesChange={handleNotesChange}
-              handleSaveNotes={handleSaveNotes}
-              noteName="other"
-              label="Autres"
-            />
-          </>
-        )}
+          <NoteSection
+            activeNote={activeNote}
+            notes={notes}
+            handleNotesChange={handleNotesChange}
+            handleSaveNotes={handleSaveNotes}
+            noteName="characters"
+            label="Personnages"
+          />
+          <NoteSection
+            activeNote={activeNote}
+            notes={notes}
+            handleNotesChange={handleNotesChange}
+            handleSaveNotes={handleSaveNotes}
+            noteName="quest"
+            label="Quêtes"
+          />
+          <NoteSection
+            activeNote={activeNote}
+            notes={notes}
+            handleNotesChange={handleNotesChange}
+            handleSaveNotes={handleSaveNotes}
+            noteName="items"
+            label="Objets"
+          />
+          <NoteSection
+            activeNote={activeNote}
+            notes={notes}
+            handleNotesChange={handleNotesChange}
+            handleSaveNotes={handleSaveNotes}
+            noteName="other"
+            label="Autres"
+          />
+        </div>
       </div>
-      {isSideOpen && (
-        <div className="table__notes-pannel--divider"/>
-      )}
-      <div 
+      <div
         onClick={() => setIsSideOpen((prev) => !prev)}
         className="table__notes-pannel--slide-btn"
-        >
-        <i className={`fa-solid ${isSideOpen ? "fa-chevron-left" : "fa-chevron-right"}`}/>
+      >
+        <i
+          className={`fa-solid ${
+            isSideOpen ? "fa-chevron-left" : "fa-chevron-right"
+          }`}
+        />
       </div>
     </div>
   );

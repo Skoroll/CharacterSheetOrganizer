@@ -2,212 +2,268 @@
 @import "../../style/variables.scss";
 
 .character-details {
+  position: relative;
+
+  .content-wrapper {
+    @include flex-row;
+    gap: $spacing-medium;
+  }
+
+  table {
+    border-collapse: collapse;
+    padding: $spacing-medium;
+    margin: auto;
+    min-width: 350px;
+    tr {
+      border-bottom: 1px solid;
+    }
+
+    .table-left {
+      text-align: left;
+      padding: $spacing-small;
+    }
+
+    .table-center {
+      text-align: center;
+      padding: $spacing-small;
+    }
+  }
+
+  &__identity {
     position: relative;
-    table {
-        border-collapse: collapse; 
-        padding: $spacing-medium;
-        margin: auto;
-        tr {
-            border-bottom: 1px solid;
-        }
-
-        .table-left  {
-            text-align: left;
-            padding: $spacing-small;
-        }
-
-        .table-center { 
-            text-align: center;
-            padding: $spacing-small;
-        }
-    }
-
-    &__identity {
-        border: 1px solid;
-        padding: $spacing-small;
-        @include flex-col;
-        text-align: left;
-
-        &--text {
-            @include flex-col;
-            
-            p {
-                margin: 0;
-            }
-
-            .text-container {
-                @include flex-row;
-                gap: $spacing-medium;
-
-                @include media-query($breakpoint-sm, "min") {
-                    @include flex-col;
-                }
-            }
-        }
-    }
-
-    &__content {
-        @include flex-col;
-        padding: $spacing-large;
-
-        img {
-            width: 260px;
-            height: 260px;
-            margin: auto;
-        }
-        
-        &--stats, &--health {
-            text-align: left;
-            
-            p {
-                @include flex-row;
-                align-items: baseline;
-            }
-
-            span {
-                @include flex-center;
-                border: 1px solid;
-                width: 15px;
-                padding: $spacing-small;
-                border-radius: 50%;
-            }
-        }
-
-        @include media-query($breakpoint-sm, "min") {
-            @include flex-row;
-            gap: 20%;
-
-            img {
-                margin: 0;
-
-
-            }
-        }
-    }
-
-    &--button-list {
-        @include flex-row;
-        padding: $spacing-large;
-        gap: $spacing-large;
-        justify-content: center;
-
-        button {
-            background: none;
-            color: $text-color;
-            font-size: 30px;
-            padding: $spacing-small;
-            border: none;
-
-            &:hover {
-                transform: scale(110%);
-            }
-        }
-    }
-    
-    &__skills, &__infos {
-        @include flex-col;
-
-        @include media-query($breakpoint-sm, "min") {
-            @include flex-row;
-        }
-
-
-        &--back-story, &--inventory {
-            width: 50%;
-
-           .character-story__container {
-            padding: $spacing-large;
-
-            &--text {
-                padding: $spacing-large;
-                white-space: pre-line;
-            }
-           }
-            
-        @include media-query($breakpoint-sm, "min") {
-            width: 100%;
-        }
-        }
-    }
-
-    &__skills {
-        div {
-            margin: 0 auto;
-        }
-    }
-    &__infos {
-        &--inventory {
-            .item {
-                text-align: left;
-                padding: $spacing-small;
-                min-width: 200px;
-            }
-
-            @include media-query($breakpoint-sm, "min") {
-                @include flex-row;
-                width: 100%;
-                justify-content: space-evenly;
-                table {
-                    margin-top: 0;
-                }
-            }
-        }
-    }
-
-    p {
-        text-align: left;
-    }
-}
-
-.character-mobile {
-    margin-top: 20px;
+    border: 1px solid;
+    padding: $spacing-small;
     @include flex-col;
-    justify-content: space-around;
-    gap: $spacing-large;
+    text-align: left;
+    align-self: flex-start;
 
-    .character-details__content--stats, 
-    .character-details__content--health {
-        @include flex-wrap;
+    .character-wrapper {
+      @include flex-row;
+      gap: $spacing-small;
+    }
+
+    &--stats {
+      bottom: 155px;
+      @include flex-row;
+      gap: $spacing-small;
+      width: 260px;
+      box-sizing: border-box;
+      margin: 0 auto 15px auto;
+      font-size: 15px;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.699);
+    }
+
+    &--status,
+    &--stats {
+      padding: 3px;
+    }
+
+    &--status {
+      width: 50px;
+      @include flex-center;
+      flex-direction: column;
+      border-right: 1px solid;
+    }
+
+    &--text {
+      @include flex-col;
+      padding: $spacing-small;
+      h2 {
+        margin-top: 0;
+      }
+      p {
+        margin: 0;
+      }
+
+      .text-container {
+        @include flex-row;
         gap: $spacing-medium;
-        justify-content: center;
 
-        p {
-            @include flex-row;
-            align-items: center;
-            gap: $spacing-small;
-
-            .fa-solid {
-                font-size: 35px;
-            }
+        @include media-query($breakpoint-sm, "min") {
+          @include flex-col;
         }
+      }
+    }
+  }
+
+  &__content {
+    @include flex-col;
+
+
+    img {
+      width: 260px;
+      height: 260px;
+      margin: auto;
+      object-fit: cover;
+    }
+
+    &--stats,
+    &--health {
+      text-align: left;
+
+      p {
+        @include flex-row;
+        align-items: baseline;
+      }
+
+      span {
+        @include flex-center;
+        border: 1px solid;
+        width: 15px;
+        padding: $spacing-small;
+        border-radius: 50%;
+      }
     }
 
     @include media-query($breakpoint-sm, "min") {
-        @include flex-row;
+      @include flex-row;
+      gap: 20%;
 
-        .character-details__content--health {
-            justify-content: initial;
-        }
-
-        .character-details__content--stats, 
-        .character-details__content--health {
-            @include flex-col;
-
-            p {
-                width: 120px;
-                justify-content: space-between;
-            }
-        }
+      img {
+        margin: 0;
+      }
     }
+  }
+
+  &--button-list {
+    @include flex-row;
+    padding: $spacing-large;
+    gap: $spacing-large;
+    justify-content: center;
+
+    button {
+      background: none;
+      color: $text-color;
+      font-size: 30px;
+      padding: $spacing-small;
+      border: none;
+
+      &:hover {
+        transform: scale(110%);
+      }
+    }
+  }
+
+  &__skills,
+  &__infos {
+    @include flex-col;
+    gap: $spacing-medium;
+    width: 100%;
+    @include media-query($breakpoint-sm, "min") {
+      @include flex-row;
+    }
+
+    &--back-story,
+    &--inventory {
+
+      .character-story__container {
+        padding: $spacing-large;
+        border: 1px solid;
+        height: 300px;
+
+        &--text {
+          padding: $spacing-large;
+          white-space: pre-line;
+        }
+      }
+
+      @include media-query($breakpoint-sm, "min") {
+        width: 100%;
+      }
+    }
+  }
+
+  &__skills {
+    div {
+      margin: 0 auto;
+    }
+  }
+  &__infos {
+    &--inventory {
+      .item {
+        text-align: left;
+        padding: $spacing-small;
+        min-width: 200px;
+      }
+
+      @include media-query($breakpoint-sm, "min") {
+        @include flex-row;
+        width: 100%;
+        justify-content: space-evenly;
+        table {
+          margin-top: 0;
+        }
+      }
+    }
+  }
+
+  p {
+    text-align: left;
+  }
+}
+
+.character-mobile {
+  margin-top: 20px;
+  @include flex-col;
+  justify-content: space-around;
+  gap: $spacing-large;
+
+  .character-details__content--stats,
+  .character-details__content--health {
+    @include flex-wrap;
+    gap: $spacing-medium;
+    justify-content: center;
+
+    p {
+      @include flex-row;
+      align-items: center;
+      gap: $spacing-small;
+      background: rgba(0, 0, 0, 0.384);
+      .fa-solid {
+        font-size: 35px;
+      }
+    }
+  }
+
+  @include media-query($breakpoint-sm, "min") {
+    @include flex-row;
+
+    .character-details__content--health {
+      justify-content: initial;
+    }
+
+    .character-details__content--stats,
+    .character-details__content--health {
+      @include flex-col;
+
+      p {
+        width: 120px;
+        justify-content: space-between;
+      }
+    }
+  }
 }
 
 .character-story {
-    width: 100%;
+  width: 100%;
 }
 
 .loader-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+
+.pros-cons {
+  @include flex-row;
+  justify-content: space-evenly;
+  margin-bottom: $spacing-medium;
+  &--pros, &--cons{
+    white-space: pre-line;
+    border: 1px solid;
+    padding: $spacing-medium;
+  }
 }

@@ -1,0 +1,47 @@
+@import "../../../style//variables.scss";
+@import "../../../style/mixins.scss";
+
+.gm-toolbar-container {
+position: relative;
+
+  p {
+    margin: 0;
+    margin-left: 10px;
+  }
+
+  .gm-toolbar {
+    position: relative;
+    @include flex-row;
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+    gap: $spacing-large;
+
+    .gm-toolbar__heading {
+      margin: auto 0 auto 0;
+    }
+
+    .fa-solid {
+      font-size: 15px;
+      cursor: pointer;
+      border-radius: 50%;
+      border: 1px solid transparent;
+      padding: 8px;
+      transition: all 0.3s;
+
+      &:hover {
+        background-color: $background-color;
+        border: 1px solid;
+      }
+    }
+  }
+}
+
+
+.gm-tool {
+  position: absolute;
+  left: 0;
+  padding: $spacing-medium;
+  background-color: $background-color;
+  z-index: 900;
+  box-sizing: border-box;
+}

@@ -97,7 +97,6 @@ export default function Menu() {
   if (error)
     return (
       <div>
-        <h2>Vos personnages </h2>
         <p>Erreur : Le serveur semble inatteignable</p>
         <p>Réessayez plus tard</p>
       </div>
@@ -106,7 +105,6 @@ export default function Menu() {
   return (
     <div className="menu">
       <div className="character-list">
-      <h2>Vos personnages </h2>
         <ul>
           <li
             className="character-list__create-new"

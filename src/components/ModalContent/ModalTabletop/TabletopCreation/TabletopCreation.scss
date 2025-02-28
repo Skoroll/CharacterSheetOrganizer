@@ -22,5 +22,9 @@
         input {
             padding: $spacing-small;
         }
+
+        .select-game {
+            @include flex-row;
+        }
     }
 }

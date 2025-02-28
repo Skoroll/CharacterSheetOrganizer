@@ -16,10 +16,9 @@ interface TabletopJoinProps {
   gameMasterId: string;
 }
 
-
 const TabletopJoin = ({ tableId, onClose, gameMasterId }: TabletopJoinProps) => {
   const { user } = useUser();
-  const { isAuthenticated, _id: playerId, userPseudo: playerName, token } = user;
+  const { isAuthenticated, _id: userId, userPseudo: playerName, token } = user;
 
   const [characters, setCharacters] = useState<Character[]>([]);
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
@@ -31,6 +30,7 @@ const TabletopJoin = ({ tableId, onClose, gameMasterId }: TabletopJoinProps) => 
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
+  // 🛠️ Récupération des personnages du joueur
   useEffect(() => {
     async function fetchCharacters() {
       if (!isAuthenticated || !token) {
@@ -52,7 +52,7 @@ const TabletopJoin = ({ tableId, onClose, gameMasterId }: TabletopJoinProps) => 
         const fetchedCharacters = await response.json();
         setCharacters(fetchedCharacters);
 
-        // Sélection automatique du premier personnage s'il y en a un
+        // Sélection automatique du premier personnage disponible
         if (fetchedCharacters.length > 0) {
           setSelectedCharacter(fetchedCharacters[0]);
         }
@@ -66,14 +66,10 @@ const TabletopJoin = ({ tableId, onClose, gameMasterId }: TabletopJoinProps) => 
     fetchCharacters();
   }, [API_URL, isAuthenticated, token]);
 
+  // 🔹 Gérer l'ajout du joueur à la table
   const handleJoinClick = async () => {
-    console.log("🔍 Données utilisateur récupérées avant l'envoi :");
-    console.log("playerId:", playerId);
-    console.log("playerName:", playerName);
-    console.log("token:", token);
-    console.log("selectedCharacter:", selectedCharacter);
-    console.log("password:", password);
-    if (!playerId || !playerName) {
+
+    if (!userId || !playerName) {
       setError("Données utilisateur manquantes !");
       return;
     }
@@ -88,8 +84,8 @@ const TabletopJoin = ({ tableId, onClose, gameMasterId }: TabletopJoinProps) => 
       return;
     }
 
-    // 🔹 Vérifier le mot de passe UNIQUEMENT quand l'utilisateur clique sur "Rejoindre la partie"
-    if (gameMasterId !== playerId && password.length > 0 && !hasEnteredPassword) {
+    // Vérification du mot de passe (si nécessaire)
+    if (gameMasterId !== userId && password.length > 0 && !hasEnteredPassword) {
       try {
         const response = await fetch(
           `${API_URL}/api/tabletop/verifyPassword/${tableId}`,
@@ -105,7 +101,7 @@ const TabletopJoin = ({ tableId, onClose, gameMasterId }: TabletopJoinProps) => 
         setHasEnteredPassword(true);
       } catch (err) {
         setError("Mot de passe incorrect.");
-        return; // 🔹 Stoppe la suite du code si le mot de passe est faux
+        return; // 🔹 Stoppe la suite si le mot de passe est faux
       }
     }
 
@@ -120,16 +116,15 @@ const TabletopJoin = ({ tableId, onClose, gameMasterId }: TabletopJoinProps) => 
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            playerId,
+            userId, // ✅ Correction ici
             playerName,
-            selectedCharacter,
+            selectedCharacter: selectedCharacter._id, // ✅ On envoie seulement l'ID du personnage
             password,
           }),
         }
       );
 
       const responseData = await response.json();
-      console.log("Réponse serveur :", responseData);
 
       if (response.ok) {
         navigate(`/table/${tableId}`);
@@ -140,7 +135,6 @@ const TabletopJoin = ({ tableId, onClose, gameMasterId }: TabletopJoinProps) => 
       setError("Erreur lors de l'envoi de la requête.");
     }
   };
-  console.log("📌 Table ID envoyé :", tableId);
 
   return (
     <div className="tabletop-join-modal">
@@ -170,7 +164,7 @@ const TabletopJoin = ({ tableId, onClose, gameMasterId }: TabletopJoinProps) => 
             ))}
           </ul>
 
-          {gameMasterId !== playerId && !hasEnteredPassword && (
+          {gameMasterId !== userId && !hasEnteredPassword && (
             <label>
               Mot de passe :
               <input

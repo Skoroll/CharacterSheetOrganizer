@@ -1,0 +1,99 @@
+@import "../../../style/variables.scss";
+@import "../../../style/mixins.scss";
+
+.npcs {
+    @include flex-row;
+    max-width: 700px;
+    .form-content {
+        @include flex-row;
+        gap: $spacing-small;
+    }
+
+    &__scroll {
+        position: relative;
+        @include flex-wrap;
+        gap: $spacing-small;
+        overflow-y: auto;
+        max-height: 500px
+    }
+
+    &__bar {
+        min-width: 150px;
+        ul {
+            @include ul-base;
+            @include flex-col;
+            gap: $spacing-medium;
+            padding: $spacing-small;
+
+            li {
+                @include button;
+            }
+        }
+    }
+
+    &__form {
+
+        &--base, &--details {
+            @include flex-col;
+            gap: $spacing-small;
+
+            label {
+                @include flex-row;
+            }
+        }
+
+    }
+
+    h2, h3, h4 {
+        margin: 0;
+    }
+
+    textarea {
+        resize: none;
+        height: 150px;
+    }
+
+    button {
+        @include button;
+    }
+
+    .create-npc {
+        width: 100%;
+        margin: $spacing-small 0;
+    }
+
+.npcs__list {
+    ul {
+        @include ul-base;
+    }
+}
+    .npc {
+        
+        width: 45%;
+        padding: $spacing-small;
+
+        p, h2 {
+            @include flex-row;
+            justify-content: space-between;
+            align-items: baseline;
+            margin: $spacing-small 0;
+        }
+        
+        &__stats {
+            @include flex-row;
+            gap: $spacing-medium;
+        }
+
+        &__stats, &__items {
+            ul {
+                @include ul-base;
+    
+                li {
+                    @include flex-row;
+                    justify-content: space-between;
+                    min-width: 100px
+                }
+            }
+        }
+    }
+}

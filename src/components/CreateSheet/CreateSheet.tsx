@@ -34,7 +34,7 @@ function CreateSheet() {
   const [intelligence, setIntelligence] = useState<number | "">("");
   const [charisma, setCharisma] = useState<number | "">("");
 
-  // Typage explicite pour weapons, skills, inventory, background
+  // Vous pouvez initialiser avec un tableau vide pour permettre l'ajout dynamique
   const [weapons, setWeapons] = useState<Weapon[]>([
     { name: "", damage: "" },
     { name: "", damage: "" },
@@ -44,15 +44,14 @@ function CreateSheet() {
   const [gold, setGold] = useState<number | "">("");
   const [injuries, setInjuries] = useState<number | "">("");
   const [protection, setProtection] = useState<number | "">("");
-  const [skills, setSkills] = useState<Skill[]>(
-    Array(5).fill(null).map(() => ({ specialSkill: "", link1: "", link2: "", score: "" }))
-  );
-
-  const [inventory, setInventory] = useState<InventoryItem[]>(
-    Array(10).fill(null).map(() => ({ item: "", quantity: "" }))
-  );
+  
+  // Initialisation vide pour compétences spéciales et inventaire
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
 
   const [background, setBackground] = useState("");
+  const [pros, setPros] = useState("");
+  const [cons, setCons] = useState("");
 
   // Définition des statistiques du personnage
   const stats = {
@@ -63,7 +62,17 @@ function CreateSheet() {
     CHA: charisma,
   };
 
-  // Gérer la prévisualisation de l'image
+  // Fonction pour ajouter une nouvelle compétence spéciale
+  const handleAddSkill = () => {
+    setSkills([...skills, { specialSkill: "", link1: "", link2: "", score: "" }]);
+  };
+
+  // Fonction pour ajouter un nouvel objet à l'inventaire
+  const handleAddInventoryItem = () => {
+    setInventory([...inventory, { item: "", quantity: "" }]);
+  };
+
+  // Gestion de la prévisualisation de l'image
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -71,7 +80,7 @@ function CreateSheet() {
     }
   };
 
-  // Gérer les modifications des armes
+  // Gestion des modifications des armes
   const handleWeaponChange = (
     index: number,
     field: keyof Weapon,
@@ -82,7 +91,7 @@ function CreateSheet() {
     setWeapons(updatedWeapons);
   };
 
-  // Gérer les modifications des compétences
+  // Gestion des modifications des compétences spéciales
   const handleSkillChange = (
     index: number,
     field: keyof Skill,
@@ -93,7 +102,7 @@ function CreateSheet() {
     setSkills(updatedSkills);
   };
 
-  // Gérer les modifications des objets d'inventaire
+  // Gestion des modifications des objets d'inventaire
   const handleInventoryChange = (
     index: number,
     field: keyof InventoryItem,
@@ -109,7 +118,12 @@ function CreateSheet() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Utilisation de FormData pour envoyer l'image et les données
+    // Calcul des scores pour les compétences spéciales avant envoi
+    const updatedSkills = skills.map((skill) => ({
+      ...skill,
+      score: skill.score || calculateScore(skill.link1, skill.link2),
+    }));
+
     const formData = new FormData();
     if (image) {
       formData.append("image", image);
@@ -126,27 +140,27 @@ function CreateSheet() {
     formData.append("injuries", injuries.toString());
     formData.append("protection", protection.toString());
     formData.append("background", background);
+    formData.append("pros", pros);
+    formData.append("cons", cons);
     formData.append("gold", gold.toString());
     formData.append("origin", origin);
 
     formData.append("weapons", JSON.stringify(weapons));
-    formData.append("skills", JSON.stringify(skills));
+    formData.append("skills", JSON.stringify(updatedSkills));
     formData.append("inventory", JSON.stringify(inventory));
 
     for (let pair of formData.entries()) {
       console.log(`🔹 ${pair[0]}:`, pair[1]);
     }
-    
-    try {
 
+    try {
       const token = localStorage.getItem("token");
       const response = await fetch(`${API_URL}/api/characters/`, {
         method: "POST",
         body: formData,
         headers: {
-          "Authorization": `Bearer ${token}` // Ajouter le token ici
-        }
-        
+          "Authorization": `Bearer ${token}`,
+        },
       });
 
       if (response.ok) {
@@ -167,18 +181,16 @@ function CreateSheet() {
 
     if (typeof stat1 === "number" && typeof stat2 === "number") {
       const average = (stat1 + stat2) / 2;
-      const percentage = Math.floor(average / 5) * 5; // Arrondi vers le bas au multiple de 5
-      return Math.min(100, Math.max(0, percentage)); // Limite entre 0 et 100
+      const percentage = Math.floor(average / 5) * 5;
+      return Math.min(100, Math.max(0, percentage));
     }
     return 0;
   };
 
   function refreshPage() {
     window.location.reload();
-    window.scrollTo(0, 0)
+    window.scrollTo(0, 0);
   }
-  
-  
 
   return (
     <div className="sheet">
@@ -196,13 +208,13 @@ function CreateSheet() {
               />
               <div className="img-container">
                 {!image && (
-                  <img 
-                  src={placeholderImage} 
-                  alt="Personnage" 
-                  className="image-placeholder"
+                  <img
+                    src={placeholderImage}
+                    alt="Personnage"
+                    className="image-placeholder"
                   />
                 )}
-                <p>Ajouter votre photo</p>
+                {!image && <p>Ajouter votre photo</p>}
                 {image && (
                   <img
                     src={URL.createObjectURL(image)}
@@ -353,109 +365,107 @@ function CreateSheet() {
       </div>
 
       <div className="sheet__bottom">
-
-      <div className="sheet__bottom--fixed">
-  <h3>Compétences</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Compétence</th>
-        <th>Lien</th>
-        <th>Score</th>
-      </tr>
-    </thead>
-    <tbody>
-      {[
-        { name: "Artisanat", link1: "DEX", link2: "INT" },
-        { name: "Combat rapproché", link1: "FOR", link2: "DEX" },
-        { name: "Combat à distance", link1: "DEX", link2: "INT" },
-        { name: "Connaissance de la nature", link1: "DEX", link2: "INT" },
-        { name: "Connaissance des secrets", link1: "INT", link2: "CHA" },
-        { name: "Courir/Sauter", link1: "DEX", link2: "END" },
-        { name: "Discrétion", link1: "DEX", link2: "CHA" },
-        { name: "Réflexe", link1: "DEX", link2: "INT" },
-        { name: "Intimider", link1: "FOR", link2: "CHA" },
-        { name: "Lire/Ecrire", link1: "INT", link2: "CHA" },
-        { name: "Mentir/Convaincre", link1: "INT", link2: "CHA" },
-        { name: "Perception", link1: "INT", link2: "CHA" },
-        { name: "Serrures et pièges", link1: "DEX", link2: "END" },
-        { name: "Soigner", link1: "INT", link2: "CHA" },
-        { name: "Survie", link1: "END", link2: "INT" },
-        { name: "Voler", link1: "INT", link2: "CHA" },
-      ].map(({ name, link1, link2 }, index) => {
-        const score = calculateScore(link1, link2); // Calcul du score pour chaque compétence
-        return (
-          <tr key={index}>
-            <td className="table-left">{name}</td>
-            <td className="table-center">{`${link1} / ${link2}`}</td>
-            <td className="table-center">{score}</td>
-          </tr>
-        );
-      })}
-    </tbody>
-  </table>
-</div>
-
-
-<form className="sheet__bottom--skills">
-  <h3>Vos compétences spéciales</h3>
-  {skills.map((skill, index) => (
-    <div key={index}>
-      <div className="what-skil">
-        <label>
-          Compétence spéciale
-          <input
-            type="text"
-            value={skill.specialSkill}
-            onChange={(e) =>
-              handleSkillChange(index, "specialSkill", e.target.value)
-            }
-          />
-        </label>
-        <div className="what-skil--link">
-          <label>
-            Lien 1
-            <input
-              type="text"
-              value={skill.link1}
-              onChange={(e) =>
-                handleSkillChange(index, "link1", e.target.value)
-              }
-            />
-          </label>
-          <label>
-            Lien 2
-            <input
-              type="text"
-              value={skill.link2}
-              onChange={(e) =>
-                handleSkillChange(index, "link2", e.target.value)
-              }
-            />
-          </label>
+        <div className="sheet__bottom--fixed">
+          <h3>Compétences</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Compétence</th>
+                <th>Lien</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { name: "Artisanat", link1: "DEX", link2: "INT" },
+                { name: "Combat rapproché", link1: "FOR", link2: "DEX" },
+                { name: "Combat à distance", link1: "DEX", link2: "INT" },
+                { name: "Connaissance de la nature", link1: "DEX", link2: "INT" },
+                { name: "Connaissance des secrets", link1: "INT", link2: "CHA" },
+                { name: "Courir/Sauter", link1: "DEX", link2: "END" },
+                { name: "Discrétion", link1: "DEX", link2: "CHA" },
+                { name: "Réflexe", link1: "DEX", link2: "INT" },
+                { name: "Intimider", link1: "FOR", link2: "CHA" },
+                { name: "Lire/Ecrire", link1: "INT", link2: "CHA" },
+                { name: "Mentir/Convaincre", link1: "INT", link2: "CHA" },
+                { name: "Perception", link1: "INT", link2: "CHA" },
+                { name: "Serrures et pièges", link1: "DEX", link2: "END" },
+                { name: "Soigner", link1: "INT", link2: "CHA" },
+                { name: "Survie", link1: "END", link2: "INT" },
+                { name: "Voler", link1: "INT", link2: "CHA" },
+              ].map(({ name, link1, link2 }, index) => {
+                const score = calculateScore(link1, link2);
+                return (
+                  <tr key={index}>
+                    <td className="table-left">{name}</td>
+                    <td className="table-center">{`${link1} / ${link2}`}</td>
+                    <td className="table-center">{score}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
 
-        <label>
-          Score
-          <input
-            type="number"
-            value={skill.score || calculateScore(skill.link1, skill.link2)}
-            onChange={(e) =>
-              handleSkillChange(index, "score", e.target.value)
-            }
-          />
-        </label>
+        <form className="sheet__bottom--skills">
+          <h3>Vos compétences spéciales</h3>
+          {skills.map((skill, index) => (
+            <div key={index}>
+              <div className="what-skil">
+                <label>
+                  Compétence spéciale
+                  <input
+                    type="text"
+                    value={skill.specialSkill}
+                    onChange={(e) =>
+                      handleSkillChange(index, "specialSkill", e.target.value)
+                    }
+                  />
+                </label>
+                <div className="what-skil--link">
+                  <label>
+                    Lien 1
+                    <input
+                      type="text"
+                      value={skill.link1}
+                      onChange={(e) =>
+                        handleSkillChange(index, "link1", e.target.value)
+                      }
+                    />
+                  </label>
+                  <label>
+                    Lien 2
+                    <input
+                      type="text"
+                      value={skill.link2}
+                      onChange={(e) =>
+                        handleSkillChange(index, "link2", e.target.value)
+                      }
+                    />
+                  </label>
+                </div>
+                <label>
+                  Score
+                  <input
+                    type="number"
+                    value={skill.score || calculateScore(skill.link1, skill.link2)}
+                    onChange={(e) =>
+                      handleSkillChange(index, "score", e.target.value)
+                    }
+                  />
+                </label>
+              </div>
+            </div>
+          ))}
+          <button type="button" onClick={handleAddSkill}>
+            Ajouter une compétence spéciale
+          </button>
+        </form>
       </div>
-    </div>
-  ))}
-</form>
-
-      </div>
-<div className="sheet__last-section">
+      <div className="sheet__last-section">
         <div className="sheet__bottom--inventory">
           <h3>Inventaire de base</h3>
-          <label 
-            className="gold">
+          <label className="gold">
             Or
             <input
               type="number"
@@ -487,20 +497,39 @@ function CreateSheet() {
               </label>
             </div>
           ))}
+          <button type="button" onClick={handleAddInventoryItem}>
+            Ajouter un objet
+          </button>
         </div>
-      <div className="sheet__background">
-        <label>
-          Histoire du personnage
-          <textarea
-            value={background}
-            onChange={(e) => setBackground(e.target.value)}
-          />
-        </label>
-      </div>
+        <div className="sheet__background">
+          <div className="sheet__background--pros-and-cons">
+            <label>
+              Vos qualités :
+              <textarea
+                value={pros}
+                onChange={(e) => setPros(e.target.value)}
+              />
+            </label>
+            <label>
+              Vos défauts :
+              <textarea
+                value={cons}
+                onChange={(e) => setCons(e.target.value)}
+              />
+            </label>
+          </div>
+          <label>
+            Histoire du personnage
+            <textarea
+              value={background}
+              onChange={(e) => setBackground(e.target.value)}
+            />
+          </label>
+        </div>
       </div>
       <div className="btn-container">
-      <button onClick={refreshPage}>Recommencer</button>
-      <button onClick={handleSubmit}>Créer le personnage</button>
+        <button onClick={refreshPage}>Recommencer</button>
+        <button onClick={handleSubmit}>Créer le personnage</button>
       </div>
     </div>
   );

@@ -1,0 +1,43 @@
+@import "../../../style/mixins.scss";
+@import "../../../style/variables.scss";
+
+.table-user {
+
+
+    &__buttons {
+        @include flex-col;
+        @include flex-center;
+        flex-direction: column-reverse;
+
+        .fa-gavel, .fa-skull {
+            @include flex-center;
+            padding: $spacing-small;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        
+        .fa-gavel{
+            color: red;
+        }
+    }
+
+    p {text-align: left}
+    ul {
+
+        @include flex-col;
+        gap: $spacing-medium;
+
+        li {
+            @include flex-row;
+
+
+        }
+    }
+
+    &__info {
+        text-align: left;
+        p {
+            margin-left: 20px;
+        }
+    }
+}

@@ -1,0 +1,17 @@
+@import "../../style/mixins.scss";
+@import "../../style/variables.scss";
+
+.banner {
+    margin-top: $spacing-medium;
+    width: 100%;
+    height: 450px;
+    background: no-repeat center;
+
+    position: relative;
+
+    h2 {
+        position: absolute;
+        top: 0;
+        padding: $spacing-small;
+    }
+}

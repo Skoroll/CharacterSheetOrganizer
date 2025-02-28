@@ -1,0 +1,16 @@
+@import "../../../style/mixins.scss";
+@import "../../../style/variables.scss";
+
+
+.soundboard {
+    
+    &__theme-bar {
+
+        ul {
+            @include ul-base;
+            @include flex-row;
+            gap: $spacing-medium;       
+        }
+
+    }
+}

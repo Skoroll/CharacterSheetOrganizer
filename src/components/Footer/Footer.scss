@@ -1,13 +1,64 @@
-footer {
- 
-        .mt-2 {
-            display:  flex;
-            gap: 20px;
-            justify-content: center;
+@import "../../style/variables.scss";
+@import "../../style//mixins.scss";
 
-            a {
-                color: black;
-                
-            }
+.footer {
+  border-top: 1px solid;
+  padding: $spacing-small;
+
+  &__cta--kofi {
+    .kofi-link {
+      @include flex-col;
+      p {
+        text-align: center;
+        margin: 0;
+      }
+
+      img {
+        width: 55px;
+        height: 55px;
+        margin: auto;
+      }
+    }
+  }
+
+  ul {
+    @include ul-base;
+    gap: $spacing-small;
+
+    li {
+      a {
+        i {
+          width: 25px;
+          justify-self: center;
+          align-self: center;
         }
+      }
+    }
+  }
+
+  a {
+    @include flex-row;
+    padding: 5px;
+    gap: $spacing-small;
+    text-decoration: none;
+    color: inherit;
+
+    &:visited {
+      color: inherit;
+    }
+  }
+
+  &__important {
+    @include flex-col;
+  }
+
+  &--CR {
+    text-align: center;
+  }
+}
+
+.footer-wrapper {
+  @include flex-row;
+  padding: $spacing-medium;
+  justify-content: space-evenly;
 }
