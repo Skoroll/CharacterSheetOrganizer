@@ -21,6 +21,7 @@ export default function PlayerList({
 
 }: PlayerListProps) {
   const [playerList, setPlayerList] = useState<Player[]>([]);
+  console.log(setPlayerList);
   const API_URL = import.meta.env.VITE_API_URL;
 
   // Mettre à jour la liste des joueurs (en excluant les GameMasters)
