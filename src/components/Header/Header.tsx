@@ -23,4 +23,5 @@ export default function Header() {
       {isOpen && <Nav className="main-menu" toggleNav={toggleNav} />}
     </header>
   );
+  
 }
