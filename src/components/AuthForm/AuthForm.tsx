@@ -8,7 +8,6 @@ export default function AuthForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const { setUser } =  useUser(); // Accède à la fonction setUser pour mettre à jour le contexte
 
   const API_URL = import.meta.env.VITE_API_URL; // Récupère l'URL du backend
