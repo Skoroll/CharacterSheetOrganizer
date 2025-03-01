@@ -12,6 +12,7 @@ export default function AuthForm() {
   const { setUser } =  useUser(); // Accède à la fonction setUser pour mettre à jour le contexte
 
   const API_URL = import.meta.env.VITE_API_URL; // Récupère l'URL du backend
+  console.log("🔍 API_URL :", import.meta.env.VITE_API_URL);
 
   useEffect(() => {
     // Vérifie si un token est déjà présent dans le localStorage lors du chargement du composant
@@ -29,8 +30,8 @@ export default function AuthForm() {
     e.preventDefault();
   
     const endpoint = isSignUp
-      ? `${API_URL}/api/users/register`
-      : `${API_URL}/api/users/login`;
+    ? `${API_URL.replace(/\/$/, "")}/api/users/register`
+    : `${API_URL.replace(/\/$/, "")}/api/users/login`;  
   
     const payload = isSignUp ? { name, email, password } : { name, password };
   
