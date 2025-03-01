@@ -7,13 +7,13 @@ export default function ManageAccount() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [oldPassword, setOldPassword] = useState("");
-
+  const API_URL = import.meta.env.VITE_API_URL;
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
   const handleDelete = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/user/delete", {
+      const response = await fetch(`${API_URL}/api/user/delete`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("token")}`,
