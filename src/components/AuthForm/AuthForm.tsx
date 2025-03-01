@@ -59,14 +59,12 @@ export default function AuthForm() {
       localStorage.setItem("refreshToken", data.refreshToken);
       localStorage.setItem(
         "user",
-        JSON.stringify({ id: data.user.id, name: data.user.name, isAdmin: data })
+        JSON.stringify({ id: data.user.id, name: data.user.name, isAdmin: data.user.isAdmin })
       );
-      
+  
       console.log("✅ Token et Refresh Token stockés :");
       console.log("🔹 Token :", localStorage.getItem("token"));
       console.log("🔹 Refresh Token :", localStorage.getItem("refreshToken"));
-      
-      
   
       setUser({ userPseudo: data.user.name, isAuthenticated: true, isAdmin: data.user.isAdmin });
   
@@ -78,49 +76,46 @@ export default function AuthForm() {
         });
         window.location.reload();
       }, 1000);
-      
-      
+  
     } catch (error) {
       console.error("❌ Erreur de connexion :", error);
       alert("Une erreur est survenue. Vérifiez votre connexion.");
     }
   };
   
+  
 
   // ✅ Fonction pour gérer la récupération de mot de passe
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (!email) {
       alert("Veuillez entrer votre adresse e-mail.");
       return;
     }
-
+  
     try {
       const response = await fetch(`${API_URL}/api/users/forgot-password`, {
-        // ✅ Correction ici
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-
+  
       const data = await response.json();
-
+  
       if (!response.ok) {
         alert(`❌ Erreur : ${data.message}`);
         return;
       }
-
+  
       alert("📩 Un email de récupération a été envoyé !");
       setIsResetPassword(false); // Revenir à la connexion
     } catch (error) {
-      console.error(
-        "❌ Erreur lors de la récupération du mot de passe :",
-        error
-      );
+      console.error("❌ Erreur lors de la récupération du mot de passe :", error);
       alert("Une erreur est survenue.");
     }
   };
+  
 
   return (
     <div className="auth-container">

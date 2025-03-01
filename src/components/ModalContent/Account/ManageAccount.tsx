@@ -27,7 +27,7 @@ export default function ManageAccount() {
       setMessage("Compte supprimé avec succès !");
       setError(null);
   
-      // Optionnel : Déconnexion après suppression
+      // Déconnexion après suppression
       localStorage.removeItem("token");
       window.location.href = "/"; // Redirige l'utilisateur
     } catch (error) {
@@ -36,9 +36,6 @@ export default function ManageAccount() {
       setMessage(null);
     }
   };
-  
-  
-  
 
   function areYouSure() {
     // Affiche un message de confirmation
@@ -59,7 +56,7 @@ export default function ManageAccount() {
     formData.append("oldPassword", oldPassword);
   
     try {
-      await axios.put("/api/users/update", formData, {
+      await axios.put(`${API_URL}/api/users/update`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
   
