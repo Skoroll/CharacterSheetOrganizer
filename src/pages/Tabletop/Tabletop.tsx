@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import Banner from "../../components/Banner/Banner";
 import Chat from "../../components/Chat/Chat";
 import DiceRoller from "../../components/DiceRoller/DiceRoller";
 import GmToolBar from "../../components/GmToolKit/GmToolBar/GmToolBar";
 import MediaDisplay from "../../components/MediaDisplay/MediaDisplay";
-{/*import NotesPanel from "../../components/NotesPanel/NotesPannel/"*/;}
+{
+  /*import NotesPanel from "../../components/NotesPanel/NotesPannel/"*/
+}
 import PlayerAtTable from "../../components/PlayersAtTable/PlayerAtTable";
 import SoundPlayer from "../../components/SoundPlayer/SoundPlayer";
 import { useUser } from "../../Context/UserContext"; // Utilisation du context
@@ -44,7 +45,6 @@ interface MessageType {
 }
 
 export default function TableComponent() {
-  const navigate = useNavigate();
   const { id } = useParams();
   const [error, setError] = useState<string | null>(null);
   const [table, setTable] = useState<Table | null>(null);
@@ -59,26 +59,46 @@ export default function TableComponent() {
     (player) => player.userId === user._id
   );
   const selectedCharacterId = currentPlayer?.selectedCharacter || null;
+  const [activePanel, setActivePanel] = useState<
+    | "npcs"
+    | "sendDocs"
+    | "playerList"
+    | "soundBoard"
+    | "tableStyle"
+    | null
+  >(null);
 
-  const [activePanel, setActivePanel] = useState<"npcs" | "sendDocs" | "playerList" | "soundBoard" | "tableStyle" | null>(null);
+  const refreshTables = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/tabletop/tables`);
+      if (!response.ok)
+        throw new Error("Erreur lors de la mise à jour des tables.");
+      console.log("✅ Tables mises à jour !");
+    } catch (err) {
+      console.error("❌ Erreur lors du rafraîchissement des tables :", err);
+    }
+  };
 
-    //  Fonction pour déclencher le re-render de Banner
-    const handleStyleUpdate = () => {
-      setRefreshTrigger((prev) => prev + 1);
-    };
+  //  Fonction pour déclencher le re-render de Banner
+  const handleStyleUpdate = () => {
+    setRefreshTrigger((prev) => prev + 1);
+  };
 
   // 📌 Ajouter un state pour stocker les notes
-{/*
+  {
+    /*
   const [notes, setNotes] = useState(table?.gameMasterNotes || {
   characters: "",
   quest: "",
   other: "",
   items: ""
 });
-*/}
+*/
+  }
 
-// 📌 Fonction pour modifier les notes
-{/*
+  // 📌 Fonction pour modifier les notes
+  {
+    /*
   const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
   const { name, value } = e.target;
   setNotes((prevNotes) => ({
@@ -110,41 +130,20 @@ const handleSaveNotes = async () => {
     alert("Impossible de sauvegarder les notes.");
   }
 };
-*/}
-
-const deleteTable = async (id: string) => {
-  try {
-    const token = localStorage.getItem("token");
-    const response = await fetch(`${API_URL}/api/tabletop/tables/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      let errorMessage = "Erreur lors de la suppression de la table.";
-      try {
-        const data = await response.json();
-        errorMessage = data.message || errorMessage;
-      } catch {}
-      throw new Error(errorMessage);
-    }
-    
-    alert("Table de jeu supprimée");
-    navigate("/"); // ✅ Bien placé ici
-  } catch (err) {
-    console.error("Erreur:", err);
-    alert("Une erreur est survenue lors de la suppression.");
+*/
   }
-};
 
-
-
-const togglePanel = (panel: "npcs" | "sendDocs" | "playerList" | "soundBoard" | "tableStyle" | null) => {
-  setActivePanel(activePanel === panel ? null : panel);
-};
+  const togglePanel = (
+    panel:
+      | "npcs"
+      | "sendDocs"
+      | "playerList"
+      | "soundBoard"
+      | "tableStyle"
+      | null
+  ) => {
+    setActivePanel(activePanel === panel ? null : panel);
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -154,39 +153,39 @@ const togglePanel = (panel: "npcs" | "sendDocs" | "playerList" | "soundBoard" | 
         const response = await fetch(`${API_URL}/api/tabletop/tables/${id}`);
         if (!response.ok)
           throw new Error("Erreur lors de la récupération de la table.");
-    
+
         const data = await response.json();
         setTable(data);
-    
+
         console.log("📌 Table récupérée :", data);
         console.log("📌 Utilisateur connecté :", user);
-    
+
         // Trouver le joueur actuel dans la liste des joueurs
         const currentPlayer = data.players.find(
           (player: Player) => player.userId === user._id
         );
-    
+
         console.log("🔍 Joueur actuel trouvé :", currentPlayer);
-    
+
         if (currentPlayer?.selectedCharacter) {
           const characterResponse = await fetch(
             `${API_URL}/api/characters/${currentPlayer.selectedCharacter}`
           );
           const characterData = await characterResponse.json();
-    
+
           setUser((prevUser) => ({
             ...prevUser,
             selectedCharacterName:
               characterData.name || "Nom du personnage non défini",
           }));
         }
-    
+
         // **🚨 Vérifie si l'utilisateur est bien détecté comme Game Master**
         console.log("🧑‍🏫 Comparaison GameMaster : ", {
           gameMaster: data.gameMaster,
           userId: user._id,
         });
-    
+
         if (data.gameMaster === user._id) {
           console.log("✅ L'utilisateur est le Game Master !");
           setIsGameMaster(true);
@@ -203,7 +202,6 @@ const togglePanel = (panel: "npcs" | "sendDocs" | "playerList" | "soundBoard" | 
         setLoading(false);
       }
     }
-    
 
     fetchTable();
   }, [id, API_URL, user._id, setUser]);
@@ -234,17 +232,18 @@ const togglePanel = (panel: "npcs" | "sendDocs" | "playerList" | "soundBoard" | 
       <div className="table__content">
         {/* Heading */}
         <div>
-        <div className="table__content--header">
-
-          <h2>{table?.name}</h2>
-          <div className="header-container">
-            <p>Maître du Jeu : {table?.gameMasterName}</p>
-            <p>Système de jeu : {table.game}</p>
+          <div className="table__content--header">
+            <h2>{table?.name}</h2>
+            <div className="header-container">
+              <p>Maître du Jeu : {table?.gameMasterName}</p>
+              <p>Système de jeu : {table.game}</p>
+            </div>
           </div>
-
-        </div>
-<Banner tableId={table?._id ?? ""} API_URL={API_URL} refreshTrigger={refreshTrigger} />
-
+          <Banner
+            tableId={table?._id ?? ""}
+            API_URL={API_URL}
+            refreshTrigger={refreshTrigger}
+          />
         </div>
         <PlayerAtTable
           tableId={table._id}
@@ -253,7 +252,7 @@ const togglePanel = (panel: "npcs" | "sendDocs" | "playerList" | "soundBoard" | 
           selectedCharacterId={selectedCharacterId}
         />
 
-{/*<NotesPanel
+        {/*<NotesPanel
   notes={notes}
   handleNotesChange={handleNotesChange}
   handleSaveNotes={handleSaveNotes}
@@ -262,16 +261,16 @@ const togglePanel = (panel: "npcs" | "sendDocs" | "playerList" | "soundBoard" | 
   userId={user._id ?? ""} // Si _id est undefined, on utilise une chaîne vide
 />*/}
 
-
         {isGameMaster && (
           <GmToolBar
-            tableId={table?._id ?? ""} // Vérifie si table est défini avant d'accéder à _id
-            players={table?.players ?? []} // Vérifie si table est défini avant d'accéder à players
+            tableId={table?._id ?? ""}
+            players={table?.players ?? []}
             isGameMaster={isGameMaster}
             activePanel={activePanel}
             togglePanel={togglePanel}
             API_URL={API_URL}
             onStyleUpdate={handleStyleUpdate}
+            refreshTables={refreshTables}
           />
         )}
 
@@ -280,16 +279,16 @@ const togglePanel = (panel: "npcs" | "sendDocs" | "playerList" | "soundBoard" | 
             <MediaDisplay tableId={table._id} API_URL={API_URL} />
           </div>
           <div className="table-side-pannel">
-          <DiceRoller 
-  socket={socket}
-  tableId={table._id}
-  userCharacterName={
-    isGameMaster
-      ? "Maître de jeu"
-      : user.selectedCharacterName || "Nom de personnage non défini"
-  }
-  userPseudo={user.userPseudo}
-/>
+            <DiceRoller
+              socket={socket}
+              tableId={table._id}
+              userCharacterName={
+                isGameMaster
+                  ? "Maître de jeu"
+                  : user.selectedCharacterName || "Nom de personnage non défini"
+              }
+              userPseudo={user.userPseudo}
+            />
 
             <Chat
               messages={messages}
@@ -304,16 +303,9 @@ const togglePanel = (panel: "npcs" | "sendDocs" | "playerList" | "soundBoard" | 
               userPseudo={user.userPseudo}
             />
           </div>
-
         </div>
       </div>
-          <SoundPlayer/>
-          {isGameMaster && <button
-            className="tabletop-browse--join"
-            onClick={() => deleteTable(table._id)}
-          >
-            <i className="fa-solid fa-trash" /> Suppimer la table
-          </button>}
+      <SoundPlayer />
     </div>
   );
 }

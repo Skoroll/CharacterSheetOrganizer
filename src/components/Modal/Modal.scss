@@ -49,3 +49,16 @@
     position: relative;
   }
 }
+
+
+.modal__inside--content {
+  button {
+    @include button;
+  }
+
+  .modal-actions {
+    @include flex-row;
+    justify-content: space-between;
+    margin-top: $spacing-medium;
+  }
+}

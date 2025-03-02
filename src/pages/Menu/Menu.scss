@@ -82,14 +82,26 @@
 .character-list__create-new {
   @include flex-col;
   border: 1px solid !important;
+  transition: all 0.3s;
 
   .fa-plus {
     font-size: 40px;
     margin: auto;
+    transition: all 0.3s;
   }
 
   p {
     margin: 5px 0;
     text-align: center;
+  }
+
+
+  &:hover {
+    
+    padding: 0;
+
+    .fa-plus {
+      font-size: 50px;
+    }
   }
 }

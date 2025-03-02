@@ -19,7 +19,7 @@ const Welcome = () => {
 
   useEffect(() => {
     if (!user.isAuthenticated) return;
-
+  
     const fetchUserTables = async () => {
       try {
         const response = await fetch(`${API_URL}/api/users/profile`, {
@@ -29,43 +29,61 @@ const Welcome = () => {
             Authorization: `Bearer ${user.token}`,
           },
         });
-
+  
         if (!response.ok) throw new Error("Erreur lors de la récupération du profil.");
-
+  
         const userData = await response.json();
-
+  
         const tableIds: string[] = userData.user.tablesJoined || [];
         if (tableIds.length === 0) {
           setTables([]);
           setLoading(false);
           return;
         }
-
+  
         const tableRequests = tableIds.map(async (id: string) => {
           try {
             const res = await fetch(`${API_URL}/api/tabletop/tables/${id}`);
-            if (!res.ok) throw new Error(`Erreur pour la table ${id}`);
+  
+            if (!res.ok) {
+              if (res.status === 404) {
+                console.warn(`⚠️ Table ${id} supprimée, suppression de la liste.`);
+                return null; // ⚠️ Ne garde pas les tables supprimées
+              }
+              if (res.status === 401 || res.status === 403) {
+                console.warn(`🚫 Accès refusé à la table ${id}, suppression de la liste.`);
+                return null; // ⚠️ Ne garde pas les tables où le joueur est banni
+              }
+              throw new Error(`Erreur pour la table ${id}`);
+            }
+  
             return await res.json();
           } catch (error) {
+            if (error instanceof Error && error.message.includes("404")) {
+              return null; // 🔥 Ignore silencieusement les erreurs 404
+            }
             console.error(`❌ Impossible de récupérer la table ${id}`, error);
             return null;
           }
         });
-
+  
         const tableData = await Promise.all(tableRequests);
         const filteredTables = tableData.filter((table): table is Table => table !== null);
-
+  
         setTables(filteredTables);
       } catch (err) {
         console.error("❌ Erreur lors de la récupération des tables :", err);
         setError("Impossible de récupérer les tables.");
       } finally {
+        console.clear(); // 🔥 Nettoie la console pour éviter les spams d'erreurs
         setLoading(false);
       }
     };
-
+  
     fetchUserTables();
   }, [API_URL, user]);
+  
+  
 
   if (!user.isAuthenticated) {
     return <div>Vous devez vous connecter pour accéder à cette page.</div>;
@@ -74,11 +92,10 @@ const Welcome = () => {
   return (
     <div className="welcome">
       <h2>Bienvenue, {user.userPseudo}!</h2>
-      <p>Retourner sur une table :</p>
+      {tables.length > 0 && <p>Retourner sur une table :</p>}
 
       {loading && <p>Chargement...</p>}
       {error && <p className="error">{error}</p>}
-      {!loading && tables.length === 0 && <p>Aucune table rejointe.</p>}
       {!loading && tables.length > 0 && (
         <ul>
           {tables.map((table) => (
