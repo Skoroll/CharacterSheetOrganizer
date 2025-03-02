@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { BeatLoader } from "react-spinners";
 import Banner from "../../components/Banner/Banner";
 import Chat from "../../components/Chat/Chat";
 import DiceRoller from "../../components/DiceRoller/DiceRoller";
@@ -223,7 +224,7 @@ const handleSaveNotes = async () => {
     };
   }, [table, socket]);
 
-  if (loading) return <p>Chargement...</p>;
+  if (loading) return <p><BeatLoader/></p>;
   if (error) return <p>Erreur : {error}</p>;
   if (!table) return <p>Table non trouvée.</p>;
 

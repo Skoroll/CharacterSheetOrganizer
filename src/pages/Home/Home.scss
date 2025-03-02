@@ -12,7 +12,9 @@
 
   &__tables-options {
     @include flex-col;
-
+    h2 {
+      text-align: center;
+    }
     &--div {
       .tabletop-browse,
       .tabletop-creation {

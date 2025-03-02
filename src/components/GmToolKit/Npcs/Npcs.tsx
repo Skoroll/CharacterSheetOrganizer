@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { BeatLoader } from "react-spinners";
 import "./Npcs.scss";
 
 interface Npc {
@@ -343,7 +344,7 @@ export default function Npcs({ tableId }: NpcsProps) {
           </h3>
 
           {loading ? (
-            <p>Chargement...</p>
+            <p><BeatLoader/></p>
           ) : error ? (
             <p>Erreur : {error}</p>
           ) : filteredNpcs.length > 0 ? (

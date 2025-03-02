@@ -5,6 +5,7 @@ import TableTopBrowse from "../../components/ModalContent/ModalTabletop/TableTop
 import TabletopCreation from "../../components/ModalContent/ModalTabletop/TabletopCreation/TabletopCreation";
 import Welcome from "../../components/Welcome/Welcome";
 import Menu from "../Menu/Menu";
+import { BeatLoader } from "react-spinners";
 import "./Home.scss";
 
 export default function Home() {
@@ -20,7 +21,7 @@ export default function Home() {
   }, []);
 
   if (isAuthenticated === null) {
-    return <div>Chargement...</div>;
+    return <div><BeatLoader/></div>;
   }
 
   return (

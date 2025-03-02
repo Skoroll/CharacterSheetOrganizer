@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../../Context/UserContext";
 import "./TabletopJoin.scss";
+import { BeatLoader } from "react-spinners";
 
 interface Character {
   _id: string;
@@ -138,7 +139,7 @@ const TabletopJoin = ({ tableId, onClose, gameMasterId }: TabletopJoinProps) => 
 
   return (
     <div className="tabletop-join-modal">
-      {loading && <p>Chargement...</p>}
+      {loading && <p><BeatLoader/></p>}
       {error && <p className="error">Erreur : {error}</p>}
       {!loading && !error && (
         <>

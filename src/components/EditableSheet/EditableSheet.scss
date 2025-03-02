@@ -47,6 +47,7 @@
   &__identity {
     position: relative;
     border: 1px solid;
+    border-radius: 16px;
     padding: $spacing-small;
     @include flex-col;
     text-align: left;
@@ -67,7 +68,7 @@
       font-size: 15px;
       justify-content: center;
       background: rgba(0, 0, 0, 0.699);
-
+      border-radius: 0 0 8px 8px;
 
     }
 
@@ -119,6 +120,7 @@
       height: 260px;
       margin: auto;
       object-fit: cover;
+      border-radius: 8px 8px 0 0;
     }
 
     &--stats,
@@ -210,10 +212,20 @@
   }
   &__infos {
     &--inventory {
-        @include flex-wrap;
-        
-        .quantity {
+        @include flex-col;
+        align-items: center;
+        justify-content:flex-start !important;
+        gap: $spacing-medium;
 
+        button {
+          width: 350px;
+        }
+        table {
+          max-width: 350px;
+          margin: 0;
+        }
+
+        .quantity {
           input {
             width: 50px;
 
@@ -227,7 +239,7 @@
       }
 
       @include media-query($breakpoint-sm, "min") {
-        @include flex-row;
+        @include flex-col;
         width: 100%;
         justify-content: space-evenly;
         table {

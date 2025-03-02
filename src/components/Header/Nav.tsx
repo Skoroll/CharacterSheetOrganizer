@@ -7,6 +7,7 @@ import Modal from "../Modal/Modal";
 import Settings from "../ModalContent/Account/Settings";
 import TableTopBrowse from "../ModalContent/ModalTabletop/TableTopBrowse/TableTopBrowse";
 import TabletopCreation from "../ModalContent/ModalTabletop/TabletopCreation/TabletopCreation";
+import { BeatLoader } from "react-spinners";
 import "./Nav.scss";
 
 interface NavProps {
@@ -116,7 +117,7 @@ export default function Nav({ className, toggleNav }: NavProps) {
           ))}
         </nav>
       ) : (
-        <p>Chargement...</p>
+        <p><BeatLoader/></p>
       )}
 
       {isModalOpen && modalTitle && selectedContent && (

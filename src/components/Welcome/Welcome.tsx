@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useUser } from "../../Context/UserContext";
 import { useNavigate } from "react-router-dom";
 import "./Welcome.scss";
+import { BeatLoader } from "react-spinners";
 
 type Table = {
   _id: string;
@@ -94,7 +95,7 @@ const Welcome = () => {
       <h2>Bienvenue, {user.userPseudo}!</h2>
       {tables.length > 0 && <p>Retourner sur une table :</p>}
 
-      {loading && <p>Chargement...</p>}
+      {loading && <p><BeatLoader/></p>}
       {error && <p className="error">{error}</p>}
       {!loading && tables.length > 0 && (
         <ul>
