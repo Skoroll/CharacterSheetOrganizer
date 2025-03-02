@@ -9,9 +9,7 @@ export default function AuthForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { setUser } =  useUser(); // Accède à la fonction setUser pour mettre à jour le contexte
-
   const API_URL = import.meta.env.VITE_API_URL; // Récupère l'URL du backend
-  console.log("🔍 API_URL :", import.meta.env.VITE_API_URL);
 
   useEffect(() => {
     // Vérifie si un token est déjà présent dans le localStorage lors du chargement du composant
@@ -29,8 +27,8 @@ export default function AuthForm() {
     e.preventDefault();
   
     const endpoint = isSignUp
-    ? `${API_URL.replace(/\/$/, "")}/api/users/register`
-    : `${API_URL.replace(/\/$/, "")}/api/users/login`;  
+      ? `${API_URL.replace(/\/$/, "")}/api/users/register`
+      : `${API_URL.replace(/\/$/, "")}/api/users/login`;
   
     const payload = isSignUp ? { name, email, password } : { name, password };
   
@@ -48,13 +46,17 @@ export default function AuthForm() {
         return;
       }
   
-      // 🔥 Vérifie les bonnes clés retournées par l'API
-      if (!data.accessToken || !data.refreshToken || !data.user) {
-        console.error("❌ L'API ne retourne pas de token ou d'utilisateur !");
+      if (isSignUp) {
+        // ✅ Si c'était une inscription, afficher un message et rediriger vers la connexion
+        alert("✅ Inscription réussie ! Vous pouvez maintenant vous connecter.");
+        setIsSignUp(false); // 🔥 Retour au formulaire de connexion
+        setName("");
+        setEmail("");
+        setPassword("");
         return;
       }
   
-      // ✅ Stocker les tokens et l'utilisateur
+      // ✅ Si c'est une connexion, stocker les tokens et l'utilisateur
       localStorage.setItem("token", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
       localStorage.setItem(
@@ -62,28 +64,16 @@ export default function AuthForm() {
         JSON.stringify({ id: data.user.id, name: data.user.name, isAdmin: data.user.isAdmin })
       );
   
-      console.log("✅ Token et Refresh Token stockés :");
-      console.log("🔹 Token :", localStorage.getItem("token"));
-      console.log("🔹 Refresh Token :", localStorage.getItem("refreshToken"));
-  
       setUser({ userPseudo: data.user.name, isAuthenticated: true, isAdmin: data.user.isAdmin });
   
-      setTimeout(() => {
-        console.log("📌 Vérification après 1s :", {
-          token: localStorage.getItem("token"),
-          refreshToken: localStorage.getItem("refreshToken"),
-          user: localStorage.getItem("user"),
-        });
-        window.location.reload();
-      }, 1000);
+      console.log("✅ Connexion réussie ! Redirection...");
+      window.location.reload(); // 🔥 Recharge la page après connexion
   
     } catch (error) {
       console.error("❌ Erreur de connexion :", error);
       alert("Une erreur est survenue. Vérifiez votre connexion.");
     }
   };
-  
-  
 
   // ✅ Fonction pour gérer la récupération de mot de passe
   const handleResetPassword = async (e: React.FormEvent) => {

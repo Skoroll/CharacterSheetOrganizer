@@ -52,8 +52,8 @@ export default function Nav({ className, toggleNav }: NavProps) {
   // Fonction pour gérer la déconnexion
   const handleLogout = () => {
     logout(); 
-    window.location.reload();
     navigate("/"); 
+    window.location.reload();
   };
 
   const userOptions: Option[] = [
