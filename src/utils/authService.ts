@@ -71,23 +71,14 @@ api.interceptors.response.use(
   }
 );
 
-console.log("🌍 API_URL utilisé :", API_URL);
-
 // ✅ Fonction pour rafraîchir le token
 export const refreshAccessToken = async () => {
   try {
     const refreshToken = localStorage.getItem("refreshToken");
-    console.log("📌 Refresh Token récupéré :", refreshToken); // ✅ Debugging
-
     if (!refreshToken) throw new Error("Aucun refresh token disponible");
-
-    console.log("🌍 Envoi de la requête à :", `${API_URL}/api/users/refresh-token`); // ✅ Ajout du log
-
     const response = await axios.post(`${API_URL}/api/users/refresh-token`, {
       refreshToken,
     });
-
-    console.log("✅ Réponse de l'API :", response.data);
 
     const { accessToken, newRefreshToken } = response.data;
     localStorage.setItem("token", accessToken);
