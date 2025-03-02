@@ -1,29 +1,53 @@
-
+import "./Legal.scss";
 
 const Legal = () => {
   return (
-    <div className="p-6 max-w-4xl mx-auto text-gray-200">
-      <h1 className="text-2xl font-bold mb-4">Mentions Légales</h1>
-      <p>
-        Ce site est édité par <strong>Skorol Web</strong>.
-      </p>
-      <p>
-        Hébergement : <strong>Nom de l'hébergeur</strong>.
-      </p>
-      <p>
-        Pour toute question, vous pouvez nous contacter à{" "}
-        <a href="mailto:contact@skorolweb.com" className="text-blue-400">
-          contact@skorolweb.com
-        </a>
-        .
-      </p>
-      <h2 className="text-xl font-semibold mt-4">Données personnelles</h2>
-      <p>
-        Ce site collecte des données uniquement pour améliorer l'expérience des
-        utilisateurs. Aucune donnée n'est vendue ou partagée.
-      </p>
-      <h2 className="text-xl font-semibold mt-4">Cookies</h2>
-      <p>Nous utilisons des cookies pour garantir un bon fonctionnement du site.</p>
+    <div className="legal-container">
+      <h1>Mentions Légales</h1>
+
+      <section>
+        <h2>Informations Générales</h2>
+        <p>
+          Ce site est un outil communautaire permettant aux joueurs de gérer leurs personnages dans l’univers du jeu de rôle <strong>Aria</strong>, créé par <strong>FibreTigre</strong> et publié par <strong>ElderCraft</strong>. Il ne détient aucun droit sur les règles du jeu et n’est en aucun cas affilié officiellement aux créateurs ou aux éditeurs.
+        </p>
+      </section>
+
+      <section>
+        <h2>Utilisation des Données Utilisateurs</h2>
+        <p>
+          Les données collectées sont uniquement utilisées pour le bon fonctionnement du site et ne sont en aucun cas revendues ou utilisées à des fins commerciales.
+        </p>
+      </section>
+
+      <section>
+        <h2>Données Stockées</h2>
+        <p>
+          Le site stocke uniquement les informations nécessaires à son fonctionnement :
+        </p>
+        <ul>
+          <li>Pseudonyme</li>
+          <li>Mot de passe (chiffré, non visible en clair)</li>
+          <li>Adresse email</li>
+          <li>Caractéristiques des personnages créés</li>
+        </ul>
+        <p>
+          Ces données ne sont accessibles qu’aux administrateurs du site et aux utilisateurs concernés.
+        </p>
+      </section>
+
+      <section>
+        <h2>Responsabilité</h2>
+        <p>
+          En utilisant ce site, vous acceptez que l’administrateur ne puisse être tenu responsable des contenus partagés par les utilisateurs, ni de l’utilisation faite des outils mis à disposition.
+        </p>
+      </section>
+
+      <section>
+        <h2>Contact</h2>
+        <p>
+          Pour toute question ou demande de suppression de compte, contactez-nous à l’adresse suivante : <strong>contact.skorol@gmail.com</strong>
+        </p>
+      </section>
     </div>
   );
 };

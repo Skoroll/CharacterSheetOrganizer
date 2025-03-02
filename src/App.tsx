@@ -7,6 +7,7 @@ import CreateSheet from "./components/CreateSheet/CreateSheet";
 import Footer from "./components/Footer/Footer";
 import Header from "./components/Header/Header";
 import Home from "./pages/Home/Home";
+import Legal from "./pages/Legal/Legal.js";
 import Tabletop from "./pages/Tabletop/Tabletop";
 import ResetPassword from "./components/ResetPassword/ResetPassword.js";
 import { UserProvider } from "./Context/UserContext";  // ✅ Import du UserProvider
@@ -45,6 +46,7 @@ function App() {
                 <Route path="/personnage/:id" element={<CharacterDetails />} />
                 <Route path="/table/:id" element={<Tabletop />} />
                 <Route path="/settings" element={<Settings />} />
+                <Route path="/mentions-legales" element={<Legal/>}/>
               </Routes>
             </main>
             <Footer />
