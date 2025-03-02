@@ -1,4 +1,5 @@
 import { useState, ReactNode, useEffect, useRef } from "react";
+import { useUser } from "../../Context/UserContext";
 import { useNavigate } from "react-router-dom";
 import CharacterList from "../ModalContent/Character/CharacterList";
 import ManageAccount from "../ModalContent/Account/ManageAccount";
@@ -29,6 +30,7 @@ interface ComponentOption {
 type Option = ActionOption | ComponentOption;
 
 export default function Nav({ className, toggleNav }: NavProps) {
+  const { user, logout } = useUser();
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState<string | null>(null);
@@ -49,10 +51,9 @@ export default function Nav({ className, toggleNav }: NavProps) {
 
   // Fonction pour gérer la déconnexion
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user")
-    navigate("/");
+    logout(); 
     window.location.reload();
+    navigate("/"); 
   };
 
   const userOptions: Option[] = [
@@ -99,34 +100,30 @@ export default function Nav({ className, toggleNav }: NavProps) {
 
   return (
     <>
-      <nav ref={navRef} className={`main-menu ${className}`}>
-        {menuSections.map(({ title, options }, index) => (
-          <section key={index}>
-            <h2>{title}</h2>
-            <ul>
-              {options.map((option, idx) => (
-                <li
-                  key={idx}
-                  onClick={() =>
-                    option.action?.() ||
-                    handleOptionClick(option.label, option.component!)
-                  }
-                >
-                  {option.label}
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
-      </nav>
+      {user.isAuthenticated ? (
+        <nav ref={navRef} className={`main-menu ${className}`}>
+          {menuSections.map(({ title, options }, index) => (
+            <section key={index}>
+              <h2>{title}</h2>
+              <ul>
+                {options.map((option, idx) => (
+                  <li key={idx} onClick={() => option.action?.() || handleOptionClick(option.label, option.component!)}>
+                    {option.label}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </nav>
+      ) : (
+        <p>Chargement...</p>
+      )}
 
       {isModalOpen && modalTitle && selectedContent && (
-  <Modal title={modalTitle} onClose={() => setModalOpen(false)}>
-    {selectedContent}
-  </Modal>
-)}
-
-
+        <Modal title={modalTitle} onClose={() => setModalOpen(false)}>
+          {selectedContent}
+        </Modal>
+      )}
     </>
   );
 }

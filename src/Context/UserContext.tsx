@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createContext, useContext } from "react";
-import { loginUser } from "../utils/authService"; // ✅ Import de la fonction login
+import { loginUser } from "../utils/authService";
 
 // ✅ Interface utilisateur
 interface User {
@@ -15,7 +15,7 @@ interface User {
 interface UserContextProps {
   user: User;
   setUser: React.Dispatch<React.SetStateAction<User>>;
-  login: (name: string, password: string) => Promise<boolean>; // 🔥 Ajout de la fonction `login`
+  login: (name: string, password: string) => Promise<boolean>;
   logout: () => void;
 }
 
@@ -31,34 +31,28 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     isAdmin: false,
   });
 
-  // ✅ Vérification et chargement du user au démarrage
+  // ✅ Vérifier si un utilisateur est déjà connecté
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const token = localStorage.getItem("token");
-  
+
     if (storedUser && token) {
       const parsedUser = JSON.parse(storedUser);
       setUser({
-        _id: parsedUser.id || parsedUser._id, // 🔥 Ajoute l'ID
+        _id: parsedUser.id || parsedUser._id,
         userPseudo: parsedUser.userPseudo || parsedUser.name,
         isAuthenticated: true,
         token,
         isAdmin: parsedUser.isAdmin || false,
         selectedCharacterName: parsedUser.selectedCharacterName || "",
       });
-  
-      console.log("✅ Utilisateur chargé depuis le localStorage :", {
-        _id: parsedUser.id || parsedUser._id,
-        userPseudo: parsedUser.userPseudo || parsedUser.name,
-      });
     }
   }, []);
-  
 
   // ✅ Fonction de connexion
   const login = async (name: string, password: string): Promise<boolean> => {
     const data = await loginUser(name, password);
-    
+
     if (data) {
       setUser({
         _id: data.user.id,
@@ -68,28 +62,35 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         isAdmin: data.user.isAdmin,
         selectedCharacterName: data.user.selectedCharacterName || "",
       });
-      return true; // ✅ Connexion réussie
+
+      localStorage.setItem("token", data.accessToken);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      return true;
     }
 
-    return false; // ❌ Connexion échouée
+    return false;
   };
 
-  // ✅ Fonction de déconnexion améliorée
+  // ✅ Fonction de déconnexion améliorée (sans `useNavigate()`)
   const logout = () => {
-    console.log(
-      "%c🔥 `logout()` a été appelé !",
-      "background: blue; color: white; font-size: 20px; font-weight: bold; padding: 10px;"
-    );
+    console.log("🔥 Déconnexion en cours...");
+  
+    // ✅ Supprimer les tokens AVANT la mise à jour de l'état
     localStorage.removeItem("token");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
-    setUser({ userPseudo: "", isAuthenticated: false, token: undefined });
-    window.location.href = "/";
-  };
   
-  useEffect(() => {
-    console.log("📌 État utilisateur mis à jour :", user);
-  }, [user]);
+    setUser({
+      userPseudo: "",
+      isAuthenticated: false,
+      token: undefined,
+      selectedCharacterName: "",
+      isAdmin: false,
+    });
+  
+    console.log("✅ Déconnecté : Token supprimé.");
+  };
   
 
   return (
@@ -105,7 +106,7 @@ const useUser = (): UserContextProps => {
   if (!context) {
     throw new Error("useUser must be used within a UserProvider");
   }
-  return context as UserContextProps; // ✅ Force TypeScript à comprendre que le contexte est valide
+  return context;
 };
 
 export { UserContext, UserProvider, useUser };

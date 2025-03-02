@@ -70,30 +70,25 @@ const TableStyle: React.FC<TableStyleProps> = ({ tableId, API_URL, onStyleUpdate
           <input type="file" accept="image/*" onChange={handleImageUpload} />
         </label>
 
-        {/* 📌 Prévisualisation de l'image */}
-        {!bannerPreview && (
-          <div
-            className={`banner-preview ${bannerStyle}`}
-            style={{
-              backgroundImage: `url(${bannerPreview})`,
-              borderWidth: borderWidth,
-              borderColor: borderColor,
-              borderStyle: "solid",
-            }}
-            
-            >
-          </div>
-          
-        )}
+{/* 📌 Prévisualisation de l'image */}
+{bannerPreview ? (
+  <div
+    className={`banner-preview ${bannerStyle}`}
+    style={{
+      backgroundImage: `url(${bannerPreview})`,
+      borderWidth: borderWidth,
+      borderColor: borderColor,
+      borderStyle: "solid",
+    }}
+  />
+) : (
+  <p className="no-img">
+    <i className="fa-solid fa-image" />
+    <br />
+    Ajouter votre image
+  </p>
+)}
 
-        {!bannerPreview && (
-          
-          <p 
-            className="no-img">
-              <i className="fa-solid fa-image"/>
-              <br/>
-            Ajouter votre image</p>
-        )}
         </div>
 
         {/* 📌 Choix du contour */}
