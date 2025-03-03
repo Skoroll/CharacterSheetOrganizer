@@ -8,6 +8,11 @@
   &-wrapper {
     @include flex-col;
     flex: 1;
+
+    &__container {
+      @include flex-row;
+      justify-content: space-evenly
+    }
   }
 
   &__tables-options {
@@ -16,19 +21,19 @@
       text-align: center;
     }
     &--div {
+      @include flex-col;
+      width: 50%;
+      padding: $spacing-small;
+
       .tabletop-browse,
       .tabletop-creation {
- 
-        padding: $spacing-large
+        gap: $spacing-small;
       }
 
       @include media-query($breakpoint-sm, "min") {
-        @include flex-row;
 
-        .table-top-browse-div,
-        .table-creation-div {
-          width: 50%;
-        }
+
+
       }
     }
   }
@@ -37,4 +42,14 @@
         color: $text-color;
     }
   }
+}
+
+
+.tables-choices {
+  @include flex-row;
+  justify-content: space-evenly;
+  .table-top-browse-div,
+  .table-creation-div {
+    width: 40%;
+  } 
 }
