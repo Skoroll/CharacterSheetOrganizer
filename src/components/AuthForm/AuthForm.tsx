@@ -109,6 +109,7 @@ export default function AuthForm() {
 
   return (
     <div className="auth-container">
+                <h2>{isSignUp ? "Créer un compte" : "Se connecter"}</h2>
       <div className="auth-container__btns">
         <button 
           onClick={() => setIsSignUp(false)}
@@ -116,7 +117,7 @@ export default function AuthForm() {
         >
             Se connecter
         </button>
-
+        /
         <button 
           onClick={() => setIsSignUp(true)}
           className={isSignUp ? "selected" : ""}
@@ -127,7 +128,7 @@ export default function AuthForm() {
       {isResetPassword ? (
         // ✅ Formulaire de récupération de mot de passe
         <>
-          <h2>🔑 Réinitialiser le mot de passe</h2>
+          <h2> Réinitialiser le mot de passe</h2>
           <form onSubmit={handleResetPassword}>
             <input
               type="email"
@@ -148,7 +149,6 @@ export default function AuthForm() {
       ) : (
         // ✅ Formulaire de connexion/inscription
         <>
-          <h2>{isSignUp ? "Créer un compte" : "Se connecter"}</h2>
           <form onSubmit={handleSubmit}>
             <input
               type="text"

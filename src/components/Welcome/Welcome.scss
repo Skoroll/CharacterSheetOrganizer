@@ -8,41 +8,11 @@
 
   h2 {
     text-align: center;
+    margin: 0;
   }
 
   p {
     margin: 0 0 $spacing-small 0;
     text-align: left;
-  }
-
-  ul {
-    @include ul-base;
-
-    li {
-      @include flex-row;
-      align-items: center;
-      text-align: left;
-
-      gap: $spacing-medium;
-      cursor: pointer;
-      border-bottom: 1px solid transparent;
-      border-left: 1px solid transparent;
-      padding: $spacing-small;
-      transition: all 0.3s;
-
-      &:hover {
-          border-bottom: 1px solid ;
-          border-left: 1px solid ;
-        .fa-chevron-right {
-            transform: scale(120%);
-        }
-      }
-
-      .table__recap {
-        span {
-          margin-left: $spacing-medium;
-        }
-      }
-    }
   }
 }
