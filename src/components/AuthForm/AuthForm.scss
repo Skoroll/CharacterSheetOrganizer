@@ -1,13 +1,18 @@
-@import "../../style/mixins.scss";
-@import "../../style/variables.scss";
 
 .auth-container {
+  position: absolute;
+  top: 65px;
+  right: 15px;
+  
     @include flex-col;
     margin: auto;
     padding: $spacing-small $spacing-medium;
     text-align: center;
     border: 1px solid #ddd;
     border-radius: 8px;
+    width: 350px;
+    height: 250px;
+    background-color: $background-color;
     
     h2 {
       margin: $spacing-small;
@@ -26,11 +31,11 @@
     }
 
   form{
-    @include flex-wrap;
+    @include flex-col;
     gap: $spacing-small;
-    
+
     button {
-      width: 50%;
+      width: 70%;
       margin: auto;
       @include button;
 
@@ -47,6 +52,7 @@
     margin: 10px 0;
     border: 1px solid #ccc;
     border-radius: 5px;
+    
   }
   
  button {
@@ -57,6 +63,7 @@
   padding: 8px 16px;
   border-radius: 5px;
   transition: all 0.3s;
+  margin: auto auto 5px auto;
   
 
   &:hover {
@@ -70,6 +77,13 @@
     text-decoration: underline;
     border: none;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: auto;
+
   }
+}
+
+
+.form__inputs-div {
+  @include flex-col;
+
 }

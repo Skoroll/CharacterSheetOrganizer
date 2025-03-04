@@ -54,7 +54,7 @@ const Footer = () => {
         <p className="footer--CR">
           © {new Date().getFullYear()} Skorol Web - Tous droits réservés.
           <br />
-          Ce site est un outil non officiel pour le jeu de rôle Aria, créé par FibreTigre et publié par ElderCraft.
+          Ce site est un outil non officiel pour le jeu de rôle Aria, créé par FibreTigre et publié par <a className="credit-link" target="_blank" href="https://elder-craft.com/">ElderCraft.</a>
         </p>
       </div>
     </footer>

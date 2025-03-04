@@ -1,5 +1,4 @@
-@import "../../style/mixins.scss";
-@import "../../style/variables.scss";
+
 
 .header {
     @include flex-row;
@@ -7,6 +6,13 @@
     backdrop-filter: blur(5px);
     z-index: 999;
     width: 100%;
+
+    .auth-btn {
+        @include button;
+        height: 35px;
+        margin: auto 15px auto auto;
+    }
+
     h1 {
         text-align: left;
         margin-left: 5px;

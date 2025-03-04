@@ -1,6 +1,3 @@
-@import "./style/mixins.scss";
-@import "./style/variables.scss";
-
 #root {
   @include flex-col;
   width: 100%;
