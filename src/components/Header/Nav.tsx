@@ -14,6 +14,7 @@ interface NavProps {
   className: string;
   toggleNav: () => void;
   component?: never;
+  role?: string,
 }
 
 interface ActionOption {
