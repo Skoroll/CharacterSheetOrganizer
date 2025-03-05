@@ -17,6 +17,15 @@ export default function Header() {
       <h1 onClick={() => navigate("/")} role="button" tabIndex={0}>
         Character sheet <br /> Organizer
       </h1>
+
+      {/* Navigation principale avec Nouveautés et Tutoriel */}
+      <nav className="main-nav">
+        <button onClick={() => navigate("/")}>Accueil</button>
+        <button onClick={() => navigate("/news")}>Nouveautés</button>
+        <button onClick={() => navigate("/tutorial")}>Tutoriel</button>
+      </nav>
+
+      {/* Bouton pour le menu utilisateur (si connecté) */}
       {user?.isAuthenticated && (
         <button
           className="menu-toggle"
@@ -27,17 +36,26 @@ export default function Header() {
           <i className={`fa-solid ${isOpen ? "fa-xmark" : "fa-bars"}`}></i>
         </button>
       )}
-      {!user?.isAuthenticated && 
-        <button 
+
+      {/* Bouton de connexion si l'utilisateur n'est pas connecté */}
+      {!user?.isAuthenticated && (
+        <button
           className="auth-btn"
           aria-label="Formulaire d'authentification"
           aria-expanded={isAuthOpen}
-          onClick={toggleAuth}>
-            Se connecter
+          onClick={toggleAuth}
+        >
+          Se connecter
         </button>
-      }
-      {isOpen && <Nav className="main-menu" toggleNav={toggleNav} role="navigation" />}
-      {isAuthOpen && <AuthForm/>}
+      )}
+
+      {/* Navigation utilisateur (dans le menu déroulant) */}
+      {isOpen && (
+        <Nav className="main-menu" toggleNav={toggleNav} role="navigation" />
+      )}
+
+      {/* Formulaire d'authentification */}
+      {isAuthOpen && <AuthForm />}
     </header>
   );
 }

@@ -21,13 +21,30 @@
     }
 
     .menu-toggle {
-        margin: auto $spacing-medium auto auto;
+        position: absolute;
+        right: 0;
         background: none;
         color: $text-color;
         padding: $spacing-medium;
         border: none;
         font-size: 30px;
         cursor: pointer;
+    }
+
+    .main-nav {
+        all: unset;
+        @include flex-row;
+        gap: $spacing-small;
+        margin: auto;
+
+        button {
+            background: none;
+            border: none;
+            color: $text-color;
+            cursor: pointer;
+
+        }
+
     }
 
 }

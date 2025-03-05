@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Articles from "../../components/Articles/Articles";
+
 import Landing from "../Landing/Landing";
 import Menu from "../Menu/Menu";
 import TableTopBrowse from "../../components/ModalContent/ModalTabletop/TableTopBrowse/TableTopBrowse";
@@ -9,7 +9,7 @@ import Welcome from "../../components/Welcome/Welcome";
 import { useUser } from "../../Context/UserContext";
 import { BeatLoader } from "react-spinners";
 import "./Home.scss";
-import "../../components/Articles/Articles.scss";
+
 
 type Table = {
   _id: string;
@@ -125,10 +125,7 @@ export default function Home() {
             {/*{user.isAdmin && <p>Admin</p>}*/}
             <div className="home__tables-options">
               <div className="home-wrapper__container">
-                <Articles 
-                contentWidth="50%"
-                flexDir="column"
-                />
+
 
                 <div className="home__tables-options--div">
                   <h2>Les Tables de jeux </h2>

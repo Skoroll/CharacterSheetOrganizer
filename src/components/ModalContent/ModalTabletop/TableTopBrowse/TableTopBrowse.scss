@@ -1,44 +1,96 @@
- 
-
 .tabletop-browse {
-    ul {
-        @include ul-base;
+  ul {
+    @include ul-base;
 
-        li{
-            @include flex-row;
-            align-items: center;
-            gap: $spacing-small;
-            padding: $spacing-small;
-            transition: all 0.3s;
+    li {
+      @include flex-row;
+      align-items: center;
+      gap: $spacing-small;
+      padding: $spacing-small;
+      transition: all 0.3s;
 
-            &:hover {
-                background: rgba(red($text-color), green($text-color), blue($text-color), 0.2);
-            }
+      &:hover {
+        background: rgba(
+          red($text-color),
+          green($text-color),
+          blue($text-color),
+          0.2
+        );
+      }
 
-            .fa-user {
-                margin-right: 5px;
-            }
-            .is-online{
-                width: 7px;
-                height: 7px;
-                border-radius: 50%;
-                border: 2px solid green;
-            }
-            p {
-                text-align: left;
-            }
+      .fa-user {
+        margin-right: 5px;
+      }
+      .is-online {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        border: 2px solid green;
+      }
+      p {
+        text-align: left;
+      }
+    }
+  }
+  .tabletop-browse__btn {
+    margin: auto 5px auto auto;
+
+    button {
+      position: relative !important;
+      top: unset !important;
+      right: unset !important;
+
+      border: none;
+      background: none;
+    }
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  background-color: #ddd;
+  border: none;
+  padding: 8px 12px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.pagination button:hover {
+  background-color: #bbb;
+}
+
+.pagination .active {
+  background-color: #3498db;
+  color: white;
+}
+
+
+.table-searchbar {
+    display: flex;
+    input {
+        all: unset;
+        width: 160px;
+        border-radius: 15px 0 0 15px;
+        padding: 5px 15px;
+        border: 0px solid;
+        background-color: $background-light;
+
+        &:active {
+            border: none;
+            outline: none
         }
     }
-    .tabletop-browse__btn {
-margin: auto 5px auto auto;
-   
+    
     button {
-        position: relative !important;
-        top: unset !important;
-        right: unset !important;
-       
-        border: none;
-        background: none;
+        @include button;
+        border-radius: 0 15px 15px 0;
+        padding: 6px 10px;
+        
     }
-}
 }

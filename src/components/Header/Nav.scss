@@ -1,6 +1,6 @@
  
 
-nav {
+.main-menu {
     @include flex-col;
     gap: $spacing-medium;
     background: $background-color;
