@@ -3,18 +3,17 @@ import { useNavigate } from "react-router-dom";
 
 import Landing from "../Landing/Landing";
 import Menu from "../Menu/Menu";
-import TableTopBrowse from "../../components/ModalContent/ModalTabletop/TableTopBrowse/TableTopBrowse";
-import TabletopCreation from "../../components/ModalContent/ModalTabletop/TabletopCreation/TabletopCreation";
-import Welcome from "../../components/Welcome/Welcome";
+import PlaceHolderTableImg from "../../assets/dice-solid.svg";
 import { useUser } from "../../Context/UserContext";
 import { BeatLoader } from "react-spinners";
 import "./Home.scss";
-
 
 type Table = {
   _id: string;
   name: string;
   players?: { playerId: string }[];
+  bannerImage?: string;
+  gameMasterName: string;
 };
 
 export default function Home() {
@@ -110,7 +109,7 @@ export default function Home() {
 
   if (isAuthenticated === null) {
     return (
-      <div>
+      <div className="loader">
         <BeatLoader />
       </div>
     );
@@ -121,16 +120,10 @@ export default function Home() {
         <>
           <Menu />
           <div className="home-wrapper">
-            <Welcome />
             {/*{user.isAdmin && <p>Admin</p>}*/}
             <div className="home__tables-options">
               <div className="home-wrapper__container">
-
-
                 <div className="home__tables-options--div">
-                  <h2>Les Tables de jeux </h2>
-                  {tables.length > 0 && <p>Retourner sur une table :</p>}
-
                   {loading && (
                     <p>
                       <BeatLoader />
@@ -138,6 +131,8 @@ export default function Home() {
                   )}
                   {error && <p className="error">{error}</p>}
                   <div className="prev-tables">
+                    <h2>Les Tables de jeux </h2>
+                    {tables.length > 0 && <p>Retourner sur une table :</p>}
                     {!loading && tables.length > 0 && (
                       <ul>
                         {tables.map((table) => (
@@ -145,12 +140,21 @@ export default function Home() {
                             key={table._id}
                             onClick={() => navigate(`/table/${table._id}`)}
                           >
-                            <i className="fa-solid fa-chevron-right" />
+                            {table.bannerImage ? (
+                              <img
+                                src={`${API_URL}${table.bannerImage}`}
+                                alt={`Bannière de ${table.name}`}
+                              />
+                            ) : (
+                              <img
+                                src={PlaceHolderTableImg}
+                                alt={`${table.name}`}
+                              />
+                            )}
                             <div className="table__recap">
-                              <p>
-                                <i className="fa-solid fa-dice" />
-                                <span>{table.name}</span>
-                              </p>
+                              <p>{table.name}</p>
+                              <span>MJ : {table.gameMasterName}</span>
+
                               <p>
                                 <i className="fa-regular fa-user"></i>{" "}
                                 {table.players?.length || 0}
@@ -161,14 +165,6 @@ export default function Home() {
                       </ul>
                     )}
                   </div>
-                  <div className="tables-choices">
-                    <div className="table-top-browse-div">
-                      <TableTopBrowse />
-                    </div>
-                    <div className="table-creation-div">
-                      <TabletopCreation />
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -176,7 +172,7 @@ export default function Home() {
         </>
       ) : (
         <>
-        <Landing />
+          <Landing />
         </>
       )}
     </div>

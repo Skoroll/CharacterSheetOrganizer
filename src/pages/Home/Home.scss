@@ -1,5 +1,3 @@
-
-
 .home {
   @include flex-row;
   flex: 1;
@@ -11,20 +9,20 @@
 
     &__container {
       @include flex-row;
-      justify-content: space-evenly
     }
   }
 
   &__tables-options {
     @include flex-col;
     h2 {
-      text-align: center;
+      text-align: left;
     }
     &--div {
-      @include flex-col;
-      width: 50%;
+      @include flex-row;
+      width: 100%;
       padding: $spacing-small;
-      
+      margin-left: 0;
+
       p {
         margin: 0 auto $spacing-small 0;
       }
@@ -35,27 +33,24 @@
       }
 
       @include media-query($breakpoint-sm, "min") {
-
-
-
       }
     }
   }
   .tabletop-browse__btn {
     button {
-        color: $text-color;
+      color: $text-color;
     }
   }
 }
 
-
 .tables-choices {
+  position: relative;
   @include flex-row;
   justify-content: space-evenly;
   .table-top-browse-div,
   .table-creation-div {
     width: 40%;
-  } 
+  }
 
   @include media-query($breakpoint-lg, "max") {
     @include flex-col;
@@ -63,47 +58,51 @@
     .table-top-browse-div,
     .table-creation-div {
       width: 100%;
-
-    } 
+    }
 
     .collapse__heading--title {
-        width: 100%;
-        text-align: center !important
-      
+      width: 100%;
+      text-align: center !important;
     }
-    
   }
 }
 
-
 .prev-tables {
+  width: 100%;
   ul {
     @include ul-base;
+    @include flex-wrap;
+    width: 100%;
+    gap: $spacing-small;
 
     li {
-      @include flex-row;
+      @include flex-col;
       align-items: center;
       text-align: left;
-
       gap: $spacing-medium;
       cursor: pointer;
       border-bottom: 1px solid transparent;
       border-left: 1px solid transparent;
       padding: $spacing-small;
       transition: all 0.3s;
+      width: 200px;
+      max-width: 300px;
+      border: 1px solid;
+      border-radius: $spacing-small;
 
-      &:hover {
-          border-bottom: 1px solid ;
-          border-left: 1px solid ;
-        .fa-chevron-right {
-            transform: scale(120%);
-        }
+      img {
+        width: 100%;
+        height: 170px;
+        object-fit: cover;
+        display: block;
+        border-radius: $spacing-small;
       }
 
       .table__recap {
-        span {
-          margin-left: $spacing-medium;
-        }
+        @include flex-col;
+        width: 100%;
+        gap: calc($spacing-small/2);
+        margin: auto auto 0 auto;
       }
     }
   }

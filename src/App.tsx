@@ -4,10 +4,12 @@ import { ThemeProvider } from "styled-components";
 import useStyleStore from "./utils/useStyleStore";
 import CharacterDetails from "./pages/CharacterDetails/CharacterDetails";
 import CreateSheet from "./components/CreateSheet/CreateSheet";
+import Blog from "./pages/Articles/Blog";
 import Footer from "./components/Footer/Footer";
 import Header from "./components/Header/Header";
 import Home from "./pages/Home/Home";
 import Legal from "./pages/Legal/Legal.js";
+import NewsPage from "./pages/Articles/News"
 import NotFound from "./pages/NotFound/NotFound.js";
 import Tabletop from "./pages/Tabletop/Tabletop";
 import ResetPassword from "./components/ResetPassword/ResetPassword.js";
@@ -49,6 +51,8 @@ function App() {
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/mentions-legales" element={<Legal/>}/>
                 <Route path="*" element={<NotFound />} />
+                <Route path="/news" element={<NewsPage/>}/>
+                <Route path="/tutorial" element={<Blog/>}/>
               </Routes>
             </main>
             <Footer />

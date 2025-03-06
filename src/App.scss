@@ -20,7 +20,7 @@ main {
   padding: $spacing-medium;
   flex: 1;
   position: relative;
-  margin-top: 75px;
+  margin-top: 110px;
 }
 
 
@@ -28,4 +28,9 @@ main {
   display: flex;
   flex-direction: column;
   min-height: 100vh; // Garantir que la mise en page fonctionne correctement
+}
+
+
+.loader {
+  margin: auto;
 }

@@ -1,7 +1,7 @@
 
 
 .header {
-    @include flex-row;
+    @include flex-col;
     position: fixed;
     backdrop-filter: blur(5px);
     z-index: 999;
@@ -18,14 +18,19 @@
         margin-left: 5px;
         font-size: 20px;
         cursor: pointer;
+        padding: 0 $spacing-small;
     }
 
+    &__content {
+        position: relative;
+        @include flex-row;
+
     .menu-toggle {
-        position: absolute;
+        position: relative;
         right: 0;
         background: none;
         color: $text-color;
-        padding: $spacing-medium;
+        padding: 0 $spacing-medium;
         border: none;
         font-size: 30px;
         cursor: pointer;
@@ -42,9 +47,19 @@
             border: none;
             color: $text-color;
             cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: 1px solid;
+            transition: all 0.3s;
+            padding: $spacing-small;
+            border-radius: 0;
 
+
+            &:hover {
+                border: 1px solid ;
+                border-radius: $spacing-small;
+            }
         }
-
+    }
     }
 
 }

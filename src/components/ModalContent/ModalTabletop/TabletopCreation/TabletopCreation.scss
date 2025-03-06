@@ -1,6 +1,8 @@
  
 
 .tabletop-creation {
+    position: absolute;
+    top: 0;
     form, label {
         @include flex-col;
         text-align: left;

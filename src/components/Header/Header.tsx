@@ -17,38 +17,46 @@ export default function Header() {
       <h1 onClick={() => navigate("/")} role="button" tabIndex={0}>
         Character sheet <br /> Organizer
       </h1>
+      <div className="header__content">
+        {/* Navigation principale avec Nouveautés et Tutoriel */}
+        <nav className="main-nav">
+          <button onClick={() => navigate("/")}>Accueil</button>
+          <button onClick={() => navigate("/parties")}>Parties <i className="fa-solid fa-caret-down"></i></button>
+          <button onClick={() => navigate("/news")}>Nouveautés</button>
+          <button onClick={() => navigate("/tutorial")}>Tutoriel <i className="fa-solid fa-caret-down"></i></button>
+          <a
+            href="https://elder-craft.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <button>Obtenir Aria</button>
+          </a>
+        </nav>
 
-      {/* Navigation principale avec Nouveautés et Tutoriel */}
-      <nav className="main-nav">
-        <button onClick={() => navigate("/")}>Accueil</button>
-        <button onClick={() => navigate("/news")}>Nouveautés</button>
-        <button onClick={() => navigate("/tutorial")}>Tutoriel</button>
-      </nav>
+        {/* Bouton pour le menu utilisateur (si connecté) */}
+        {user?.isAuthenticated && (
+          <button
+            className="menu-toggle"
+            onClick={toggleNav}
+            aria-label="Affiche la navigation"
+            aria-expanded={isOpen}
+          >
+            <i className={`fa-solid ${isOpen ? "fa-xmark" : "fa-bars"}`}></i>
+          </button>
+        )}
 
-      {/* Bouton pour le menu utilisateur (si connecté) */}
-      {user?.isAuthenticated && (
-        <button
-          className="menu-toggle"
-          onClick={toggleNav}
-          aria-label="Affiche la navigation"
-          aria-expanded={isOpen}
-        >
-          <i className={`fa-solid ${isOpen ? "fa-xmark" : "fa-bars"}`}></i>
-        </button>
-      )}
-
-      {/* Bouton de connexion si l'utilisateur n'est pas connecté */}
-      {!user?.isAuthenticated && (
-        <button
-          className="auth-btn"
-          aria-label="Formulaire d'authentification"
-          aria-expanded={isAuthOpen}
-          onClick={toggleAuth}
-        >
-          Se connecter
-        </button>
-      )}
-
+        {/* Bouton de connexion si l'utilisateur n'est pas connecté */}
+        {!user?.isAuthenticated && (
+          <button
+            className="auth-btn"
+            aria-label="Formulaire d'authentification"
+            aria-expanded={isAuthOpen}
+            onClick={toggleAuth}
+          >
+            Se connecter
+          </button>
+        )}
+      </div>
       {/* Navigation utilisateur (dans le menu déroulant) */}
       {isOpen && (
         <Nav className="main-menu" toggleNav={toggleNav} role="navigation" />

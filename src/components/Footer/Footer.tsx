@@ -23,14 +23,23 @@ const Footer = () => {
           <div className="footer__cta--social">
             <ul>
               <li>
-                <a href="https://www.instagram.com/skoroll_/">
-                  <i className="fa-brands fa-instagram"></i> Instagram
+                <a href="https://www.instagram.com/skoroll_/"  target="_blank">
+                  <i className="fa-brands fa-instagram"></i> 
                 </a>
               </li>
               <li>
-                <a href="https://discord.gg/ypsABckuDt">
-                  <i className="fa-brands fa-discord"></i> Discord
+                <a href="https://discord.gg/ypsABckuDt"  target="_blank">
+                  <i className="fa-brands fa-discord"></i> 
                 </a>
+              </li>
+              <li>
+                <a href="https://www.linkedin.com/in/yann-gicquel-6b2009323/" target="_blank">
+                  <i className="fa-brands fa-linkedin"></i> 
+                </a>
+              </li>
+
+              <li>
+                <a href="https://www.twitch.tv/skoroltv" target="_blank"><i className="fa-brands fa-twitch"></i></a>
               </li>
             </ul>
           </div>
