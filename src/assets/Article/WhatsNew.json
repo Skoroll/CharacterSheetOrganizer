@@ -5,6 +5,11 @@
         "subtitle": "On test tout ça ?",
         "content": "Bienvenue sur cette version de test de Character Sheet Organizer. <br/> Beaucoup de choses sont encore manquantes mais je les ajouterais au fur et à mesure. <br/> Une suggestion, un bug à rapporter ? Envoyez un mail à cette adresse : <strong>contact.skorol@gmail.com</strong>.",
         "image": ""
+    },
+    {
+        "id": 2,
+        "title": "Prochains ajouts",
+        "content": "<ul><li>D'autres jeux qu'Aria (CyberPunk, D&D, Fallout, ...),</li> <li>Consultation des profils d'autres joueurs,</li><li>Système de notifications,</li><li>Système d'invitation d'amis,</li><li>Soundboard prédéfinie sur les tables de jeu,</li><li>Soundboard personnalisable.</li> </ul> <br/><p>Pour toute suggestions, vous pouvez envoyer un e-mail sur <a href=`mailto:contact.skorol@gmail.com`> contact.skorol@gmail.com</a> "
     }
 
 

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useUser } from "../../Context/UserContext";
 import { useNavigate } from "react-router-dom";
 import AuthForm from "../../components/AuthForm/AuthForm";
+import NewGame from "./NewGame/NewGame";
+import UnfoldingMenu from "./UnfoldingMenu/UnfoldingMenu";
 import Nav from "./Nav";
 import "./Header.scss";
 
@@ -9,9 +11,11 @@ export default function Header() {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isUnfoldOpen, setIsUnfoldOpen] = useState(false);
   const { user } = useUser();
   const toggleNav = () => setIsOpen((prev) => !prev);
   const toggleAuth = () => setIsAuthOpen((prev) => !prev);
+
   return (
     <header className="header">
       <h1 onClick={() => navigate("/")} role="button" tabIndex={0}>
@@ -21,7 +25,19 @@ export default function Header() {
         {/* Navigation principale avec Nouveautés et Tutoriel */}
         <nav className="main-nav">
           <button onClick={() => navigate("/")}>Accueil</button>
-          <button onClick={() => navigate("/parties")}>Parties <i className="fa-solid fa-caret-down"></i></button>
+                    {/* Conteneur du menu déroulant */}
+                    <div 
+            className="dropdown"
+            onMouseEnter={() => setIsUnfoldOpen(true)}
+            onMouseLeave={() => setIsUnfoldOpen(false)}
+          >
+            <button onClick={() => navigate("/parties")}>
+              Parties <i className="fa-solid fa-caret-down"></i>
+            </button>
+
+            {/* Affichage du menu déroulant uniquement si isUnfoldOpen est true */}
+            {isUnfoldOpen && <UnfoldingMenu content={<UnfoldingMenu content={<NewGame/>}/>}/>}
+          </div>
           <button onClick={() => navigate("/news")}>Nouveautés</button>
           <button onClick={() => navigate("/tutorial")}>Tutoriel <i className="fa-solid fa-caret-down"></i></button>
           <a

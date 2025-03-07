@@ -1,0 +1,17 @@
+.unfold-menu {
+    position: absolute;
+    min-width: 150px;
+
+    ul {
+
+        background-color: $background-color;
+        @include ul-base;
+        @include flex-col;
+        gap: $spacing-small;
+        padding: $spacing-small;
+        li {
+            cursor: pointer;
+            padding: $spacing-small;
+        }
+    }
+}
