@@ -63,7 +63,7 @@ const navigate = useNavigate();
 
       <div className="modal-actions">
         <button onClick={handleDelete} disabled={isDeleting} className="confirm-btn">
-          {isDeleting ? "Suppression..." : "Oui, supprimer"}
+          {isDeleting ? "Suppression..." : `${<i className="fa-solid fa-triangle-exclamation"></i>} Oui, supprimer`}
         </button>
         <button onClick={closeModal} className="cancel-btn">Annuler</button>
       </div>

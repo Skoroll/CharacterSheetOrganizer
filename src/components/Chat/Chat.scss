@@ -17,7 +17,7 @@
 
     &__messages {
         @include flex-col;
-        height: 200px;
+        height: 400px;
         overflow-y: auto;
         overflow-x: hidden;
         

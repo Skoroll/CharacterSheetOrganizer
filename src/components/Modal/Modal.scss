@@ -59,5 +59,11 @@
     @include flex-row;
     justify-content: space-between;
     margin-top: $spacing-medium;
+
+
+    .confirm-btn {
+      background: none;
+      color: red;
+    }
   }
 }

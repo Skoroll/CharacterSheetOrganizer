@@ -11,6 +11,8 @@ import Home from "./pages/Home/Home";
 import Legal from "./pages/Legal/Legal.js";
 import NewsPage from "./pages/Articles/News"
 import NotFound from "./pages/NotFound/NotFound.js";
+import TabletopCreation from "./components/ModalContent/ModalTabletop/TabletopCreation/TabletopCreation.js";
+import TableTopBrowse from "./components/ModalContent/ModalTabletop/TableTopBrowse/TableTopBrowse.js";
 import Tabletop from "./pages/Tabletop/Tabletop";
 import ResetPassword from "./components/ResetPassword/ResetPassword.js";
 import { UserProvider } from "./Context/UserContext";  // ✅ Import du UserProvider
@@ -53,6 +55,9 @@ function App() {
                 <Route path="*" element={<NotFound />} />
                 <Route path="/news" element={<NewsPage/>}/>
                 <Route path="/tutorial" element={<Blog/>}/>
+                <Route path="/creer-partie" element={<TabletopCreation/>}/>
+                <Route path="/rejoindre" element={<TableTopBrowse/>}/>
+                
               </Routes>
             </main>
             <Footer />

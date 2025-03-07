@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Collapses from "../../../Collapses/Collapses";
+
 import "./TabletopCreation.scss";
 
 
@@ -59,8 +59,7 @@ export default function TabletopCreation() {
 
   return (
     <div className="tabletop-creation">
-      <Collapses title="Créer une table"
-        content={
+
           <form onSubmit={handleSubmit}>
             <label>
               Nom de la table
@@ -102,7 +101,7 @@ export default function TabletopCreation() {
               Créer la table
             </button>
           </form>
-        } />
+
     </div>
   );
 }
