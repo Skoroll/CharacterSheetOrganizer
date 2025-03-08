@@ -13,12 +13,14 @@
         margin: auto 15px auto auto;
     }
 
-    h1 {
+    img {
         text-align: left;
         margin-left: 5px;
         font-size: 20px;
+        height: 50px;
+        width: 170px;
         cursor: pointer;
-        padding: 0 $spacing-small;
+        padding:  $spacing-small;
     }
 
     &__content {

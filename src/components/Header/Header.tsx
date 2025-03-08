@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import AuthForm from "../../components/AuthForm/AuthForm";
 import NewGame from "./NewGame/NewGame";
 import UnfoldingMenu from "./UnfoldingMenu/UnfoldingMenu";
+import logoCSO from "../../assets/logo_critroller.png";
 import Nav from "./Nav";
 import "./Header.scss";
 
@@ -18,9 +19,9 @@ export default function Header() {
 
   return (
     <header className="header">
-      <h1 onClick={() => navigate("/")} role="button" tabIndex={0}>
-        Character sheet <br /> Organizer
-      </h1>
+      <img  onClick={() => navigate("/")} role="button" tabIndex={0} src={logoCSO}/>
+        
+
       <div className="header__content">
         {/* Navigation principale avec Nouveautés et Tutoriel */}
         <nav className="main-nav">
