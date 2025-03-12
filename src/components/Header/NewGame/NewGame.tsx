@@ -1,15 +1,9 @@
 import { useNavigate } from "react-router-dom";
 
-
 export default function NewGame () {
     const navigate = useNavigate();
-
     const menuOptions = 
     [
-        {
-            name: "Parties précédentes",
-            goTo: "/partie-precedentes"
-         }, 
          {
             name: "Créer une partie",
             goTo: "/creer-partie"

@@ -3,7 +3,9 @@
   border-top: 1px solid;
   padding: $spacing-small;
 
-  &__cta--kofi {
+  &__cta{
+  
+  &--kofi {
     .kofi-link {
       @include flex-col;
       p {
@@ -18,6 +20,14 @@
       }
     }
   }
+
+  &--social {
+    ul {
+      @include flex-row;
+      justify-content: center
+    }
+  }
+}
 
   ul {
     @include ul-base;
@@ -47,11 +57,12 @@
   }
 
   &__important {
-    @include flex-col;
+    @include flex-row;
   }
 
   &--CR {
     text-align: center;
+    font-style: italic;
   }
 
   .credit-link {
@@ -62,7 +73,14 @@
 }
 
 .footer-wrapper {
-  @include flex-row;
+  @include flex-col;
+  flex-direction: column-reverse;
+  justify-content: center;
   padding: $spacing-medium;
   justify-content: space-evenly;
+
+  .container {
+    @include flex-row;
+    justify-content: center;
+  }
 }

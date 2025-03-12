@@ -19,28 +19,39 @@ export default function Header() {
 
   return (
     <header className="header">
-      <img  onClick={() => navigate("/")} role="button" tabIndex={0} src={logoCSO}/>
-        
+      <img
+        onClick={() => navigate("/")}
+        role="button"
+        tabIndex={0}
+        src={logoCSO}
+        alt="Crit Roller logo"
+      />
 
       <div className="header__content">
         {/* Navigation principale avec Nouveautés et Tutoriel */}
         <nav className="main-nav">
           <button onClick={() => navigate("/")}>Accueil</button>
-                    {/* Conteneur du menu déroulant */}
-                    <div 
+          {/* Conteneur du menu déroulant */}
+          <div
             className="dropdown"
             onMouseEnter={() => setIsUnfoldOpen(true)}
             onMouseLeave={() => setIsUnfoldOpen(false)}
           >
-            <button onClick={() => navigate("/parties")}>
+            <button >
               Parties <i className="fa-solid fa-caret-down"></i>
             </button>
 
             {/* Affichage du menu déroulant uniquement si isUnfoldOpen est true */}
-            {isUnfoldOpen && <UnfoldingMenu content={<UnfoldingMenu content={<NewGame/>}/>}/>}
+            {isUnfoldOpen && (
+              <UnfoldingMenu
+                content={<UnfoldingMenu content={<NewGame />} />}
+              />
+            )}
           </div>
           <button onClick={() => navigate("/news")}>Nouveautés</button>
-          <button onClick={() => navigate("/tutorial")}>Tutoriel <i className="fa-solid fa-caret-down"></i></button>
+          <button onClick={() => navigate("/tutorial")}>
+            Tutoriel <i className="fa-solid fa-caret-down"></i>
+          </button>
           <a
             href="https://elder-craft.com/"
             target="_blank"

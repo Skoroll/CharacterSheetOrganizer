@@ -1,6 +1,7 @@
 .unfold-menu {
     position: absolute;
     min-width: 150px;
+    padding: 5px 0;
 
     ul {
 
@@ -12,6 +13,12 @@
         li {
             cursor: pointer;
             padding: $spacing-small;
+            border-bottom: 1px solid transparent;
+            transform: all 0.3s;
+
+            &:hover {
+                border-bottom: 1px solid ;
+            }
         }
     }
 }

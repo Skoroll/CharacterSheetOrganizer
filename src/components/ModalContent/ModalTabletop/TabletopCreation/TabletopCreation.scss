@@ -1,7 +1,8 @@
  
 
 .tabletop-creation {
-    position: absolute;
+    max-width: 350px;
+    margin: auto;
     top: 0;
     form, label {
         @include flex-col;
