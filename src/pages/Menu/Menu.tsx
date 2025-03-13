@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
-import defaultImg from "../../assets/default-people.webp";
+import defaultImg from "../../assets/person-placeholder-5.webp";
 import "../../components/ModalContent/Character/CharacterList.scss";
 import "./Menu.scss";
 
@@ -126,13 +126,11 @@ export default function Menu() {
                     e.stopPropagation();
                     handleDelete(character._id);
                   }}
-                  style={{display: "none"}}
+                  style={{ display: "none" }}
                 />
 
                 <div className="character__inside">
-                  <div className="character__inside--stats">
-
-                  </div>
+                  <div className="character__inside--stats"></div>
                   <div className="character__inside--image">
                     <img
                       src={
@@ -141,6 +139,9 @@ export default function Menu() {
                           : defaultImg
                       }
                       alt={character.name}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = defaultImg;
+                      }}
                     />
                   </div>
                 </div>

@@ -3,7 +3,7 @@ import { BeatLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../Context/UserContext";
 import Modal from "../../components/Modal/Modal";
-import defaultImg from "../../assets/default-people.webp";
+import defaultImg from "../../assets/person-placeholder-5.webp"
 import "./EditableSheet.scss";
 
 interface BaseSkill {

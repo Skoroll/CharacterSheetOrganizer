@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
-import defaultImg from "../../../assets/default-people.webp";
+import defaultImg from "../../../assets/person-placeholder-5.webp"
 import "./CharacterList.scss";
 import "../../../types/Character"
 
