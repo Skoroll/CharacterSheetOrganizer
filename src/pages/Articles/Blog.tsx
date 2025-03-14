@@ -1,7 +1,13 @@
+import { useEffect } from "react";
 import articles from "../../assets/Article/Blog.json";
 
-
 export default function Blog () {
+    useEffect(() => {
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 100);
+    }, []);
+
     return (
         <div className="news">
           <h2>Articles</h2>

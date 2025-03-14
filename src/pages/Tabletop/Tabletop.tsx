@@ -69,6 +69,13 @@ export default function TableComponent() {
     | null
   >(null);
 
+  useEffect(() => {
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 1000);
+  }, []);
+  
+
   const refreshTables = async () => {
     try {
       const response = await fetch(`${API_URL}/api/tabletop/tables`);
@@ -227,6 +234,7 @@ const handleSaveNotes = async () => {
   if (loading) return <p><BeatLoader/></p>;
   if (error) return <p>Erreur : {error}</p>;
   if (!table) return <p>Table non trouvée.</p>;
+
 
   return (
     <div className="table">

@@ -1,7 +1,15 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./NotFound.scss";
 
 export default function NotFound() {
+    useEffect(() => {
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 100);
+    }, []);
+
+
   return (
     <div className="page-404">
       <h1>404</h1>

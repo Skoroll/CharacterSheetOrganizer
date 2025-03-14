@@ -24,6 +24,13 @@ export default function Home() {
   const { user } = useUser();
 
   useEffect(() => {
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 100);
+  }, []);
+
+
+  useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       setIsAuthenticated(true);

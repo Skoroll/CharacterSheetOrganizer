@@ -1,8 +1,16 @@
 import { useParams } from "react-router-dom";
+import { useEffect } from "react";
 import EditableSheet from "../../components/EditableSheet/EditableSheet";
 
 export default function CharacterPage() {
-  const { id } = useParams<{ id: string }>(); // Récupérer l'ID de l'URL
+      useEffect(() => {
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+        }, 100);
+      }, []);
+  
+
+  const { id } = useParams<{ id: string }>();
 
   if (!id) return <p>Aucun personnage trouvé.</p>;
 

@@ -1,6 +1,13 @@
+import { useEffect } from "react";
 import "./Legal.scss";
-
 const Legal = () => {
+    useEffect(() => {
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 100);
+    }, []);
+
+
   return (
     <div className="legal-container">
       <h1>Mentions Légales</h1>

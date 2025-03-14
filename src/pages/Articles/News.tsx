@@ -1,6 +1,13 @@
+import { useEffect } from "react";
 import news from "../../assets/Article/WhatsNew.json";
-
 export default function NewsDisplay() {
+      useEffect(() => {
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+        }, 100);
+      }, []);
+  
+
   return (
     <div className="news">
       <h2>Nouveautés</h2>
