@@ -1,6 +1,8 @@
 
 .menu {
   width: 100px;
+  border-right: 1px solid;
+  padding-right: $spacing-small;
   .character-list {
     ul {
       @include flex-col;

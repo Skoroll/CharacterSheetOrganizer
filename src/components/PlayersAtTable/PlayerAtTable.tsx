@@ -4,6 +4,7 @@ import { io, Socket } from "socket.io-client";
 import "./PlayersAtTable.scss";
 import EditableSheet from "../EditableSheet/EditableSheet";
 import Modal from "../Modal/Modal";
+import defaultImg from "../../assets/person-placeholder-5.webp"
 
 interface Character {
   _id: string;
@@ -374,6 +375,9 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
                         <img
                           src={`${API_URL}/${selectedCharacter.image}`}
                           alt={selectedCharacter.name}
+                          onError={(e) => {
+                            e.currentTarget.src = defaultImg;
+                          }}
                         />
                       )}
                       <p className="player__image--name">

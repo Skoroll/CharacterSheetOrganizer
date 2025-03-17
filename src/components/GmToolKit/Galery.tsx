@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { io } from "socket.io-client";
+import brokenImg from "../../assets/broken-image.png"
 
 interface GalleryProps {
   files: Array<{
@@ -100,12 +101,9 @@ const Gallery: React.FC<GalleryProps> = ({ files, API_URL, onDeleteFile }) => {
                   <img
                     src={`${API_URL}${file.path}`}
                     alt={file.filename}
-                    onError={() =>
-                      console.error(
-                        "❌ Erreur chargement:",
-                        `${API_URL}${file.path}`
-                      )
-                    }
+                    onError={(e) => {
+                      e.currentTarget.src = brokenImg;
+                    }}
                   />
                   <button
                     className="show-btn"

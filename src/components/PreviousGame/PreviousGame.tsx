@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import PlaceHolderTableImg from "../../assets/dice-solid.svg";
 import { BeatLoader } from "react-spinners"; // Si tu veux l'utiliser
+import defaultTableImg from "../../assets/dice-solid.svg"
 
 type Table = {
   _id: string;
@@ -50,7 +51,13 @@ export default function PreviousGame({ tables = [], loading, error, API_URL }: P
             {tables.map((table) => (
               <li key={table._id} onClick={() => navigate(`/table/${table._id}`)}>
                 {table.bannerImage ? (
-                  <img src={`${API_URL}${table.bannerImage}`} alt={`Bannière de ${table.name}`} />
+                  <img 
+                    src={`${API_URL}${table.bannerImage}`} 
+                    alt={`Bannière de ${table.name}`} 
+                    onError={(e) => {
+                      e.currentTarget.src = defaultTableImg;
+                    }}
+                    />
                 ) : (
                   <img src={PlaceHolderTableImg} alt={`${table.name}`} />
                 )}

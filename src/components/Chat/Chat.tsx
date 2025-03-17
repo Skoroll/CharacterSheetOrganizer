@@ -28,8 +28,21 @@ const Chat = ({
 }: ChatProps) => {
   const [inputValue, setInputValue] = useState("");
   const [chatOpen, setChatOpen] = useState(true);
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const chatMessagesRef = useRef<HTMLDivElement | null>(null);
   const API_URL = import.meta.env.VITE_API_URL;
+
+  // Vérifier si l'utilisateur est déjà en bas AVANT d'ajouter un message
+  useEffect(() => {
+    if (!chatMessagesRef.current) return;
+
+    const chatContainer = chatMessagesRef.current;
+    const isAtBottom =
+      chatContainer.scrollHeight - chatContainer.scrollTop <= chatContainer.clientHeight + 10;
+
+    if (isAtBottom) {
+      chatContainer.scrollTop = chatContainer.scrollHeight; // ✅ On force le scroll en bas
+    }
+  }, [messages]);
 
   // Rejoindre la salle de chat via Socket.io
   useEffect(() => {
@@ -43,10 +56,8 @@ const Chat = ({
 
     socket.on("newMessage", handleNewMessage);
 
-
     return () => {
       socket.off("newMessage", handleNewMessage);
-
     };
   }, [tableId, socket, setMessages]);
 
@@ -108,13 +119,6 @@ const Chat = ({
     }
   };
 
-  // Scroll automatique en bas du chat
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages]);
-
   return (
     <div className={`chat ${chatOpen ? "chat--open" : ""}`}>
       <div
@@ -126,7 +130,7 @@ const Chat = ({
       </div>
       {chatOpen && (
         <>
-          <div className="chat__messages">
+          <div ref={chatMessagesRef} className="chat__messages">
             {messages.map((msg, index) => (
               <p
                 key={index}
@@ -144,12 +148,9 @@ const Chat = ({
                   {msg.characterName || "Nom du personnage non défini"}
                 </span>{" "}
                 <br />
-                <span>
-                {msg.message}
-                </span>
+                <span>{msg.message}</span>
               </p>
             ))}
-            <div ref={messagesEndRef} />
           </div>
           <form
             className="chat__box"

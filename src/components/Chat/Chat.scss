@@ -20,6 +20,7 @@
         height: 400px;
         overflow-y: auto;
         overflow-x: hidden;
+        scroll-behavior: smooth;
         
         p {
             margin: $spacing-small 0;
