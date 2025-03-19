@@ -34,32 +34,41 @@ const Chat = ({
   // Vérifier si l'utilisateur est déjà en bas AVANT d'ajouter un message
   useEffect(() => {
     if (!chatMessagesRef.current) return;
-
+  
     const chatContainer = chatMessagesRef.current;
-    const isAtBottom =
-      chatContainer.scrollHeight - chatContainer.scrollTop <= chatContainer.clientHeight + 10;
-
-    if (isAtBottom) {
-      chatContainer.scrollTop = chatContainer.scrollHeight; // ✅ On force le scroll en bas
-    }
+    
+    // Utilisation d'un timeout pour attendre le rendu avant de scroller
+    setTimeout(() => {
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }, 0);
   }, [messages]);
+  
 
   // Rejoindre la salle de chat via Socket.io
   useEffect(() => {
-    socket.emit("joinTable", tableId);
-
     const handleNewMessage = (newMessage: MessageType) => {
       if (newMessage.tableId === tableId) {
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
+        setMessages((prevMessages) => {
+          // Vérifier si le message est déjà présent (évite le doublon)
+          const isDuplicate = prevMessages.some(
+            (msg) =>
+              msg.message === newMessage.message &&
+              msg.characterName === newMessage.characterName &&
+              msg.senderName === newMessage.senderName
+          );
+  
+          return isDuplicate ? prevMessages : [...prevMessages, newMessage];
+        });
       }
     };
-
+  
     socket.on("newMessage", handleNewMessage);
-
+  
     return () => {
       socket.off("newMessage", handleNewMessage);
     };
   }, [tableId, socket, setMessages]);
+  
 
   // Récupérer les derniers messages depuis l'API
   useEffect(() => {
