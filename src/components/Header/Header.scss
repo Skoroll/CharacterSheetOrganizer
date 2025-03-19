@@ -1,8 +1,9 @@
 
 
 .header {
-    @include flex-col;
+    @include flex-row;
     position: fixed;
+    justify-content: space-between;
     backdrop-filter: blur(5px);
     z-index: 999;
     width: 100%;
@@ -10,15 +11,15 @@
     .auth-btn {
         @include button;
         height: 35px;
-        margin: auto 15px auto auto;
+        margin: auto $spacing-small;
     }
 
     img {
         text-align: left;
         margin-left: 5px;
         font-size: 20px;
-        height: 50px;
-        width: 170px;
+        height: auto;
+        width: 200px;
         cursor: pointer;
         padding:  $spacing-small;
         transition: all 1s;
@@ -32,16 +33,7 @@
         position: relative;
         @include flex-row;
 
-    .menu-toggle {
-        position: relative;
-        right: 0;
-        background: none;
-        color: $text-color;
-        padding: 0 $spacing-medium;
-        border: none;
-        font-size: 30px;
-        cursor: pointer;
-    }
+
 
     .main-nav {
         all: unset;
@@ -67,6 +59,16 @@
             }
         }
     }
+    }
+    .menu-toggle {
+        position: relative;
+        right: 0;
+        background: none;
+        color: $text-color;
+        padding: 0 $spacing-medium;
+        border: none;
+        font-size: 30px;
+        cursor: pointer;
     }
 
 }

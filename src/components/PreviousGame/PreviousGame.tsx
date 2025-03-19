@@ -23,7 +23,7 @@ export default function PreviousGame({ tables = [], loading, error, API_URL }: P
 
   return (
     <div className="prev-tables">
-      <h2>Les Tables de jeux</h2>
+
 
       {error && <p className="error">Erreur : {error}</p>}
 

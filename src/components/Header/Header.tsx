@@ -37,7 +37,7 @@ export default function Header() {
             onMouseEnter={() => setIsUnfoldOpen(true)}
             onMouseLeave={() => setIsUnfoldOpen(false)}
           >
-            <button >
+            <button>
               Parties <i className="fa-solid fa-caret-down"></i>
             </button>
 
@@ -60,36 +60,33 @@ export default function Header() {
             <button>Obtenir Aria</button>
           </a>
         </nav>
-
-        {/* Bouton pour le menu utilisateur (si connecté) */}
-        {user?.isAuthenticated && (
-          <button
-            className="menu-toggle"
-            onClick={toggleNav}
-            aria-label="Affiche la navigation"
-            aria-expanded={isOpen}
-          >
-            <i className={`fa-solid ${isOpen ? "fa-xmark" : "fa-bars"}`}></i>
-          </button>
-        )}
-
-        {/* Bouton de connexion si l'utilisateur n'est pas connecté */}
-        {!user?.isAuthenticated && (
-          <button
-            className="auth-btn"
-            aria-label="Formulaire d'authentification"
-            aria-expanded={isAuthOpen}
-            onClick={toggleAuth}
-          >
-            Se connecter
-          </button>
-        )}
       </div>
+      {/* Bouton pour le menu utilisateur (si connecté) */}
+      {user?.isAuthenticated && (
+        <button
+          className="menu-toggle"
+          onClick={toggleNav}
+          aria-label="Affiche la navigation"
+          aria-expanded={isOpen}
+        >
+          <i className={`fa-solid ${isOpen ? "fa-xmark" : "fa-bars"}`}></i>
+        </button>
+      )}
       {/* Navigation utilisateur (dans le menu déroulant) */}
       {isOpen && (
         <Nav className="main-menu" toggleNav={toggleNav} role="navigation" />
       )}
-
+      {/* Bouton de connexion si l'utilisateur n'est pas connecté */}
+      {!user?.isAuthenticated && (
+        <button
+          className="auth-btn"
+          aria-label="Formulaire d'authentification"
+          aria-expanded={isAuthOpen}
+          onClick={toggleAuth}
+        >
+          Se connecter
+        </button>
+      )}
       {/* Formulaire d'authentification */}
       {isAuthOpen && <AuthForm />}
     </header>
