@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
 import { MessageType } from "../../types/Messages";
@@ -49,7 +49,7 @@ export default function TableComponent() {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const { user, setUser } = useUser(); // Utiliser le context pour récupérer l'utilisateur
   const API_URL = import.meta.env.VITE_API_URL;
-  const socket = io(API_URL);
+  const socket = useMemo(() => io(API_URL), [API_URL]);
   const currentPlayer = table?.players.find(
     (player) => player.userId === user._id
   );
@@ -135,6 +135,43 @@ const handleSaveNotes = async () => {
 */
   }
 
+  useEffect(() => {
+    if (!table) return;
+  
+    socket.emit("joinTable", table._id);
+  
+    const handleNewMessage = (newMessage: MessageType) => {
+      if (newMessage.tableId !== table._id) return;
+    
+      const isDiceRoll = newMessage.messageType === "diceRoll";
+    
+      setMessages((prev) => {
+        const alreadyExists = prev.some(
+          (msg) => msg._id && msg._id === newMessage._id
+        );
+    
+        if (!isDiceRoll && alreadyExists) return prev;
+    
+        return [
+          ...prev,
+          {
+            ...newMessage,
+            animate: true, // 🪄 propriété spéciale
+          },
+        ];
+      });
+    };
+    
+  
+    socket.on("newMessage", handleNewMessage);
+  
+    return () => {
+      socket.off("newMessage", handleNewMessage);
+    };
+  }, [table, socket]);
+  
+  
+
   const togglePanel = (
     panel:
       | "npcs"
@@ -207,12 +244,6 @@ const handleSaveNotes = async () => {
 
     fetchTable();
   }, [id, API_URL, user._id, setUser]);
-
-useEffect(() => {
-  if (table) {
-    socket.emit("joinTable", table._id);
-  }
-}, [table, socket]);
 
 
   if (loading) return <p><BeatLoader/></p>;
