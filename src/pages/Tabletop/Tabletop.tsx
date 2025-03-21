@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
+import { MessageType } from "../../types/Messages";
 import Banner from "../../components/Banner/Banner";
 import Chat from "../../components/Chat/Chat";
 import DiceRoller from "../../components/DiceRoller/DiceRoller";
@@ -36,13 +37,6 @@ interface Player {
   playerName: string;
   selectedCharacter: string | null;
   isGameMaster: boolean; // Ajoutez ici la propriété isGameMaster
-}
-
-interface MessageType {
-  message: string;
-  characterName: string;
-  senderName: string;
-  tableId: string;
 }
 
 export default function TableComponent() {
@@ -214,22 +208,12 @@ const handleSaveNotes = async () => {
     fetchTable();
   }, [id, API_URL, user._id, setUser]);
 
-  useEffect(() => {
-    if (table) {
-      socket.emit("joinTable", table._id);
+useEffect(() => {
+  if (table) {
+    socket.emit("joinTable", table._id);
+  }
+}, [table, socket]);
 
-      // Écouter les nouveaux messages
-      socket.on("newMessage", (newMessage: MessageType) => {
-        if (newMessage.tableId === table._id) {
-          setMessages((prevMessages) => [...prevMessages, newMessage]);
-        }
-      });
-    }
-
-    return () => {
-      socket.off("newMessage");
-    };
-  }, [table, socket]);
 
   if (loading) return <p><BeatLoader/></p>;
   if (error) return <p>Erreur : {error}</p>;
