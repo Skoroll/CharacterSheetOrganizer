@@ -25,7 +25,7 @@ const Banner = ({ tableId, API_URL, refreshTrigger }: BannerProps) => {
                 console.log("📸 Image reçue :", data.bannerImage);
 
                 setBannerData({
-                    bannerImage: data.bannerImage ? `${API_URL}${data.bannerImage}` : "",
+                    bannerImage: data.bannerImage || "",
                     borderWidth: data.borderWidth,
                     borderColor: data.borderColor,
                     bannerStyle: data.bannerStyle,
