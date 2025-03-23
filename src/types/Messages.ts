@@ -5,5 +5,6 @@ export type MessageType = {
     senderName: string;
     tableId: string;
     messageType?: string;
+    createdAt?: string;
   };
   

@@ -52,18 +52,25 @@ const Chat = ({
 
         const data: MessageType[] = await response.json();
         console.log("🔍 [API] Messages récupérés :", data);
-
+        
+        // ✅ TRIER du plus ancien au plus récent
+        const sortedMessages = [...data].sort((a, b) => {
+          const dateA = new Date(a.createdAt ?? 0); // 0 = timestamp 1970
+          const dateB = new Date(b.createdAt ?? 0);
+          return dateA.getTime() - dateB.getTime();
+        });
+        
+        
         setMessages((prevMessages) => {
-          const existingMessageIds = new Set(
-            prevMessages.map((msg) => msg._id)
-          );
-          const newMessages = data.filter(
+          const existingMessageIds = new Set(prevMessages.map((msg) => msg._id));
+          const newMessages = sortedMessages.filter(
             (msg) => !existingMessageIds.has(msg._id)
           );
-
-          console.log("✅ [API] Messages après filtrage :", newMessages);
+        
+          console.log("✅ [API] Messages après tri et filtrage :", newMessages);
           return [...prevMessages, ...newMessages];
         });
+        
       } catch (error) {
         console.error("❌ Erreur lors du chargement des messages:", error);
       }
