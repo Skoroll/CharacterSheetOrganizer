@@ -117,13 +117,18 @@ export default function EditableSheet({ id }: EditableSheetProps) {
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
+    const { name, value, type } = e.target;
+  
+    const parsedValue =
+      type === "number" ? parseInt(value, 10) || 0 : value;
+  
     if (editedCharacter) {
       setEditedCharacter({
         ...editedCharacter,
-        [e.target.name]: e.target.value,
+        [name]: parsedValue,
       });
     }
-  };
+  };  
 
   const handleArrayChange = (
     index: number,
@@ -165,12 +170,14 @@ export default function EditableSheet({ id }: EditableSheetProps) {
   const handleSaveChanges = async () => {
     if (!editedCharacter) return;
 
-    try {
+    const hasImageFile = editedCharacter.image instanceof File;
+
+    if (hasImageFile) {
       const formData = new FormData();
 
       for (const [key, value] of Object.entries(editedCharacter)) {
         if (key === "image" && value instanceof File) {
-          formData.append("image", value); // 👈 image envoyée à Cloudinary
+          formData.append("image", value);
         } else {
           formData.append(
             key,
@@ -178,30 +185,61 @@ export default function EditableSheet({ id }: EditableSheetProps) {
           );
         }
       }
-      
-      // Les compétences de base modifiées
-      const bonusUpdates = baseSkills.map((skill) => {
-        const bonus = skillBonuses[skill.name] ?? 0;
-        return { name: skill.name, bonusMalus: bonus };
-      });
-      formData.append("baseSkills", JSON.stringify(bonusUpdates));
-      
-      
-      const response = await fetch(`${API_URL}/api/characters/${id}`, {
-        method: "PUT",
-        body: formData,
-      });
-      
 
-      if (!response.ok) {
-        throw new Error("Erreur lors de la mise à jour du personnage");
+      const mergedBaseSkills = baseSkills.map((defaultSkill) => {
+        const existing = editedCharacter.baseSkills?.find(
+          (skill) => skill.name === defaultSkill.name
+        );
+        return existing
+          ? { ...defaultSkill, bonusMalus: existing.bonusMalus }
+          : defaultSkill;
+      });
+
+      formData.set("baseSkills", JSON.stringify(mergedBaseSkills));
+
+      try {
+        const response = await fetch(`${API_URL}/api/characters/${id}`, {
+          method: "PUT",
+          body: formData,
+        });
+        if (!response.ok) throw new Error("Erreur lors de la mise à jour");
+        setCharacter(editedCharacter);
+        setIsEditing(false);
+      } catch (error) {
+        console.error("❌ Upload échoué :", error);
+        setError("Impossible de modifier ce personnage.");
       }
+    } else {
+      // ✅ Sinon, on continue avec JSON classique
+      const mergedBaseSkills = baseSkills.map((defaultSkill) => {
+        const existing = editedCharacter.baseSkills?.find(
+          (skill) => skill.name === defaultSkill.name
+        );
+        return existing
+          ? { ...defaultSkill, bonusMalus: existing.bonusMalus }
+          : defaultSkill;
+      });
 
-      setCharacter(editedCharacter);
-      setIsEditing(false);
-    } catch (error) {
-      console.error("Erreur :", error);
-      setError("Impossible de modifier ce personnage.");
+      try {
+        const response = await fetch(`${API_URL}/api/characters/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...editedCharacter,
+            baseSkills: mergedBaseSkills,
+          }),
+          
+        });
+
+        if (!response.ok) throw new Error("Erreur lors de la mise à jour");
+        setCharacter(editedCharacter);
+        setIsEditing(false);
+      } catch (error) {
+        console.error("❌ JSON update échoué :", error);
+        setError("Impossible de modifier ce personnage.");
+      }
     }
   };
 
@@ -240,16 +278,21 @@ export default function EditableSheet({ id }: EditableSheetProps) {
 
   // Fonction pour calculer le score basé sur les statistiques
   const calculateScore = (link1: string, link2: string): number => {
-    const stat1 = character[link1 as keyof typeof character];
-    const stat2 = character[link2 as keyof typeof character];
-
+    const source = isEditing && editedCharacter ? editedCharacter : character;
+    if (!source) return 0;
+  
+    const stat1 = source[link1 as keyof typeof source];
+    const stat2 = source[link2 as keyof typeof source];
+  
     if (typeof stat1 === "number" && typeof stat2 === "number") {
       const average = (stat1 + stat2) / 2;
-      const percentage = Math.floor(average / 5) * 5; // Arrondi vers le bas au multiple de 5
-      return Math.min(100, Math.max(0, percentage)); // Limite entre 0 et 100
+      const percentage = Math.floor(average / 5) * 5;
+      return Math.min(100, Math.max(0, percentage));
     }
+  
     return 0;
   };
+  
 
   const handleBonusChange = (skillName: string, value: string) => {
     const parsedValue = parseInt(value, 10) || 0;
@@ -315,28 +358,31 @@ export default function EditableSheet({ id }: EditableSheetProps) {
       {/*Bouton de suppression de personnage*/}
       {isOwner && (
         <div className="edit-section">
-          <button
-            className="danger"
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsModalOpen(true);
-            }}
-          >
-            <i className="fa-solid fa-trash" />
-            Supprimer le personnage
-          </button>
+          {!isEditing ? (
+            <button
+              className="danger"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsModalOpen(true);
+              }}
+            >
+              <i className="fa-solid fa-trash" />
+            </button>
+          ) : (
+            ""
+          )}
           {isEditing ? (
             <>
-              <button className="save-btn" onClick={handleSaveChanges}>
-                Valider les changements
-              </button>
               <button className="cancel-btn" onClick={handleCancelEdit}>
-                Annuler
+                <i className="fa-solid fa-x"></i>
+              </button>
+              <button className="save-btn" onClick={handleSaveChanges}>
+                <i className="fa-solid fa-check"></i>
               </button>
             </>
           ) : (
             <button className="edit-btn" onClick={() => setIsEditing(true)}>
-              <i className="fa-solid fa-pen"></i> Éditer le personnage
+              <i className="fa-solid fa-pen"></i>
             </button>
           )}
         </div>
@@ -358,23 +404,25 @@ export default function EditableSheet({ id }: EditableSheetProps) {
         <div className="character-details__content">
           <div className="character-details__identity">
             <div className="character-details__identity--image">
-            <img
-  src={
-    editedCharacter?.image
-      ? typeof editedCharacter.image === "string"
-        ? editedCharacter.image // 🔥 URL Cloudinary déjà complète
-        : URL.createObjectURL(editedCharacter.image)
-      : defaultImg
-  }
-  alt={character.name}
-  width={260}
-  height={260}
-  onError={(e) => {
-    e.currentTarget.src = defaultImg;
-  }}
-/>
+              <img
+                src={
+                  editedCharacter?.image
+                    ? typeof editedCharacter.image === "string"
+                      ? editedCharacter.image // 🔥 URL Cloudinary déjà complète
+                      : URL.createObjectURL(editedCharacter.image)
+                    : defaultImg
+                }
+                alt={character.name}
+                width={260}
+                height={260}
+                onError={(e) => {
+                  e.currentTarget.src = defaultImg;
+                }}
+              />
 
               {isEditing && (
+                <label>
+                  <i className="fa-solid fa-pen-to-square"></i>
                 <input
                   type="file"
                   accept="image/*"
@@ -387,6 +435,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
                     }
                   }}
                 />
+                </label>
               )}
             </div>
 
