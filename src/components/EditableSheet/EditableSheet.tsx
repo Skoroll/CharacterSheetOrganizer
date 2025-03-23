@@ -165,16 +165,6 @@ export default function EditableSheet({ id }: EditableSheetProps) {
   const handleSaveChanges = async () => {
     if (!editedCharacter) return;
 
-    // Fusionner defaultBaseSkills avec editedCharacter.baseSkills
-    const mergedBaseSkills = baseSkills.map((defaultSkill) => {
-      const existing = editedCharacter.baseSkills?.find(
-        (skill) => skill.name === defaultSkill.name
-      );
-      return existing
-        ? { ...defaultSkill, bonusMalus: existing.bonusMalus }
-        : defaultSkill;
-    });
-
     try {
       const formData = new FormData();
 
@@ -190,7 +180,12 @@ export default function EditableSheet({ id }: EditableSheetProps) {
       }
       
       // Les compétences de base modifiées
-      formData.append("baseSkills", JSON.stringify(mergedBaseSkills));
+      const bonusUpdates = baseSkills.map((skill) => {
+        const bonus = skillBonuses[skill.name] ?? 0;
+        return { name: skill.name, bonusMalus: bonus };
+      });
+      formData.append("baseSkills", JSON.stringify(bonusUpdates));
+      
       
       const response = await fetch(`${API_URL}/api/characters/${id}`, {
         method: "PUT",
