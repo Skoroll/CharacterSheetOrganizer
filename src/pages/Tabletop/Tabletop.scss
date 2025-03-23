@@ -43,7 +43,7 @@
 
 .table-content {
   &__media-container {
-    margin: auto auto auto 95px;
+    margin: $spacing-small 95px;
     padding: $spacing-medium;
     width: 100%;
     z-index: 1;

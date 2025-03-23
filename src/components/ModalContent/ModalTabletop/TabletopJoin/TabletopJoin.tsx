@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../../Context/UserContext";
 import "./TabletopJoin.scss";
 import { BeatLoader } from "react-spinners";
+import defaultImg from "../../../../assets/person-placeholder-5.webp"
 
 interface Character {
   _id: string;
@@ -156,7 +157,15 @@ const TabletopJoin = ({ tableId, onClose, gameMasterId }: TabletopJoinProps) => 
                 />
                 <label htmlFor={`character-${character._id}`}>
                   {character.image ? (
-                    <img src={`${API_URL}/${character.image}`} alt={character.name} />
+                    <img 
+                    src={
+                      character?.image
+                        ? typeof character.image === "string"
+                          ? character.image // 🔥 URL Cloudinary déjà complète
+                          : URL.createObjectURL(character.image)
+                        : defaultImg
+                    }
+                     />
                   ) : (
                     <p>{character.name}</p>
                   )}

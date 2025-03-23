@@ -373,11 +373,20 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
                       </p>
                       {selectedCharacter.image && (
                         <img
-                          src={`${API_URL}/${selectedCharacter.image}`}
+                        src={
+                          selectedCharacter?.image
+                            ? typeof selectedCharacter.image === "string"
+                              ? selectedCharacter.image // 🔥 URL Cloudinary déjà complète
+                              : URL.createObjectURL(selectedCharacter.image)
+                            : defaultImg
+                        }
                           alt={selectedCharacter.name}
                           onError={(e) => {
                             e.currentTarget.src = defaultImg;
                           }}
+
+
+                          
                         />
                       )}
                       <p className="player__image--name">

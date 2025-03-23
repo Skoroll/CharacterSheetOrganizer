@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
+import { Character, EditableCharacter } from "../../types/Character";
 import { BeatLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../Context/UserContext";
 import Modal from "../../components/Modal/Modal";
-import defaultImg from "../../assets/person-placeholder-5.webp"
+import defaultImg from "../../assets/person-placeholder-5.webp";
 import "./EditableSheet.scss";
 
 interface BaseSkill {
@@ -11,37 +12,6 @@ interface BaseSkill {
   link1: string;
   link2: string;
   bonusMalus: number;
-}
-
-interface Character {
-  _id: string;
-  name: string;
-  className: string;
-  image: string;
-  age: number;
-  strength: number;
-  dexterity: number;
-  endurance: number;
-  intelligence: number;
-  charisma: number;
-  pointsOfLife: number;
-  protection: number;
-  injuries: number;
-  skills: {
-    specialSkill: string;
-    link1: string;
-    link2: string;
-    score: number;
-  }[];
-  background: string;
-  inventory: { item: string; quantity: number }[];
-  weapons: { name: string; damage: string }[];
-  gold: number;
-  origin: string;
-  pros: string;
-  cons: string;
-  userId: string;
-  baseSkills: BaseSkill[]; // ✅ Ajout de `baseSkills`
 }
 
 interface EditableSheetProps {
@@ -64,9 +34,8 @@ export default function EditableSheet({ id }: EditableSheetProps) {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const isOwner = character && character.userId === currentUserId;
-  const [editedCharacter, setEditedCharacter] = useState<Character | null>(
-    null
-  );
+  const [editedCharacter, setEditedCharacter] =
+    useState<EditableCharacter | null>(null);
 
   const baseSkills = [
     { name: "Artisanat", link1: "dexterity", link2: "intelligence" },
@@ -382,60 +351,159 @@ export default function EditableSheet({ id }: EditableSheetProps) {
       <div className="content-wrapper">
         <div className="character-details__content">
           <div className="character-details__identity">
-            {/* Image du perssonage */}
+            <div className="character-details__identity--image">
             <img
-              src={
-                character.image
-                  ? `${API_URL}/${character.image.replace(/\\/g, "/")}`
-                  : defaultImg
-              }
-              alt={character.name}
-              onError={(e) => {
-                e.currentTarget.src = defaultImg;
-              }}
-            />
+  src={
+    editedCharacter?.image
+      ? typeof editedCharacter.image === "string"
+        ? editedCharacter.image // 🔥 URL Cloudinary déjà complète
+        : URL.createObjectURL(editedCharacter.image)
+      : defaultImg
+  }
+  alt={character.name}
+  width={260}
+  height={260}
+  onError={(e) => {
+    e.currentTarget.src = defaultImg;
+  }}
+/>
+
+              {isEditing && (
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setEditedCharacter((prev) =>
+                        prev ? { ...prev, image: file } : null
+                      );
+                    }
+                  }}
+                />
+              )}
+            </div>
 
             {/* Statistiques du personnage */}
             <div className="character-details__identity--stats">
-              <p>FOR {character.strength}</p>
-              <p>DEX {character.dexterity}</p>
-              <p>END {character.endurance}</p>
-              <p>INT {character.intelligence}</p>  
-              <p>CHA {character.charisma}</p>
+              {[
+                "strength",
+                "dexterity",
+                "endurance",
+                "intelligence",
+                "charisma",
+              ].map((stat) => (
+                <p key={stat}>
+                  {getStatAbbreviation(stat)}{" "}
+                  {isEditing ? (
+                    <input
+                      type="number"
+                      name={stat}
+                      value={(editedCharacter as any)[stat]}
+                      onChange={handleInputChange}
+                      className="table-size--small"
+                    />
+                  ) : (
+                    <span>{String(character[stat as keyof Character])}</span>
+                  )}
+                </p>
+              ))}
             </div>
 
             {/* Conteneur */}
             <div className="character-wrapper">
               {/* Status, hp, blessures, défense */}
               <div className="character-details__identity--status">
-                <p>
-                  <i className="fa-solid fa-heart" />{" "}
-                  <span>{character.pointsOfLife}</span>
-                </p>
-                <p>
-                  <i className="fa-solid fa-heart-crack" />{" "}
-                  <span>{character.injuries}</span>
-                </p>
-                <p>
-                  <i className="fa-solid fa-shield" />{" "}
-                  <span>{character.protection}</span>
-                </p>
+                {editedCharacter &&
+                  ["pointsOfLife", "injuries", "protection"].map(
+                    (field, index) => {
+                      const icons = ["fa-heart", "fa-heart-crack", "fa-shield"];
+                      const value = (editedCharacter as any)[field];
+
+                      return (
+                        <p key={field}>
+                          <i className={`fa-solid ${icons[index]}`} />{" "}
+                          {isEditing ? (
+                            <input
+                              type="number"
+                              name={field}
+                              value={value}
+                              onChange={handleInputChange}
+                              className="table-size--small"
+                            />
+                          ) : (
+                            <span>{value}</span>
+                          )}
+                        </p>
+                      );
+                    }
+                  )}
               </div>
 
               {/* Infos diverse */}
               <div className="character-details__identity--text">
-                <h2>{character.name}</h2>
-                <div className="text-container">
-                  <p className="character--class">
-                    Classe : <span>{character.className}</span>
-                  </p>
-                  <p>
-                    Âge : <span>{character.age}</span>
-                  </p>
-                  <p>
-                    Origine : <span>{character.origin}</span>
-                  </p>
-                </div>
+                {isEditing ? (
+                  <>
+                    <input
+                      type="text"
+                      name="name"
+                      value={editedCharacter?.name || ""}
+                      onChange={handleInputChange}
+                      className="edit-input"
+                      placeholder="Nom du personnage"
+                    />
+                    <div className="text-container">
+                      <label className="character--class">
+                        Classe :{" "}
+                        <input
+                          type="text"
+                          name="className"
+                          value={editedCharacter?.className || ""}
+                          onChange={handleInputChange}
+                          className="edit-input"
+                          placeholder="Classe"
+                        />
+                      </label>
+                      <label>
+                        Âge :{" "}
+                        <input
+                          type="number"
+                          name="age"
+                          value={editedCharacter?.age || 0}
+                          onChange={handleInputChange}
+                          className="edit-input"
+                          placeholder="Âge"
+                        />
+                      </label>
+                      <label>
+                        Origine :{" "}
+                        <input
+                          type="text"
+                          name="origin"
+                          value={editedCharacter?.origin || ""}
+                          onChange={handleInputChange}
+                          className="edit-input"
+                          placeholder="Origine"
+                        />
+                      </label>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <h2>{character.name}</h2>
+                    <div className="text-container">
+                      <p className="character--class">
+                        Classe : <span>{character.className}</span>
+                      </p>
+                      <p>
+                        Âge : <span>{character.age}</span>
+                      </p>
+                      <p>
+                        Origine : <span>{character.origin}</span>
+                      </p>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -477,7 +545,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
                               link1
                             )} / ${getStatAbbreviation(link2)}`}</td>
                             <td className="table-center">{finalScore}</td>
-                            <td className="table-center">
+                            <td className="table-center table-bonus">
                               {isEditing ? (
                                 <input
                                   type="number"

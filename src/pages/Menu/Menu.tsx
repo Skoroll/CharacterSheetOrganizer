@@ -134,8 +134,10 @@ export default function Menu() {
                   <div className="character__inside--image">
                     <img
                       src={
-                        character.image
-                          ? `${API_URL}/${character.image.replace("\\", "/")}`
+                        character?.image
+                          ? typeof character.image === "string"
+                            ? character.image
+                            : URL.createObjectURL(character.image)
                           : defaultImg
                       }
                       alt={character.name}

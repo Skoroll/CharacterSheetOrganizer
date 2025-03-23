@@ -308,11 +308,13 @@ export default function CharacterSheetModal({ characterId }: CharacterSheetModal
           <div className="character-details__identity">
             {/* Image du perssonage */}
             <img
-              src={
-                character.image
-                  ? `${API_URL}/${character.image.replace(/\\/g, "/")}`
-                  : defaultImg
-              }
+                      src={
+                        character?.image
+                          ? typeof character.image === "string"
+                            ? character.image // 🔥 URL Cloudinary déjà complète
+                            : URL.createObjectURL(character.image)
+                          : defaultImg
+                      }
               alt={character.name}
               onError={(e) => {
                 e.currentTarget.src = defaultImg;

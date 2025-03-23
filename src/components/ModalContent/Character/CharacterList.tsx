@@ -92,7 +92,13 @@ export default function CharacterList() {
                 </div>
                 <div className="character__inside--image">
                   <img
-                    src={character.image ? `${API_URL}/${character.image.replace("\\", "/")}` : defaultImg}
+                      src={
+                        character?.image
+                          ? typeof character.image === "string"
+                            ? character.image // 🔥 URL Cloudinary déjà complète
+                            : URL.createObjectURL(character.image)
+                          : defaultImg
+                      }
                     alt={character.name}
                   />
                 </div>
