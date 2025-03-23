@@ -176,16 +176,27 @@ export default function EditableSheet({ id }: EditableSheetProps) {
     });
 
     try {
+      const formData = new FormData();
+
+      for (const [key, value] of Object.entries(editedCharacter)) {
+        if (key === "image" && value instanceof File) {
+          formData.append("image", value); // 👈 image envoyée à Cloudinary
+        } else {
+          formData.append(
+            key,
+            typeof value === "object" ? JSON.stringify(value) : String(value)
+          );
+        }
+      }
+      
+      // Les compétences de base modifiées
+      formData.append("baseSkills", JSON.stringify(mergedBaseSkills));
+      
       const response = await fetch(`${API_URL}/api/characters/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...editedCharacter,
-          baseSkills: mergedBaseSkills,
-        }),
+        body: formData,
       });
+      
 
       if (!response.ok) {
         throw new Error("Erreur lors de la mise à jour du personnage");
