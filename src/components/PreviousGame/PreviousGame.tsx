@@ -1,14 +1,20 @@
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../Context/UserContext";
+import { useState } from "react";
 import PlaceHolderTableImg from "../../assets/dice-solid.svg";
-import { BeatLoader } from "react-spinners"; // Si tu veux l'utiliser
+import { BeatLoader } from "react-spinners";
 import defaultTableImg from "../../assets/dice-solid.svg";
+import Modal from "../Modal/Modal";
+import SelectNextCharacter from "../SelectNextCharacter/SelectNextCharacter";
 
 type Table = {
   _id: string;
   name: string;
   players?: { playerId: string }[];
   bannerImage?: string;
+  gameMaster: string;
   gameMasterName: string;
+  game: string;
 };
 
 type PreviousGameProps = {
@@ -25,6 +31,9 @@ export default function PreviousGame({
   API_URL,
 }: PreviousGameProps) {
   const navigate = useNavigate();
+  const { user } = useUser();
+  const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
+  const [selectedTable, setSelectedTable] = useState<Table | null>(null);
 
   return (
     <div className="prev-tables">
@@ -55,7 +64,35 @@ export default function PreviousGame({
             {tables.map((table) => (
               <li
                 key={table._id}
-                onClick={() => navigate(`/table/${table._id}`)}
+                onClick={async () => {
+                  const userId = user._id;
+                  try {
+                    const response = await fetch(
+                      `${API_URL}/api/tabletop/tables/${table._id}/players`
+                    );
+                    if (!response.ok)
+                      throw new Error(
+                        "Erreur lors de la vérification du joueur"
+                      );
+
+                    const players = await response.json();
+                    const currentPlayer = players.find(
+                      (p: any) => p.userId === userId
+                    );
+
+                    if (currentPlayer?.selectedCharacter) {
+                      navigate(`/table/${table._id}`);
+                    } else {
+                      setSelectedTable(table);
+                      setIsJoinModalOpen(true);
+                    }
+                  } catch (error) {
+                    console.error(
+                      "❌ Erreur lors de la vérification du personnage :",
+                      error
+                    );
+                  }
+                }}
               >
                 {table.bannerImage ? (
                   <img
@@ -73,17 +110,32 @@ export default function PreviousGame({
                   <img src={PlaceHolderTableImg} alt={`${table.name}`} />
                 )}
                 <div className="table__recap">
-                  <p>{table.name}</p>
-                  <span>MJ : {table.gameMasterName}</span>
                   <p>
-                    <i className="fa-regular fa-user"></i>{" "}
-                    {table.players?.length || 0}
+                    <span className="table__recap--name">{table.name}</span>
+                    <span>MJ : {table.gameMasterName}</span>
+
+                    <span>
+                      <i className="fa-regular fa-user"></i>{" "} {table.players?.length || 0}
+                    </span>
+                    <span>Jeu : {table.game}</span>
                   </p>
                 </div>
               </li>
             ))}
           </ul>
         </>
+      )}
+      {isJoinModalOpen && selectedTable && (
+        <Modal
+          title="Sélectionnez votre personnage"
+          onClose={() => setIsJoinModalOpen(false)}
+        >
+          <SelectNextCharacter
+            tableId={selectedTable._id}
+            gameMasterId={selectedTable.gameMaster}
+            onClose={() => setIsJoinModalOpen(false)}
+          />
+        </Modal>
       )}
     </div>
   );

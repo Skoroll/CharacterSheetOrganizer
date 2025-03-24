@@ -65,7 +65,7 @@ export default function Nav({ className, toggleNav }: NavProps) {
   ];
 
   const characterOptions: Option[] = [
-    { label: "Gérer les personnages", component: <CharacterList /> },
+    { label: "Vos personnages", component: <CharacterList /> },
   ];
 
   const tableOptions: Option[] = [
@@ -75,8 +75,8 @@ export default function Nav({ className, toggleNav }: NavProps) {
 
   const menuSections = [
     { title: "Votre compte", options: userOptions },
-    { title: "Les personnages", options: characterOptions },
-    { title: "Les tables de jeux", options: tableOptions },
+    { title: "Personnages", options: characterOptions },
+    { title: "Jouer", options: tableOptions },
   ];
 
   // Ouvrir la modale avec un composant spécifique

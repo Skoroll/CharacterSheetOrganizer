@@ -1,63 +1,51 @@
- 
-.modal__inside--content{
+.modal__inside--content {
+  .character-list {
+    ul {
+      @include ul-base;
+      @include flex-col;
+      gap: $spacing-small;
+    }
+  }
 
-    .character-list{
+  .character {
+    position: relative;
+    @include flex-col;
+    border: 1px solid;
+    cursor: pointer;
+    width: 250px;
+    height: 250px;
+    margin: auto;
 
-        ul{
-            @include ul-base;
-            @include flex-col;
-            gap: $spacing-small;
-        }
+    &:hover {
+      background: rgba(
+        red($text-color),
+        green($text-color),
+        blue($text-color),
+        0.2
+      );
+      border: 1px solid transparent;
     }
 
-    .character{
-        position: relative;
-        @include flex-col; 
-        border: 1px solid;
-        padding: $spacing-small;
-        cursor: pointer;
-
-        &:hover {
-            background: rgba(red($text-color), green($text-color), blue($text-color), 0.2);
-            border: 1px solid transparent;            
-        }
-
-        h2 {
-            margin: 0;
-        }
-
-        .fa-trash{
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            transition: all 0.5s;
-            &:hover {
-                color: rgb(194, 99, 99);
-                transform: scale(110%)
-            }
-        }
-
-        &__inside{
-            @include flex-row;
-
-            flex-direction: row-reverse;
-
-            &--stats{
-                width: 50%;
-
-                p{
-                    @include flex-row;
-                    width: 120px;
-                    justify-content: space-between;
-                }
-            }
-
-            &--image{
-                width: 50%;
-                img{
-                    width: 100px;
-                }
-            }
-        }
+    h3 {
+      margin: 0;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      z-index: 999;
+      width: 100%;
+      padding: 5px;
+      box-sizing: border-box;
+      background: rgba(36, 35, 35, 0.74);
     }
+  }
+
+  .character--img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+  }
 }

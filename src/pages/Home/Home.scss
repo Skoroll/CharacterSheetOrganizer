@@ -85,18 +85,18 @@
       text-align: left;
       gap: $spacing-medium;
       cursor: pointer;
-      border-bottom: 1px solid transparent;
-      border-left: 1px solid transparent;
       padding: $spacing-small;
       transition: all 0.3s;
       width: 200px;
-      max-width: 300px;
+      height: 270px;
       border: 1px solid;
-      border-radius: $spacing-small;
+      align-items: center;
+      border-radius: calc($spacing-small *2);
+
 
       img {
         width: 100%;
-        height: 170px;
+        min-height: 125px;
         object-fit: cover;
         display: block;
         border-radius: $spacing-small;
@@ -105,8 +105,19 @@
       .table__recap {
         @include flex-col;
         width: 100%;
-        gap: calc($spacing-small/2);
+        height: 100%;
         margin: auto auto 0 auto;
+
+        &--name {
+          font-weight: 800
+        }
+
+        p {
+          @include flex-col;
+          margin: 0;
+          height: 100%;
+          gap: calc($spacing-small *2);
+        }
       }
     }
   }
