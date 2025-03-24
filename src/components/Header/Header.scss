@@ -1,74 +1,91 @@
-
-
 .header {
+  @include flex-row;
+  position: fixed;
+  justify-content: space-between;
+  backdrop-filter: blur(5px);
+  z-index: 999;
+  width: 100%;
+
+  .auth-btn {
+    @include button;
+    height: 35px;
+    margin: auto $spacing-small;
+  }
+
+  img {
+    text-align: left;
+    margin-left: 5px;
+    font-size: 20px;
+    height: auto;
+    width: 200px;
+    cursor: pointer;
+    padding: $spacing-small;
+    transition: all 1s;
+
+    &:hover {
+      transform: scale(95%);
+    }
+  }
+
+  &__content {
+    position: relative;
     @include flex-row;
-    position: fixed;
-    justify-content: space-between;
-    backdrop-filter: blur(5px);
-    z-index: 999;
-    width: 100%;
-
-    .auth-btn {
-        @include button;
-        height: 35px;
-        margin: auto $spacing-small;
-    }
-
-    img {
-        text-align: left;
-        margin-left: 5px;
-        font-size: 20px;
-        height: auto;
-        width: 200px;
-        cursor: pointer;
-        padding:  $spacing-small;
-        transition: all 1s;
-
-        &:hover {
-            transform: scale(95%);
-        }
-    }
-
-    &__content {
-        position: relative;
-        @include flex-row;
-
-
 
     .main-nav {
-        all: unset;
-        @include flex-row;
-        gap: $spacing-small;
-        margin: auto;
+      all: unset;
+      @include flex-row;
+      gap: $spacing-small;
+      margin: auto;
 
-        button {
-            background: none;
-            border: none;
-            color: $text-color;
-            cursor: pointer;
-            border: 1px solid transparent;
-            border-bottom: 1px solid;
-            transition: all 0.3s;
-            padding: $spacing-small;
-            border-radius: 0;
-
-
-            &:hover {
-                border: 1px solid ;
-                border-radius: $spacing-small;
-            }
-        }
-    }
-    }
-    .menu-toggle {
-        position: relative;
-        right: 0;
+      button {
         background: none;
-        color: $text-color;
-        padding: 0 $spacing-medium;
         border: none;
-        font-size: 30px;
+        color: $text-color;
         cursor: pointer;
+        border: 1px solid transparent;
+        border-bottom: 1px solid;
+        transition: all 0.3s;
+        padding: $spacing-small;
+        border-radius: 0;
+
+        &:hover {
+          border: 1px solid;
+          border-radius: $spacing-small;
+        }
+      }
+    }
+  }
+  .menu-toggle {
+    position: relative;
+    right: 0;
+    background: none;
+    color: $text-color;
+    padding: 0 $spacing-medium;
+    border: none;
+    font-size: 30px;
+    cursor: pointer;
+  }
+}
+
+@include media-query($breakpoint-sm, "max") {
+  .header {
+    @include flex-col;
+
+    img {
+      margin: auto;
     }
 
+    .menu-toggle {
+        position: absolute;
+    }
+
+    .main-menu {
+        top: 40px;
+    }
+
+    .main-nav {
+        @include flex-wrap;
+        justify-content: space-evenly;
+    }
+  }
 }

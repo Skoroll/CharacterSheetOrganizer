@@ -20,6 +20,10 @@ main {
   flex: 1;
   position: relative;
   margin-top: 110px;
+
+  @include media-query($breakpoint-sm, "max") {
+    margin-top: 150px;
+  }
 }
 
 

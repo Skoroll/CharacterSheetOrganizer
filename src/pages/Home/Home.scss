@@ -131,3 +131,10 @@
     }
   }
 }
+
+
+@include media-query($breakpoint-sm, "max") {
+  .home {
+    @include flex-col;
+  }
+}
