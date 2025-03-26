@@ -9,6 +9,7 @@ interface GalleryProps {
     path?: string;
     type: "image" | "text";
     content?: string;
+    title?: string;
   }>;
   API_URL: string;
   onDeleteFile: (fileId: string) => void; // ✅ Nouvelle prop
@@ -72,30 +73,25 @@ const Gallery: React.FC<GalleryProps> = ({ files, API_URL, onDeleteFile }) => {
     socketRef.current.emit("sendText", textObject);
   };
 
-  // ✅ Fonction pour supprimer un média actuellement affiché
-  const removeDisplayedMedia = () => {
-    if (!socketRef.current.connected) return;
-    socketRef.current.emit("removeMedia", { tableId });
-  };
-
   return (
     <div className="gallery">
       {/* 🔴 Bouton pour retirer le média affiché */}
-      <button className="remove-btn" onClick={removeDisplayedMedia}>
-        Retirer l'affichage
-      </button>
       <h3>📂 Fichiers enregistrés</h3>
       {files.length > 0 ? (
         <ul>
           {files.map((file, index) => (
             <li key={index} className="file-item">
+              <div className="file-item__header">
+                <strong>{file.title}</strong>
+              </div>
+
               {file.type === "image" ? (
                 <>
                   <button
-                    onClick={() => handleDeleteFile(file._id)} // ✅ Passer l'ID du fichier
+                    onClick={() => handleDeleteFile(file._id)}
                     className="file-item--remove"
                   >
-                    <i className="fa-solid fa-trash"></i> Supprimer
+                    <i className="fa-solid fa-trash"></i>
                   </button>
 
                   <img
@@ -108,9 +104,9 @@ const Gallery: React.FC<GalleryProps> = ({ files, API_URL, onDeleteFile }) => {
 
                   <button
                     className="show-btn"
-                    onClick={() => sendToMediaDisplay(`${API_URL}${file.path}`)}
+                    onClick={() => sendToMediaDisplay(`${file.path}`)}
                   >
-                    Afficher
+                    <i className="fa-solid fa-upload"></i>
                   </button>
                 </>
               ) : file.type === "text" ? (
@@ -124,7 +120,7 @@ const Gallery: React.FC<GalleryProps> = ({ files, API_URL, onDeleteFile }) => {
                       )
                     }
                   >
-                    Afficher le texte
+                    <i className="fa-solid fa-upload"></i>
                   </button>
                 </>
               ) : null}

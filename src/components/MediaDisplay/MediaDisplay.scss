@@ -1,13 +1,43 @@
  
 
 .table-content__media-container {
+    padding: $spacing-small;
+    z-index: 1;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    margin: auto;
     .displayed-text {
         white-space: pre-line;
     }
 
-.media-container {
+.media-container, .zoom-wrapper {
     position: relative;
-    height: 100%;
+    overflow: hidden;
+    outline: none;
+
+    img {
+        height: 100%;
+        width: 100%;
+        z-index: 2;
+    }
+
+    .zoom-controls {
+        position: absolute;
+        top: 0;
+        right: 0;
+        @include flex-row;
+        gap: $spacing-small;
+        padding: $spacing-small;
+        position: absolute;
+        z-index: 50;
+        bottom: 0;
+
+        button {
+            @include button;
+            height: 35px;
+        }
+    }
 
     .remove-btn{
         position: absolute;
@@ -18,6 +48,7 @@
         left: 0;
         padding: $spacing-small;
         cursor: pointer;
+        z-index: 5;
     }
 }
 }

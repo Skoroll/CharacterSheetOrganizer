@@ -300,7 +300,10 @@ const handleSaveNotes = async () => {
 
         <div className="table__content--main-container">
           <div className="table-content__media-container">
-            <MediaDisplay tableId={table._id} API_URL={API_URL} />
+            <MediaDisplay 
+              tableId={table._id} 
+              API_URL={API_URL} 
+              isGameMaster = {isGameMaster}/>
           </div>
           <div className="table-side-pannel">
             <DiceRoller

@@ -111,11 +111,22 @@
   width: 150px;
   height: 150px;
 
+  strong {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: rgba(0, 0, 0, 0.445);
+    padding: 5px;
+  }
+
   &--remove {
     position: absolute;
     background: none !important;
     left: 0;
-    top: 0;
+    bottom: 8px;
+
   }
 
   p {
@@ -126,7 +137,7 @@
 
   .show-btn {
     position: absolute;
-    bottom: 5px;
-    right: 5px;
+    bottom: 8px;
+    right: 8px;
   }
 }
