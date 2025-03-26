@@ -63,6 +63,7 @@ export default function PreviousGame({
           <ul>
             {tables.map((table) => (
               <li
+                className="prev-tables--item"
                 key={table._id}
                 onClick={async () => {
                   const userId = user._id;

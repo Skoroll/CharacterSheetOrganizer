@@ -10,7 +10,6 @@
 
       li {
         border: 1px transparent;
-        flex-grow: 1;
         padding: $spacing-small;
         border-radius: $spacing-medium;
         border: 1px solid transparent;
@@ -81,6 +80,8 @@
   @include flex-col;
   border: 1px solid !important;
   transition: all 0.3s;
+  width: 80px;
+  height: 80px;
 
   .fa-plus {
     font-size: 40px;
@@ -108,11 +109,13 @@
     width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
+    margin-bottom: $spacing-medium;
 
     .character-list {
       ul {
         position: relative;
         flex-direction: row;
+        padding-bottom: $spacing-small;
         }
 
 
@@ -128,7 +131,7 @@
       }
       }
     }
-    .character__inside--image:hover, li:hover {
+    .character__inside--image:hover {
       width: 80px !important;
       height: 80px !important;
     }
