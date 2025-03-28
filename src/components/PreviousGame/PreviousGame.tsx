@@ -5,17 +5,10 @@ import PlaceHolderTableImg from "../../assets/dice-solid.svg";
 import { BeatLoader } from "react-spinners";
 import defaultTableImg from "../../assets/dice-solid.svg";
 import Modal from "../Modal/Modal";
+import {Table} from "../../types/Table"
 import SelectNextCharacter from "../SelectNextCharacter/SelectNextCharacter";
 
-type Table = {
-  _id: string;
-  name: string;
-  players?: { playerId: string }[];
-  bannerImage?: string;
-  gameMaster: string;
-  gameMasterName: string;
-  game: string;
-};
+
 
 type PreviousGameProps = {
   tables?: Table[];

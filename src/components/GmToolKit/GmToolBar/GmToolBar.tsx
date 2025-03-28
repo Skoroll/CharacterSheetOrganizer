@@ -45,16 +45,16 @@ const GmToolBar: React.FC<GmToolBarProps> = ({ tableId, API_URL, players, isGame
     <div className="gm-toolbar-container" ref={toolbarRef}>
       <p className="gm-toolbar__heading">Outils du Maître de Jeu</p>
       <div className="gm-toolbar">
-        <i onClick={() => togglePanel("sendDocs")} className="fa-solid fa-file-import"></i>
-        <i onClick={() => togglePanel("playerList")} className="fa-solid fa-user"></i>
-        <i onClick={() => togglePanel("soundBoard")} className="fa-solid fa-music"></i>
-        <i onClick={() => togglePanel("npcs")} className="fa-solid fa-ghost"></i>
-        <i className="fa-solid fa-hat-wizard"></i>
-        <i className="fa-solid fa-suitcase"></i>
-        <i onClick={() => togglePanel("tableStyle")} className="fa-solid fa-brush"></i>
+        <button onClick={() => togglePanel("sendDocs")} ><i className="fa-solid fa-file-import"></i></button>
+        <button onClick={() => togglePanel("playerList")} ><i className="fa-solid fa-user"></i></button>
+        <button onClick={() => togglePanel("soundBoard")}><i className="fa-solid fa-music"></i></button>
+        <button onClick={() => togglePanel("npcs")}><i  className="fa-solid fa-ghost"></i></button>
+        <button><i className="fa-solid fa-hat-wizard"></i></button>
+        <button><i className="fa-solid fa-suitcase"></i></button>
+        <button onClick={() => togglePanel("tableStyle")}><i  className="fa-solid fa-brush"></i></button>
 
         {/* ✅ L'icône ouvre directement la modale de suppression */}
-        <i onClick={() => setIsDeleteModalOpen(true)} className="fa-solid fa-trash"></i>
+       <button onClick={() => setIsDeleteModalOpen(true)}> <i className="fa-solid fa-trash"></i></button>
       </div>
 
       {/* ✅ Affichage de la modale de suppression */}

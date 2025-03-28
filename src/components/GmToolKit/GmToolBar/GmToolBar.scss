@@ -19,13 +19,15 @@ position: relative;
       margin: auto 0 auto 0;
     }
 
-    .fa-solid {
+    button {
       font-size: 15px;
       cursor: pointer;
       border-radius: 50%;
       border: 1px solid transparent;
       padding: 8px;
       transition: all 0.3s;
+      background: none;
+      color: $text-color;
 
       &:hover {
         background-color: $background-color;
@@ -43,4 +45,13 @@ position: relative;
   background-color: $background-color;
   z-index: 900;
   box-sizing: border-box;
+}
+
+
+
+@include media-query($breakpoint-sm, "max") {
+  .gm-toolbar {
+    flex-wrap: wrap;
+    gap: $spacing-small;
+  }
 }

@@ -1,19 +1,13 @@
 import { useEffect, useState } from "react";
-
 import Landing from "../Landing/Landing";
 import Menu from "../Menu/Menu";
+import NewsPanel from "../../components/NewsPanel/NewsPanel";
 import PreviousGame from "../../components/PreviousGame/PreviousGame";
 import { useUser } from "../../Context/UserContext";
+import {Table} from "../../types/Table"
 import { BeatLoader } from "react-spinners";
 import "./Home.scss";
 
-type Table = {
-  _id: string;
-  name: string;
-  players?: { playerId: string }[];
-  bannerImage?: string;
-  gameMasterName: string;
-};
 
 export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -41,7 +35,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!user.isAuthenticated) return;
-
+  
     const fetchUserTables = async () => {
       try {
         const response = await fetch(`${API_URL}/api/users/profile`, {
@@ -51,45 +45,56 @@ export default function Home() {
             Authorization: `Bearer ${user.token}`,
           },
         });
-
+  
         if (!response.ok) throw new Error("Erreur lors de la récupération du profil.");
-
+  
         const userData = await response.json();
         const tableIds: string[] = userData.user.tablesJoined || [];
-        
+  
         if (tableIds.length === 0) {
           setTables([]);
           setLoading(false);
           return;
         }
-
-        const tableRequests = tableIds.map(async (id: string) => {
+  
+        const validTables: Table[] = [];
+  
+        for (const id of tableIds) {
           try {
             const res = await fetch(`${API_URL}/api/tabletop/tables/${id}`);
-
-            if (!res.ok) {
-              if (res.status === 404) return null; // Table supprimée
-              if (res.status === 401 || res.status === 403) return null; // Accès refusé
-              throw new Error(`Erreur pour la table ${id}`);
+  
+            if (res.status === 404) {
+              // 💥 Supprimer la table inexistante de l'utilisateur
+              await fetch(`${API_URL}/api/users/removeTable/${id}`, {
+                method: "PATCH",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${user.token}`,
+                },
+              });
+              continue;
             }
-
-            return await res.json();
-          } catch (error) {
-            return null;
+  
+            if (!res.ok) throw new Error(`Erreur pour la table ${id}`);
+  
+            const tableData = await res.json();
+            validTables.push(tableData);
+          } catch (err) {
+            console.warn(`❌ Impossible de charger la table ${id} :`, err);
           }
-        });
-
-        const tableData = await Promise.all(tableRequests);
-        setTables(tableData.filter((table): table is Table => table !== null));
+        }
+  
+        setTables(validTables);
       } catch (err) {
         setError("Impossible de récupérer les tables.");
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchUserTables();
   }, [API_URL, user]);
+  
 
   if (isAuthenticated === null) {
     return (
@@ -112,6 +117,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
+            <NewsPanel />
           </div>
         </>
       ) : (

@@ -1,0 +1,50 @@
+.news-panel {
+    margin: 0 0 auto auto;
+    border-left: 1px solid;
+    padding: 10px;
+
+    &--more {
+        opacity: 0;
+        font-size: 12px;
+        transition: all 0.3s;
+    }
+    
+    &--title {
+        font-size: 500;
+    }
+
+    h2 {
+        margin: 0 auto $spacing-small auto
+    }
+
+    ul {
+
+        @include flex-col;
+        padding: $spacing-small;
+        list-style: none;
+        flex-direction: column-reverse;
+        gap: $spacing-small;
+
+        li {
+            @include flex-row;
+            cursor: pointer;
+
+            &::before {
+                content: "\f054"; 
+                font-family: "Font Awesome 6 Free";
+                font-weight: 900;
+                margin-right: 0.5em;
+            }
+
+            &:hover {
+               .news-panel--more {
+                opacity: 1;
+               } 
+            }
+
+            p {
+                margin: 0;
+            }
+        }
+    }
+}

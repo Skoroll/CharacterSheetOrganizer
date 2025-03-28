@@ -3,7 +3,7 @@
   flex: 1;
 
   &-wrapper {
-    @include flex-col;
+    @include flex-row;
     flex: 1;
 
     &__container {

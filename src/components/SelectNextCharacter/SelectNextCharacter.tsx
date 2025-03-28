@@ -17,7 +17,7 @@ interface Props {
   onClose: () => void;
 }
 
-export default function SelectNextCharacter({ tableId, onClose }: Props) {
+export default function SelectNextCharacter({ tableId, gameMasterId, onClose }: Props) {
   const { user } = useUser();
   const navigate = useNavigate();
 
@@ -27,6 +27,14 @@ export default function SelectNextCharacter({ tableId, onClose }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   const API_URL = import.meta.env.VITE_API_URL;
+
+  // ✅ Redirige automatiquement si le MJ n'a pas besoin de choisir de personnage
+  useEffect(() => {
+    if (user._id === gameMasterId) {
+      onClose();
+      navigate(`/table/${tableId}`);
+    }
+  }, [user._id, gameMasterId, navigate, onClose, tableId]);
 
   useEffect(() => {
     async function fetchCharacters() {

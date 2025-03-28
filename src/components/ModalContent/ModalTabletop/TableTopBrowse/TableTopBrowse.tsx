@@ -3,23 +3,9 @@ import { BeatLoader } from "react-spinners";
 import Modal from "../../../Modal/Modal";
 import TableSearch from "./TableSearch";
 import TabletopJoin from "../TabletopJoin/TabletopJoin";
+import { Table } from "../../../../types/Table";
 import "./TableTopBrowse.scss";
-
-type Player = {
-  playerId: string;
-  playerName: string;
-  selectedCharacter: string | null;
-  isGameMaster: boolean;
-};
-
-type Table = {
-  _id: string;
-  name: string;
-  gameMaster: string;
-  game: string;
-  players: Player[];
-  gameMasterNotes?: { notes: string };
-};
+import placeHolderImg from "../../../../assets/dice-solid.svg"
 
 export default function TableTopBrowse() {
   const [tables, setTables] = useState<Table[]>([]);
@@ -28,7 +14,7 @@ export default function TableTopBrowse() {
   const [error, setError] = useState("");
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
   const [selectedTableId, setSelectedTableId] = useState<string | null>(null);
-  
+
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const tablesPerPage = 5; // Nombre de tables par page
@@ -56,7 +42,9 @@ export default function TableTopBrowse() {
         setFilteredTables(data.tables); // Initialisation des tables affichées
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Une erreur inconnue est survenue."
+          err instanceof Error
+            ? err.message
+            : "Une erreur inconnue est survenue."
         );
       } finally {
         setLoading(false);
@@ -82,7 +70,10 @@ export default function TableTopBrowse() {
   // Pagination : Déterminer les tables à afficher
   const indexOfLastTable = currentPage * tablesPerPage;
   const indexOfFirstTable = indexOfLastTable - tablesPerPage;
-  const currentTables = filteredTables.slice(indexOfFirstTable, indexOfLastTable);
+  const currentTables = filteredTables.slice(
+    indexOfFirstTable,
+    indexOfLastTable
+  );
 
   // Changer de page
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
@@ -105,37 +96,52 @@ export default function TableTopBrowse() {
           <ul>
             {currentTables.map((table) => (
               <li key={table._id}>
-                <div className="is-online" />
+                <button
+                  onClick={() => handleJoinTable(table._id)}
+                >
+                <div className="table-banner">
+                  <img
+                    src={
+                      table.bannerImage?.startsWith("http")
+                        ? table.bannerImage
+                        : `${API_URL}${table.bannerImage}`
+                    }
+                    alt={table.name}
+                    onError={(e) => {
+                      e.currentTarget.src = `${placeHolderImg}`;
+                    }}
+                  />
+                </div>
                 <div className="table-infos">
-                  <p>{table.name}</p>
+                  <p className="table-infos--name">{table.name}</p>
                   <p>
-                    <i className="fa-regular fa-user"></i> {table.players?.length || 0}
+                    <i className="fa-regular fa-user"></i>{" "}
+                    {table.players?.length || 0}
                   </p>
-                  <p>{table.game}</p>
+                  <p><span>{table.game}</span>  <span>{table.gameMasterName}</span></p>
                 </div>
                 <div className="tabletop-browse__btn">
-                  <button
-                    className="tabletop-browse--join"
-                    onClick={() => handleJoinTable(table._id)}
-                  >
-                    <i className="fa-solid fa-right-to-bracket" />
-                  </button>
+               
                 </div>
+                </button>
               </li>
             ))}
           </ul>
 
           {/* Pagination */}
           <div className="pagination">
-            {Array.from({ length: Math.ceil(filteredTables.length / tablesPerPage) }, (_, i) => (
-              <button
-                key={i + 1}
-                className={currentPage === i + 1 ? "active" : ""}
-                onClick={() => paginate(i + 1)}
-              >
-                {i + 1}
-              </button>
-            ))}
+            {Array.from(
+              { length: Math.ceil(filteredTables.length / tablesPerPage) },
+              (_, i) => (
+                <button
+                  key={i + 1}
+                  className={currentPage === i + 1 ? "active" : ""}
+                  onClick={() => paginate(i + 1)}
+                >
+                  {i + 1}
+                </button>
+              )
+            )}
           </div>
         </>
       )}
@@ -150,7 +156,8 @@ export default function TableTopBrowse() {
             onClose={() => setIsJoinModalOpen(false)}
             onJoin={handleJoinSuccess}
             gameMasterId={
-              tables.find((table) => table._id === selectedTableId)?.gameMaster || ""
+              tables.find((table) => table._id === selectedTableId)
+                ?.gameMaster || ""
             }
           />
         </Modal>

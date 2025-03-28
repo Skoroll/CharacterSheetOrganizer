@@ -6,6 +6,10 @@
   .content-wrapper {
     @include flex-row;
     gap: $spacing-medium;
+
+    @include media-query($breakpoint-sm, "max") {
+      @include flex-col;
+    }
   }
 
   .edit-section {
@@ -64,6 +68,10 @@
     @include flex-col;
     text-align: left;
     align-self: flex-start;
+
+    @include media-query($breakpoint-sm, "max") {
+      margin: auto;
+    }    
 
     &--image {
       position: relative;
