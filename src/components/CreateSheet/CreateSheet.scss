@@ -155,6 +155,8 @@
 }
 
 .character__equipment {
+  position: relative;
+
   &--weapon {
     @include flex-wrap;
 
@@ -215,6 +217,8 @@
 }
 
 .character-points {
+  position: relative;
+  
   @include flex-col;
   label {
     padding: (calc($spacing-small * 2));
@@ -226,6 +230,7 @@
 }
 
 .character-stats {
+  position: relative;
   label {
     flex-direction: row;
     justify-content: space-between;

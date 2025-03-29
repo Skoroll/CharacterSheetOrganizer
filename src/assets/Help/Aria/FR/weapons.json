@@ -1,0 +1,6 @@
+[
+    {
+      "text": "Les armes de votre personnage comportent 2 attributs : <ul><li>un nom,</li><li>des dégâts</li></ul><br/>Les dégâts peuvent être un chiffre fixe ou une fourchette donnée par un jeu de dé.<br/>Par exemple <code>1d6</code> veut dire \"le résultat d'un jet de dé à 6 faces\"."
+    }
+  ]
+  

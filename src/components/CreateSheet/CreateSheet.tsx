@@ -1,6 +1,10 @@
 import { useState } from "react";
 import "./CreateSheet.scss";
 import { useNavigate } from "react-router-dom";
+import Helper from "../Helper/Helper";
+import statsTooltip from "../../assets/Help/Aria/FR/stats.json"
+import weaponsTooltip from "../../assets/Help/Aria/FR/weapons.json"
+import healthTooltip from "../../assets/Help/Aria/FR/health.json"
 import placeholderImage from "../../assets/placeholder-image.webp";
 
 // Déclaration des types pour les armes, compétences, inventaire, etc.
@@ -262,7 +266,8 @@ function CreateSheet() {
           </div>
 
           <div className="character-stats">
-            <h3>Caractéristiques</h3>
+            <h3>Caractéristiques </h3>
+            <Helper content={statsTooltip}/>
             <label>
               Force
               <input
@@ -308,6 +313,7 @@ function CreateSheet() {
 
         <div className="character__equipment">
           <h3>Armes</h3>
+          <Helper content={weaponsTooltip}/>
           {weapons.map((weapon, index) => (
             <div key={index} className="character__equipment--weapon">
               <label>
@@ -337,6 +343,7 @@ function CreateSheet() {
         </div>
         <div className="character-points">
           <h3>Physique</h3>
+          <Helper content={healthTooltip}/>
           <label>
             Points de vie
             <input
