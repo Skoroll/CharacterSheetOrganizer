@@ -13,6 +13,11 @@
 
     &__label {
         margin: $spacing-small 0;
+        display: flex;
+        
+        input {
+            flex: 1;
+        }
     }
 
     &__messages {

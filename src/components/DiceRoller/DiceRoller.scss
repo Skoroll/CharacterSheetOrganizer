@@ -1,6 +1,7 @@
 
 .dice-roller {
     @include flex-row;
+    flex-direction: row-reverse;
     gap: $spacing-medium;
     justify-content: space-between;
 

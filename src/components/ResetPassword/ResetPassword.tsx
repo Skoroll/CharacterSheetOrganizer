@@ -34,7 +34,7 @@ export default function ResetPassword() {
       }
 
       alert("✅ Mot de passe réinitialisé avec succès !");
-      navigate("/login"); // 🔄 Redirige vers la page de connexion
+      navigate("/"); // 🔄 Redirige vers la page de connexion
     } catch (error) {
       console.error("❌ Erreur :", error);
       alert("Une erreur est survenue.");
