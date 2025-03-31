@@ -48,3 +48,14 @@
         }
     }
 }
+
+@include media-query($breakpoint-sm, "max") {
+    .news-panel {
+        width: 100%;
+        border-left: 0;
+
+        h2 {
+            border-bottom: 1px solid;
+        }
+    }
+  }

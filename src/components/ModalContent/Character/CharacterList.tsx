@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
-import defaultImg from "../../../assets/person-placeholder-5.webp"
+import defaultImg from "../../../assets/person-placeholder-5.webp";
+import AriaLogo from "../../../assets/Aria_logo.png";
+import defaultLogo from "../../../assets/dice-solid.svg";
 import "./CharacterList.scss";
-import "../../../types/Character"
+import "../../../types/Character";
 
 interface Character {
   _id: string;
@@ -11,6 +13,7 @@ interface Character {
   className: string;
   age: number;
   image: string;
+  game: string;
 }
 
 export default function CharacterList() {
@@ -19,6 +22,11 @@ export default function CharacterList() {
   const [error, setError] = useState<string | null>(null);
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
+
+  const gameLogos: Record<string, string> = {
+    Aria: AriaLogo,
+    //Futurs jeux à ajouter ici pour avoir les logos correspondants
+  };
 
   useEffect(() => {
     async function fetchCharacters() {
@@ -63,7 +71,6 @@ export default function CharacterList() {
     fetchCharacters();
   }, [API_URL]);
 
-
   if (loading) return <BeatLoader />;
   if (error) return <div>Erreur : {error}</div>;
 
@@ -76,20 +83,25 @@ export default function CharacterList() {
               className="character"
               onClick={() => navigate(`/personnage/${character._id}`)}
             >
-                <div className="character--stats">
-                  <h3>{character.name}</h3>
-                </div>
-                  <img
-                      className="character--img"
-                      src={
-                        character?.image
-                          ? typeof character.image === "string"
-                            ? character.image // 🔥 URL Cloudinary déjà complète
-                            : URL.createObjectURL(character.image)
-                          : defaultImg
-                      }
-                    alt={character.name}
-                  />
+              <img
+                src={gameLogos[character.game || ""] || defaultLogo}
+                alt={`${character.game || "Jeu inconnu"} logo`}
+                className="game-logo"
+              />
+              <div className="character--stats">
+                <h3>{character.name}</h3>
+              </div>
+              <img
+                className="character--img"
+                src={
+                  character?.image
+                    ? typeof character.image === "string"
+                      ? character.image // 🔥 URL Cloudinary déjà complète
+                      : URL.createObjectURL(character.image)
+                    : defaultImg
+                }
+                alt={character.name}
+              />
             </div>
           </li>
         ))}

@@ -5,7 +5,7 @@ import TableSearch from "./TableSearch";
 import TabletopJoin from "../TabletopJoin/TabletopJoin";
 import { Table } from "../../../../types/Table";
 import "./TableTopBrowse.scss";
-import placeHolderImg from "../../../../assets/dice-solid.svg"
+import placeHolderImg from "../../../../assets/dice-solid.svg";
 
 export default function TableTopBrowse() {
   const [tables, setTables] = useState<Table[]>([]);
@@ -96,33 +96,32 @@ export default function TableTopBrowse() {
           <ul>
             {currentTables.map((table) => (
               <li key={table._id}>
-                <button
-                  onClick={() => handleJoinTable(table._id)}
-                >
-                <div className="table-banner">
-                  <img
-                    src={
-                      table.bannerImage?.startsWith("http")
-                        ? table.bannerImage
-                        : `${API_URL}${table.bannerImage}`
-                    }
-                    alt={table.name}
-                    onError={(e) => {
-                      e.currentTarget.src = `${placeHolderImg}`;
-                    }}
-                  />
-                </div>
-                <div className="table-infos">
-                  <p className="table-infos--name">{table.name}</p>
-                  <p>
-                    <i className="fa-regular fa-user"></i>{" "}
-                    {table.players?.length || 0}
-                  </p>
-                  <p><span>{table.game}</span>  <span>{table.gameMasterName}</span></p>
-                </div>
-                <div className="tabletop-browse__btn">
-               
-                </div>
+                <button onClick={() => handleJoinTable(table._id)}>
+                  <div className="table-banner">
+                    <img
+                      src={
+                        table.bannerImage?.startsWith("http")
+                          ? table.bannerImage
+                          : `${API_URL}${table.bannerImage}`
+                      }
+                      alt={table.name}
+                      onError={(e) => {
+                        e.currentTarget.src = `${placeHolderImg}`;
+                      }}
+                    />
+                  </div>
+                  <div className="table-infos">
+                    <p className="table-infos--name">{table.name}</p>
+                    <p>
+                      <i className="fa-regular fa-user"></i>{" "}
+                      {table.players?.length || 0}
+                    </p>
+                    <p>
+                      <span>Jeu : {table.game}</span> <br />
+                      Maitre de jeu : <span>{table.gameMasterName}</span>
+                    </p>
+                  </div>
+                  <div className="tabletop-browse__btn"></div>
                 </button>
               </li>
             ))}
@@ -158,6 +157,9 @@ export default function TableTopBrowse() {
             gameMasterId={
               tables.find((table) => table._id === selectedTableId)
                 ?.gameMaster || ""
+            }
+            game={
+              tables.find((table) => table._id === selectedTableId)?.game || ""
             }
           />
         </Modal>

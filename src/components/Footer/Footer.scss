@@ -6,6 +6,9 @@
   &__cta{
   
   &--kofi {
+    margin: $spacing-small;
+    box-shadow: 0px 0px 21px -10px #D0D0D0;
+    border-radius: $spacing-small;
     .kofi-link {
       @include flex-col;
       p {

@@ -10,6 +10,11 @@
     color: $text-muted;
   }
 
+  .game-logo {
+    width: min(500px, 50%);
+    margin: $spacing-large auto
+  }
+
   button {
     @include button;
   }

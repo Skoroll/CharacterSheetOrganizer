@@ -1,5 +1,6 @@
 export interface Character {
   _id: string;
+  game: string;
   name: string;
   className: string;
   age: number;

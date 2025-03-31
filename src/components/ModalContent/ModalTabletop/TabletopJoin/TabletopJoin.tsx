@@ -4,21 +4,18 @@ import { useUser } from "../../../../Context/UserContext";
 import "./TabletopJoin.scss";
 import { BeatLoader } from "react-spinners";
 import defaultImg from "../../../../assets/person-placeholder-5.webp"
+import { Character } from "../../../../types/Character";
 
-interface Character {
-  _id: string;
-  name: string;
-  image?: string;
-}
 
 interface TabletopJoinProps {
   tableId: string;
   onClose: () => void;
   onJoin?: () => void;
   gameMasterId: string;
+  game: string;
 }
 
-const TabletopJoin = ({ tableId, onClose, gameMasterId }: TabletopJoinProps) => {
+const TabletopJoin = ({ tableId, onClose, gameMasterId, game }: TabletopJoinProps) => {
   const { user } = useUser();
   const { isAuthenticated, _id: userId, userPseudo: playerName, token } = user;
 
@@ -52,7 +49,9 @@ const TabletopJoin = ({ tableId, onClose, gameMasterId }: TabletopJoinProps) => 
         if (!response.ok) throw new Error("Erreur lors de la récupération des personnages");
 
         const fetchedCharacters = await response.json();
-        setCharacters(fetchedCharacters);
+        setCharacters(
+          fetchedCharacters.filter((character: Character) => character.game === game)
+        );
 
         // Sélection automatique du premier personnage disponible
         if (fetchedCharacters.length > 0) {
@@ -140,6 +139,12 @@ const TabletopJoin = ({ tableId, onClose, gameMasterId }: TabletopJoinProps) => 
 
   return (
     <div className="tabletop-join-modal">
+      {characters.length === 0 && (
+  <p>Aucun personnage disponible pour <strong>{game}</strong>.
+    <br/>
+    <button onClick={() => navigate("/creation-de-personnage")}>Créer un personnage</button> 
+  </p>
+)}
       {loading && <p><BeatLoader/></p>}
       {error && <p className="error">Erreur : {error}</p>}
       {!loading && !error && (

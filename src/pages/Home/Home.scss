@@ -6,6 +6,10 @@
     @include flex-row;
     flex: 1;
 
+    @include media-query($breakpoint-sm, "max") {
+      flex-direction: column-reverse;
+    }
+
     &__container {
       @include flex-row;
     }
@@ -13,6 +17,9 @@
 
   &__tables-options {
     @include flex-col;
+    width: 100%;
+
+    
     h2 {
       text-align: left;
     }
