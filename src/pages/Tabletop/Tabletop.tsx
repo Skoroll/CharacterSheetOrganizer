@@ -50,6 +50,7 @@ export default function TableComponent() {
   const { user, setUser } = useUser(); // Utiliser le context pour récupérer l'utilisateur
   const API_URL = import.meta.env.VITE_API_URL;
   const socket = useMemo(() => io(API_URL), [API_URL]);
+  const [isComOpen, setIsComOpen] = useState(false);
   const currentPlayer = table?.players.find(
     (player) => player.userId === user._id
   );
@@ -305,6 +306,8 @@ const handleSaveNotes = async () => {
               API_URL={API_URL} 
               isGameMaster = {isGameMaster}/>
           </div>
+
+          {isComOpen &&
           <div className="table-side-pannel">
             <DiceRoller
               socket={socket}
@@ -329,10 +332,17 @@ const handleSaveNotes = async () => {
               }
               userPseudo={user.userPseudo}
             />
-          </div>
+          </div>}
         </div>
       </div>
-      <SoundPlayer />
+      <div className="table__low-bar">
+        <SoundPlayer />
+        <button
+          onClick={() => setIsComOpen((prev) => !prev)}
+        >
+          Discussion/Jet de dés
+        </button>
+      </div>
     </div>
   );
 }

@@ -2,6 +2,8 @@
     margin: 0 0 auto auto;
     border-left: 1px solid;
     padding: 10px;
+    height: 100%;
+    box-sizing: border-box;
 
     &--more {
         opacity: 0;

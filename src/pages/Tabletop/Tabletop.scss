@@ -3,6 +3,10 @@
   position: relative;
   flex-grow: 1;
 
+  &__content {
+    position: relative
+  }
+
   &__content--header {
     @include flex-row;
     justify-content: space-between;
@@ -45,9 +49,15 @@
     margin: auto;
 
     .table-side-pannel {
+      position: absolute;
+      right: 0;
+      bottom: 0;
       border-left: 1px solid;
       @include flex-col;
       padding: $spacing-medium;
+      z-index: 500;
+      background-color: $background-color;
+      margin-bottom: $spacing-medium;
     }
 
     @include media-query($breakpoint-sm, "max") {
@@ -70,9 +80,19 @@
         }
       }
 
-      .table-content__media-container {
-        margin-top: 15px;
-      }
+
     }
   }
+
+  &__low-bar {
+    @include flex-row;
+    position: sticky;
+  }
+}
+.table-content__media-container {
+  margin-top: 15px;
+  min-height: 560px;
+  background: url(../../assets/backgrounds/scroll.webp) no-repeat;
+  background-size: cover;
+  margin: $spacing-medium 0;
 }
