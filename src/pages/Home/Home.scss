@@ -105,7 +105,7 @@
         min-height: 125px;
         object-fit: cover;
         display: block;
-        border-radius: $spacing-small;
+        border-radius: $spacing-small !important;
       }
 
       .table__recap {

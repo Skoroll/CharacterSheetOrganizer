@@ -122,6 +122,12 @@ const Gallery: React.FC<GalleryProps> = ({ files, API_URL, onDeleteFile }) => {
                   >
                     <i className="fa-solid fa-upload"></i>
                   </button>
+                  <button
+                    onClick={() => handleDeleteFile(file._id)}
+                    className="file-item--remove"
+                  >
+                    <i className="fa-solid fa-trash"></i>
+                  </button>
                 </>
               ) : null}
             </li>

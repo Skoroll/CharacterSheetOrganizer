@@ -17,6 +17,13 @@
       
     .displayed-text {
         white-space: pre-line;
+        background: url("../../assets/backgrounds/scroll.webp") no-repeat;
+        background-size: cover;
+        word-wrap: break-word;
+        padding: $spacing-large;
+        margin: auto;
+        overflow: auto;
+        max-height: 560px;
     }
 
 .media-container, .zoom-wrapper {
