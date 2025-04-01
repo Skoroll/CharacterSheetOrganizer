@@ -7,6 +7,7 @@ import Chat from "../../components/Chat/Chat";
 import DiceRoller from "../../components/DiceRoller/DiceRoller";
 import GmToolBar from "../../components/GmToolKit/GmToolBar/GmToolBar";
 import MediaDisplay from "../../components/MediaDisplay/MediaDisplay";
+import { useCallback } from "react";
 {
   /*import NotesPanel from "../../components/NotesPanel/NotesPannel/"*/
 }
@@ -19,6 +20,7 @@ import "./Tabletop.scss";
 interface Table {
   _id: string;
   name: string;
+  selectedFont?: string;
   gameMaster: string;
   gameMasterName: string;
   game: string;
@@ -29,6 +31,7 @@ interface Table {
     other: string;
     items: string;
   };
+  tableBG: string;
 }
 
 interface Player {
@@ -51,6 +54,7 @@ export default function TableComponent() {
   const API_URL = import.meta.env.VITE_API_URL;
   const socket = useMemo(() => io(API_URL), [API_URL]);
   const [isComOpen, setIsComOpen] = useState(false);
+  const tableBG = table?.tableBG || "";
   const currentPlayer = table?.players.find(
     (player) => player.userId === user._id
   );
@@ -80,11 +84,6 @@ export default function TableComponent() {
     } catch (err) {
       console.error("❌ Erreur lors du rafraîchissement des tables :", err);
     }
-  };
-
-  //  Fonction pour déclencher le re-render de Banner
-  const handleStyleUpdate = () => {
-    setRefreshTrigger((prev) => prev + 1);
   };
 
   // 📌 Ajouter un state pour stocker les notes
@@ -185,67 +184,45 @@ const handleSaveNotes = async () => {
     setActivePanel(activePanel === panel ? null : panel);
   };
 
-  useEffect(() => {
+  const fetchTable = useCallback(async () => {
     if (!id) return;
-
-    async function fetchTable() {
-      try {
-        const response = await fetch(`${API_URL}/api/tabletop/tables/${id}`);
-        if (!response.ok)
-          throw new Error("Erreur lors de la récupération de la table.");
-
-        const data = await response.json();
-        setTable(data);
-
-        console.log("📌 Table récupérée :", data);
-        console.log("📌 Utilisateur connecté :", user);
-
-        // Trouver le joueur actuel dans la liste des joueurs
-        const currentPlayer = data.players.find(
-          (player: Player) => player.userId === user._id
-        );
-
-        console.log("🔍 Joueur actuel trouvé :", currentPlayer);
-
-        if (currentPlayer?.selectedCharacter) {
-          const characterResponse = await fetch(
-            `${API_URL}/api/characters/${currentPlayer.selectedCharacter}`
-          );
-          const characterData = await characterResponse.json();
-
-          setUser((prevUser) => ({
-            ...prevUser,
-            selectedCharacterName:
-              characterData.name || "Nom du personnage non défini",
-          }));
-        }
-
-        // **🚨 Vérifie si l'utilisateur est bien détecté comme Game Master**
-        console.log("🧑‍🏫 Comparaison GameMaster : ", {
-          gameMaster: data.gameMaster,
-          userId: user._id,
-        });
-
-        if (data.gameMaster === user._id) {
-          console.log("✅ L'utilisateur est le Game Master !");
-          setIsGameMaster(true);
-        } else {
-          console.warn("❌ L'utilisateur n'est PAS le Game Master !");
-        }
-      } catch (err: unknown) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Une erreur inconnue est survenue."
-        );
-      } finally {
-        setLoading(false);
+  
+    try {
+      const response = await fetch(`${API_URL}/api/tabletop/tables/${id}`);
+      if (!response.ok) throw new Error("Erreur lors de la récupération de la table.");
+  
+      const data = await response.json();
+      setTable(data);
+      
+      // Vérifie si le joueur actuel est GM
+      const currentPlayer = data.players.find((player: Player) => player.userId === user._id);
+      if (currentPlayer?.selectedCharacter) {
+        const characterResponse = await fetch(`${API_URL}/api/characters/${currentPlayer.selectedCharacter}`);
+        const characterData = await characterResponse.json();
+  
+        setUser((prevUser) => ({
+          ...prevUser,
+          selectedCharacterName: characterData.name || "Nom du personnage non défini",
+        }));
       }
+  
+      if (data.gameMaster === user._id) {
+        setIsGameMaster(true);
+      } else {
+        setIsGameMaster(false);
+      }
+  
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Une erreur inconnue est survenue.");
+    } finally {
+      setLoading(false);
     }
-
-    fetchTable();
   }, [id, API_URL, user._id, setUser]);
-
+  
+  useEffect(() => {
+    fetchTable();
+  }, [fetchTable]);
+  
 
   if (loading) return <p><BeatLoader/></p>;
   if (error) return <p>Erreur : {error}</p>;
@@ -258,7 +235,7 @@ const handleSaveNotes = async () => {
         {/* Heading */}
         <div>
           <div className="table__content--header">
-            <h2>{table?.name}</h2>
+          <h2 className={`font-${table?.selectedFont || ""}`}>{table?.name}</h2>
             <div className="header-container">
               <p>Maître du Jeu : {table?.gameMasterName}</p>
               <p>Système de jeu : {table.game}</p>
@@ -270,12 +247,6 @@ const handleSaveNotes = async () => {
             refreshTrigger={refreshTrigger}
           />
         </div>
-        <PlayerAtTable
-          tableId={table._id}
-          API_URL={API_URL}
-          gameMaster={table.gameMaster}
-          selectedCharacterId={selectedCharacterId}
-        />
 
         {/*<NotesPanel
   notes={notes}
@@ -294,18 +265,35 @@ const handleSaveNotes = async () => {
             activePanel={activePanel}
             togglePanel={togglePanel}
             API_URL={API_URL}
-            onStyleUpdate={handleStyleUpdate}
             refreshTables={refreshTables}
+            onStyleUpdate={async () => {
+              await fetchTable(); // attendre la mise à jour de table (donc de la font)
+              setRefreshTrigger((prev) => prev + 1); // ensuite seulement on refresh Banner
+            }}
+                    
           />
         )}
 
         <div className="table__content--main-container">
-          <div className="table-content__media-container">
+          <div className="table-content__media-container"
+              style={{
+                backgroundImage: tableBG ? `url(${tableBG})` : "none",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+          >
             <MediaDisplay 
               tableId={table._id} 
               API_URL={API_URL} 
-              isGameMaster = {isGameMaster}/>
+              isGameMaster = {isGameMaster}
+            />
           </div>
+          <PlayerAtTable
+          tableId={table._id}
+          API_URL={API_URL}
+          gameMaster={table.gameMaster}
+          selectedCharacterId={selectedCharacterId}
+        />
 
           {isComOpen &&
           <div className="table-side-pannel">

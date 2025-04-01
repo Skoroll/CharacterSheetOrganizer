@@ -29,3 +29,11 @@ $breakpoint-sm: 768px;  // Tablettes en portrait
 $breakpoint-md: 1024px; // Tablettes en paysage ou petits ordinateurs portables
 $breakpoint-lg: 1280px; // Ordinateurs de bureau ou grands écrans
 $breakpoint-xl: 1600px; // Très grands écrans
+
+//Fonts
+.font-uncial { font-family: 'Uncial Antiqua', cursive; }
+.font-medieval { font-family: 'MedievalSharp', cursive; }
+.font-pirata { font-family: 'Pirata One', cursive; }
+.font-cinzel { font-family: 'Cinzel Decorative', cursive; }
+.font-imfell { font-family: 'IM Fell English', serif; }
+.font-almendra { font-family: 'Almendra SC', serif; }

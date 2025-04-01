@@ -6,5 +6,11 @@ export type Table = {
     gameMaster: string;
     gameMasterName: string;
     game: string;
+    selectedFont?: string;
+    tableBG?: string;
+    borderWidth: string;
+    borderColor: string;
+    bannerStyle: string;
+    
   };
   

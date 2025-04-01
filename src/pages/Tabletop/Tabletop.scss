@@ -47,6 +47,7 @@
     justify-content: space-between;
     position: relative;
     margin: auto;
+    gap: $spacing-medium;
 
     .table-side-pannel {
       position: absolute;
@@ -88,11 +89,4 @@
     @include flex-row;
     position: sticky;
   }
-}
-.table-content__media-container {
-  margin-top: 15px;
-  min-height: 560px;
-  background: url(../../assets/backgrounds/scroll.webp) no-repeat;
-  background-size: cover;
-  margin: $spacing-medium 0;
 }

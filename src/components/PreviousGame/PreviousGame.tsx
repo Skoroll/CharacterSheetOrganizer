@@ -57,6 +57,11 @@ export default function PreviousGame({
             {tables.map((table) => (
               <li
                 className="prev-tables--item"
+                style={{
+                  backgroundImage: table.tableBG ? `url(${table.tableBG})` : "none",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
                 key={table._id}
                 onClick={async () => {
                   const userId = user._id;
@@ -90,6 +95,14 @@ export default function PreviousGame({
               >
                 {table.bannerImage ? (
                   <img
+                  style={{
+                    backgroundImage: table.bannerImage ? `url(${table.bannerImage})` : "none",
+                    border: table.bannerImage ? `${table.borderWidth} solid ${table.borderColor}` : "none",
+                    borderRadius: table.bannerStyle === "rounded" ? "20px" : "0px",
+                    boxShadow: table.bannerStyle === "shadow" ? "5px 5px 10px rgba(0,0,0,0.3)" : "none",
+
+                    transition: "height 0.3s ease-in-out",
+                }}
                     src={
                       table.bannerImage?.startsWith("http")
                         ? table.bannerImage
@@ -105,7 +118,7 @@ export default function PreviousGame({
                 )}
                 <div className="table__recap">
                   <p>
-                    <span className="table__recap--name">{table.name}</span>
+                  <span className={`table__recap--name font-${table?.selectedFont || ""}`}>{table.name}</span>
                     <span>MJ : {table.gameMasterName}</span>
 
                     <span>

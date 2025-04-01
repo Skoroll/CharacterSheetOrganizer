@@ -1,33 +1,50 @@
  
 
 .table-content__media-container {
+    display: flex;
     padding: $spacing-small;
     z-index: 1;
     position: relative;
     height: 100%;
-    width: 100%;
     margin: auto;
+    flex: 1;
+    min-width: 0;
+    max-width: calc(100% - 220px); //La dernière valeur est celle de la box des personnages sur la table
+    margin-top: 15px;
+    min-height: 560px;
+    background-size: cover;
+    margin: $spacing-medium 0;
+      
     .displayed-text {
         white-space: pre-line;
     }
 
 .media-container, .zoom-wrapper {
     position: relative;
+    display: flex;
     overflow: hidden;
     outline: none;
     min-height: 560px;
+
+    width: 100%;
+    box-sizing: border-box;
+    margin: auto;
+
+
 
     img {
         height: 100%;
         width: 100%;
         z-index: 2;
+        margin: auto;
     }
 
     .zoom-controls {
         position: absolute;
-        top: 0;
+        bottom: 0;
         right: 0;
         @include flex-row;
+        
         gap: $spacing-small;
         padding: $spacing-small;
         position: absolute;
@@ -37,6 +54,8 @@
         button {
             @include button;
             height: 35px;
+            width: 35px;
+            padding: 0;
         }
     }
 
@@ -52,4 +71,13 @@
         z-index: 5;
     }
 }
+}
+
+
+@include media-query($breakpoint-sm, "max") {
+    .table-content__media-container, .media-container, .zoom-controls {
+        width: auto;
+        flex: 1;
+        max-width: 100%;
+    }
 }

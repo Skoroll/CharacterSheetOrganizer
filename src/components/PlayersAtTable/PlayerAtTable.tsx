@@ -4,7 +4,7 @@ import { io, Socket } from "socket.io-client";
 import "./PlayersAtTable.scss";
 import EditableSheet from "../EditableSheet/EditableSheet";
 import Modal from "../Modal/Modal";
-import defaultImg from "../../assets/person-placeholder-5.webp"
+import defaultImg from "../../assets/person-placeholder-5.webp";
 
 interface Character {
   _id: string;
@@ -54,9 +54,14 @@ const socket: Socket = io(import.meta.env.VITE_API_URL);
 const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(
+    null
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [openPanel, setOpenPanel] = useState<{ playerId: string; panel: string } | null>(null);
+  const [openPanel, setOpenPanel] = useState<{
+    playerId: string;
+    panel: string;
+  } | null>(null);
   const { user } = useUser();
   const currentUserId = user?._id || null;
 
@@ -69,7 +74,8 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
     socket.on("updateHealth", ({ characterId, pointsOfLife }) => {
       setPlayers((prevPlayers) =>
         prevPlayers.map((player) =>
-          player.selectedCharacter && player.selectedCharacter._id === characterId
+          player.selectedCharacter &&
+          player.selectedCharacter._id === characterId
             ? {
                 ...player,
                 selectedCharacter: {
@@ -91,7 +97,9 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
     if (!tableId) return;
 
     try {
-      const response = await fetch(`${API_URL}/api/tabletop/tables/${tableId}/players`);
+      const response = await fetch(
+        `${API_URL}/api/tabletop/tables/${tableId}/players`
+      );
       if (!response.ok) {
         throw new Error(`Erreur HTTP ${response.status}`);
       }
@@ -114,16 +122,21 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
     if (newHealth < 0) return;
 
     try {
-      const response = await fetch(`${API_URL}/api/characters/${character._id}/update-health`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pointsOfLife: newHealth, tableId }),
-      });
+      const response = await fetch(
+        `${API_URL}/api/characters/${character._id}/update-health`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pointsOfLife: newHealth, tableId }),
+        }
+      );
 
       if (!response.ok) {
         const errorResponse = await response.json();
         console.error("❌ Erreur réponse serveur :", errorResponse);
-        throw new Error(`Erreur HTTP ${response.status}: ${errorResponse.message}`);
+        throw new Error(
+          `Erreur HTTP ${response.status}: ${errorResponse.message}`
+        );
       }
 
       const updatedCharacter = await response.json();
@@ -142,7 +155,11 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (!document.querySelector(".player__easy-acces")?.contains(event.target as Node)) {
+      if (
+        !document
+          .querySelector(".player__easy-acces")
+          ?.contains(event.target as Node)
+      ) {
         setOpenPanel(null);
       }
     };
@@ -177,9 +194,15 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
           {otherPlayers.map((player, index) => {
             const { selectedCharacter } = player;
             return (
-              <div key={`${tableId}-${player.playerId || index}`} className="player">
+              <div
+                key={`${tableId}-${player.playerId || index}`}
+                className="player"
+              >
                 {selectedCharacter ? (
-                  <div className="player__image" onClick={() => handlePlayerClick(selectedCharacter)}>
+                  <div
+                    className="player__image"
+                    onClick={() => handlePlayerClick(selectedCharacter)}
+                  >
                     <p className="character-hp">
                       <i className="fa-regular fa-heart"></i>
                       <i className="fa-solid fa-heart"></i>
@@ -198,7 +221,6 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
                         }}
                       />
                     )}
-                    <p className="player__image--name">{selectedCharacter.name}</p>
                   </div>
                 ) : (
                   <p>(Pas de personnage sélectionné)</p>
@@ -207,166 +229,177 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
             );
           })}
 
-          {currentPlayer && (() => {
-            const { selectedCharacter } = currentPlayer;
-            return (
-              <div key={`${tableId}-me-${currentPlayer.playerId}`} className="player is-current-user">
-                {/* 🌟 Boutons easy-access visibles uniquement pour le propriétaire */}
-                {selectedCharacter && (
-                  <div className="player__easy-acces">
-                    {/* Points de vie */}
-                    <div
-                      className="player__easy-acces--hp"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        togglePanel(currentPlayer.playerId, "hp");
-                      }}
-                    >
-                      <p>
-                        <i className="fa-regular fa-heart"></i>
-                      </p>
-                      {openPanel?.playerId === currentPlayer.playerId &&
-                        openPanel?.panel === "hp" && (
-                          <div className="player__easy-acces--inside">
-                            <i
-                              className="fa-solid fa-chevron-down"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                updateHealth(selectedCharacter, -1);
-                              }}
-                            ></i>
-                            <span>{selectedCharacter.pointsOfLife}</span>
-                            <i
-                              className="fa-solid fa-chevron-up"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                updateHealth(selectedCharacter, 1);
-                              }}
-                            ></i>
-                          </div>
-                        )}
-                    </div>
-
-                    {/* Pièces d'or */}
-                    <div
-                      className="player__easy-acces--coins"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        togglePanel(currentPlayer.playerId, "coins");
-                      }}
-                    >
-                      <p>
-                        <i className="fa-solid fa-coins"></i>
-                      </p>
-                      {openPanel?.playerId === currentPlayer.playerId &&
-                        openPanel?.panel === "coins" && (
-                          <div className="player__easy-acces--inside">
-                            {selectedCharacter.gold} pièces
-                          </div>
-                        )}
-                    </div>
-
-                    {/* Inventaire */}
-                    <div
-                      className="player__easy-acces--inventory"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        togglePanel(currentPlayer.playerId, "inventory");
-                      }}
-                    >
-                      <p>
-                        <i className="fa-solid fa-briefcase"></i>
-                      </p>
-                      {openPanel?.playerId === currentPlayer.playerId &&
-                        openPanel?.panel === "inventory" &&
-                        selectedCharacter.inventory.length !== 0 && (
-                          <div className="player__easy-acces--inside">
-                            {selectedCharacter.inventory.filter(
-                              (item) => item.item.trim() !== ""
-                            ).length > 0 ? (
-                              <table>
-                                <thead>
-                                  <tr>
-                                    <th className="table-left">Objet</th>
-                                    <th>Quantité</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {selectedCharacter.inventory
-                                    .filter((item) => item.item.trim() !== "")
-                                    .map((item, index) => (
-                                      <tr key={index}>
-                                        <td className="table-left">{item.item}</td>
-                                        <td>{item.quantity}</td>
-                                      </tr>
-                                    ))}
-                                </tbody>
-                              </table>
-                            ) : (
-                              <p>Aucun objet dans l'inventaire</p>
-                            )}
-                          </div>
-                        )}
-                    </div>
-
-                    {/* Équipement */}
-                    <div
-                      className="player__easy-acces--equipment"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        togglePanel(currentPlayer.playerId, "gear");
-                      }}
-                    >
-                      <p>
-                        <i className="fa-solid fa-shield"></i>
-                      </p>
-                      {openPanel?.playerId === currentPlayer.playerId &&
-                        openPanel?.panel === "gear" &&
-                        selectedCharacter.weapons.length !== 0 && (
-                          <div className="player__easy-acces--inside">
-                            {selectedCharacter.weapons.length} armes
-                          </div>
-                        )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Affichage du personnage */}
-                {selectedCharacter ? (
-                  <div className="player__image" onClick={() => handlePlayerClick(selectedCharacter)}>
-                    <p className="character-hp">
-                      <i className="fa-regular fa-heart"></i>
-                      <i className="fa-solid fa-heart"></i>
-                      <span>{selectedCharacter.pointsOfLife}</span>
-                    </p>
-                    {selectedCharacter.image && (
-                      <img
-                        src={
-                          typeof selectedCharacter.image === "string"
-                            ? selectedCharacter.image
-                            : URL.createObjectURL(selectedCharacter.image)
-                        }
-                        alt={selectedCharacter.name}
-                        onError={(e) => {
-                          e.currentTarget.src = defaultImg;
+          {currentPlayer &&
+            (() => {
+              const { selectedCharacter } = currentPlayer;
+              return (
+                <div
+                  key={`${tableId}-me-${currentPlayer.playerId}`}
+                  className="player is-current-user"
+                >
+                  {/* 🌟 Boutons easy-access visibles uniquement pour le propriétaire */}
+                  {selectedCharacter && (
+                    <div className="player__easy-acces">
+                      {/* Points de vie */}
+                      <div
+                        className="player__easy-acces--hp"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          togglePanel(currentPlayer.playerId, "hp");
                         }}
-                      />
-                    )}
-                    <p className="player__image--name">{selectedCharacter.name}</p>
-                  </div>
-                ) : (
-                  <p>(Pas de personnage sélectionné)</p>
-                )}
-              </div>
-            );
-          })()}
+                      >
+                        <p>
+                          <i className="fa-regular fa-heart"></i>
+                        </p>
+                        {openPanel?.playerId === currentPlayer.playerId &&
+                          openPanel?.panel === "hp" && (
+                            <div className="player__easy-acces--inside">
+                              <i
+                                className="fa-solid fa-chevron-down"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  updateHealth(selectedCharacter, -1);
+                                }}
+                              ></i>
+                              <span>{selectedCharacter.pointsOfLife}</span>
+                              <i
+                                className="fa-solid fa-chevron-up"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  updateHealth(selectedCharacter, 1);
+                                }}
+                              ></i>
+                            </div>
+                          )}
+                      </div>
+
+                      {/* Pièces d'or */}
+                      <div
+                        className="player__easy-acces--coins"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          togglePanel(currentPlayer.playerId, "coins");
+                        }}
+                      >
+                        <p>
+                          <i className="fa-solid fa-coins"></i>
+                        </p>
+                        {openPanel?.playerId === currentPlayer.playerId &&
+                          openPanel?.panel === "coins" && (
+                            <div className="player__easy-acces--inside">
+                              {selectedCharacter.gold} pièces
+                            </div>
+                          )}
+                      </div>
+
+                      {/* Inventaire */}
+                      <div
+                        className="player__easy-acces--inventory"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          togglePanel(currentPlayer.playerId, "inventory");
+                        }}
+                      >
+                        <p>
+                          <i className="fa-solid fa-briefcase"></i>
+                        </p>
+                        {openPanel?.playerId === currentPlayer.playerId &&
+                          openPanel?.panel === "inventory" &&
+                          selectedCharacter.inventory.length !== 0 && (
+                            <div className="player__easy-acces--inside">
+                              {selectedCharacter.inventory.filter(
+                                (item) => item.item.trim() !== ""
+                              ).length > 0 ? (
+                                <table>
+                                  <thead>
+                                    <tr>
+                                      <th className="table-left">Objet</th>
+                                      <th>Quantité</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {selectedCharacter.inventory
+                                      .filter((item) => item.item.trim() !== "")
+                                      .map((item, index) => (
+                                        <tr key={index}>
+                                          <td className="table-left">
+                                            {item.item}
+                                          </td>
+                                          <td>{item.quantity}</td>
+                                        </tr>
+                                      ))}
+                                  </tbody>
+                                </table>
+                              ) : (
+                                <p>Aucun objet dans l'inventaire</p>
+                              )}
+                            </div>
+                          )}
+                      </div>
+
+                      {/* Équipement */}
+                      <div
+                        className="player__easy-acces--equipment"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          togglePanel(currentPlayer.playerId, "gear");
+                        }}
+                      >
+                        <p>
+                          <i className="fa-solid fa-shield"></i>
+                        </p>
+                        {openPanel?.playerId === currentPlayer.playerId &&
+                          openPanel?.panel === "gear" &&
+                          selectedCharacter.weapons.length !== 0 && (
+                            <div className="player__easy-acces--inside">
+                              {selectedCharacter.weapons.length} armes
+                            </div>
+                          )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Affichage du personnage */}
+                  {selectedCharacter ? (
+                    <div
+                      className="player__image"
+                      onClick={() => handlePlayerClick(selectedCharacter)}
+                    >
+                      <p className="character-hp">
+                        <i className="fa-regular fa-heart"></i>
+                        <i className="fa-solid fa-heart"></i>
+                        <span>{selectedCharacter.pointsOfLife}</span>
+                      </p>
+                      {selectedCharacter.image && (
+                        <img
+                          src={
+                            typeof selectedCharacter.image === "string"
+                              ? selectedCharacter.image
+                              : URL.createObjectURL(selectedCharacter.image)
+                          }
+                          alt={selectedCharacter.name}
+                          onError={(e) => {
+                            e.currentTarget.src = defaultImg;
+                          }}
+                        />
+                      )}
+                    </div>
+                  ) : (
+                    <p>(Pas de personnage sélectionné)</p>
+                  )}
+                </div>
+              );
+            })()}
         </div>
       ) : (
         <p>Aucun joueur trouvé.</p>
       )}
 
       {isModalOpen && selectedCharacter?._id && (
-        <Modal title="Fiche du personnage" onClose={() => setIsModalOpen(false)}>
+        <Modal
+          title="Fiche du personnage"
+          onClose={() => setIsModalOpen(false)}
+        >
           <EditableSheet id={selectedCharacter._id} />
         </Modal>
       )}

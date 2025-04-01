@@ -2,25 +2,32 @@
 
 .players-at-table {
   position: relative;
-  display: flex;
   right: 25px;
   top: 0;
-  height: 100%;
-  width: 100%;
-  margin: 0 0 auto auto;
+
   padding: $spacing-small;
+  margin: $spacing-medium 0 auto auto;
+
+  @include media-query($breakpoint-sm, "max") {
+    margin: auto;
+  }
 
   &--container {
-    @include flex-wrap;
-    gap: $spacing-medium;
+    @include flex-col;
+    flex-direction: column-reverse;
+    gap: $spacing-small;
     margin: auto 0 auto auto;
+    width: 130px;
+
+    @include media-query($breakpoint-sm, "max") {
+      flex-direction: row;
+    }
     
     .player {
       position: relative;
       cursor: pointer;
-      height: 145px;
       @include flex-row;
-      width: 145px;
+      margin: auto 0 auto auto;
 
       &__easy-acces {
         padding: $spacing-small;
@@ -59,8 +66,8 @@
         display: flex;
         align-items: center; // Centre verticalement
         justify-content: center; // Centre horizontalement
-        top: 0px;
-        left: 0;
+        bottom: 0px;
+        right: 0;
         width: 45px;
         height: 45px;
         margin: 0;
@@ -83,11 +90,12 @@
 
       &__image {
         position: relative;
-        height: 120px;
+        height: 95px;
+        width: 95px;
         margin: auto 0 auto auto;
         img {
-          width: 110px;
-          height: 120px;
+          width: 100%;
+          height: 100%;
           margin: auto auto 0 auto;
           object-fit: cover;
           transition: all 0.3s;
