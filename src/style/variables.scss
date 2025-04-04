@@ -1,18 +1,18 @@
 // Couleurs principales
-$background-color: #121212;
-$text-color: #f0f0f0; // Couleur du texte pour contraste
-$primary-color: #3498db; // Bleu pour les boutons ou accents
-$secondary-color: #2ecc71; // Vert pour les validations
-$danger-color: #e74c3c; // Rouge pour les erreurs
+$background-color: var(--background-color);
+$text-color: var(--text-color);
+$primary-color: var(--primary-color);
+$secondary-color: var(--secondary-color);
+$danger-color: var(--danger-color);
+$text-muted: var(--text-muted);
 
 // Couleurs dérivées
-$background-light: lighten($background-color, 10%);
-$background-dark: darken($background-color, 10%);
-$text-muted: rgba($text-color, 0.7);
+$background-light: var(--background-light);
+$background-dark: var(--background-dark);
 
 // Typographie
-$font-family: "Arial", sans-serif;
-$font-size-base: 16px;
+$font-family: var(--font-family);
+$font-size-base: var(--font-size-base);
 
 // Espacements
 $spacing-small: 8px;

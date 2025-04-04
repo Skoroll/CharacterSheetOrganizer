@@ -22,12 +22,7 @@
 
       }
       &:hover {
-        background: rgba(
-          red($text-color),
-          green($text-color),
-          blue($text-color),
-          0.2
-        );
+        background: rgba(var(--text-color-rgb), 0.2);
       }
 
       button {
