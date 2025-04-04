@@ -16,6 +16,8 @@ export default function SendDocs() {
   const [textContent, setTextContent] = useState("");
   const [title, setTitle] = useState("");
   const API_URL = import.meta.env.VITE_API_URL;
+  const [textFont, setTextFont] = useState("Almendra SC");
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -52,6 +54,7 @@ export default function SendDocs() {
       localFiles.forEach((file) => formData.append("files", file));
     } else if (activeTab === "text") {
       formData.append("text", textContent);
+      formData.append("textFont", textFont);
     }
 
     try {
@@ -133,17 +136,38 @@ export default function SendDocs() {
             </form>
           )}
 
-          {activeTab === "text" && (
-            <form onSubmit={handleUpload}>
-              <label>Nom du texte :</label>
-              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
+{activeTab === "text" && (
+  <form onSubmit={handleUpload}>
+    <label>Nom du texte :</label>
+    <input
+      type="text"
+      value={title}
+      onChange={(e) => setTitle(e.target.value)}
+      required
+    />
 
-              <label>Texte :</label>
-              <textarea value={textContent} onChange={(e) => setTextContent(e.target.value)} />
+    <label>Police :</label>
+    <select value={textFont} onChange={(e) => setTextFont(e.target.value)}>
+      <option value="">-Sélectionner une police-</option>
+      <option value="Almendra SC">Almendra SC</option>
+      <option value="Cinzel Decorative">Cinzel Decorative</option>
+      <option value="IM Fell English">IM Fell English</option>
+      <option value="MedievalSharp">MedievalSharp</option>
+      <option value="Pirata One">Pirata One</option>
+      <option value="Uncial Antiqua">Uncial Antiqua</option>
+    </select>
 
-              <button type="submit">Envoyer</button>
-            </form>
-          )}
+    <label>Texte :</label>
+    <textarea
+      value={textContent}
+      onChange={(e) => setTextContent(e.target.value)}
+      style={{ fontFamily: textFont }}
+    />
+
+    <button type="submit">Envoyer</button>
+  </form>
+)}
+
         </div>
 
         {activeTab === "galery" && (

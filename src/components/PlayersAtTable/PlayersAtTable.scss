@@ -9,7 +9,7 @@
   margin: $spacing-medium 0 auto auto;
 
   @include media-query($breakpoint-sm, "max") {
-    margin: auto;
+    margin: $spacing-medium 75px auto auto;
   }
 
   &--container {

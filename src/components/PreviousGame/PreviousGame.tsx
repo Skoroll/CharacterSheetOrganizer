@@ -57,11 +57,6 @@ export default function PreviousGame({
             {tables.map((table) => (
               <li
                 className="prev-tables--item"
-                style={{
-                  backgroundImage: table.tableBG ? `url(${table.tableBG})` : "none",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
                 key={table._id}
                 onClick={async () => {
                   const userId = user._id;

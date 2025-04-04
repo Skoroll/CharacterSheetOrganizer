@@ -31,7 +31,7 @@
     display: flex;
     overflow: hidden;
     outline: none;
-    min-height: 560px;
+    height: 700px;
 
     width: 100%;
     box-sizing: border-box;
@@ -44,6 +44,7 @@
         width: 100%;
         z-index: 2;
         margin: auto;
+        object-fit: contain;
     }
 
     .zoom-controls {

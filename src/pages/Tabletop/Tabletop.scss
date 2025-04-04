@@ -88,5 +88,9 @@
   &__low-bar {
     @include flex-row;
     position: sticky;
+
+    button {
+      @include button;
+    }
   }
 }

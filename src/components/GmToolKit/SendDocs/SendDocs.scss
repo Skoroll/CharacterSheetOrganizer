@@ -2,6 +2,7 @@
 .share-pannel {
   z-index: 700;
   margin: auto;
+  min-height: 500px;
 
   h2 {
     margin: 0;
@@ -53,12 +54,13 @@
 }
 
 .share-pannel--preview {
-  height: 275px;
+
 }
 .preview-container {
 
   .preview-grid {
-    height: 150px;
+    min-height: 150px;
+    @include flex-wrap;
     .preview-item {
       @include flex-col;
 
@@ -88,7 +90,7 @@
     gap: $spacing-small;
 
     li {
-      @include flex-row;
+      @include flex-col;
       align-items: baseline;
       padding: $spacing-small;
       border: 1px solid;
@@ -107,18 +109,14 @@
 }
 
 .file-item {
+  @include flex-col;
   position: relative;
   width: 150px;
   height: 150px;
 
   strong {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    box-sizing: border-box;
-    background-color: rgba(0, 0, 0, 0.445);
-    padding: 5px;
+
+
   }
 
   &--remove {

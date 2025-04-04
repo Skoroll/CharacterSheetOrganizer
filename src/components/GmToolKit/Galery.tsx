@@ -10,6 +10,7 @@ interface GalleryProps {
     type: "image" | "text";
     content?: string;
     title?: string;
+    textFont?: string;
   }>;
   API_URL: string;
   onDeleteFile: (fileId: string) => void; // ✅ Nouvelle prop
@@ -111,7 +112,10 @@ const Gallery: React.FC<GalleryProps> = ({ files, API_URL, onDeleteFile }) => {
                 </>
               ) : file.type === "text" ? (
                 <>
-                  <p>{file.content || "📄 Aucun contenu disponible"}</p>
+                  <p style={{ fontFamily: file.textFont || "inherit" }}>
+                    {file.content || "📄 Aucun contenu disponible"}
+                  </p>
+
                   <button
                     className="show-btn"
                     onClick={() =>

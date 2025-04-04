@@ -122,7 +122,7 @@
           @include flex-col;
           margin: 0;
           height: 100%;
-          gap: calc($spacing-small * 2);
+          justify-content: space-evenly;
         }
       }
     }
