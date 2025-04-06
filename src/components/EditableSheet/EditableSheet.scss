@@ -7,6 +7,7 @@
     @include flex-row;
     gap: $spacing-medium;
 
+
     @include media-query($breakpoint-sm, "max") {
       @include flex-col;
     }
@@ -14,13 +15,22 @@
 
   .edit-section {
     @include flex-row;
+    position: sticky;
     gap: $spacing-small;
+    bottom: -0;
+    right: 0;
+    width: 100%;
+    background-color: $background-color;
+    justify-content: right;
+    padding: $spacing-medium;
+    box-sizing: border-box;
 
     button {
       position: relative;
       text-align: left;
       border: 1px solid transparent;
       background: none;
+
     }
 
     .danger {
@@ -104,8 +114,10 @@
     }
 
     .character-wrapper {
+      position: relative;
       @include flex-row;
       gap: $spacing-small;
+ 
     }
 
     &--stats {
@@ -228,6 +240,7 @@
     @include flex-col;
     gap: $spacing-medium;
     width: 100%;
+    margin-bottom: $spacing-large;
     @include media-query($breakpoint-sm, "min") {
       @include flex-row;
     }

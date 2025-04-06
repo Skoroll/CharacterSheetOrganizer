@@ -355,38 +355,6 @@ export default function EditableSheet({ id }: EditableSheetProps) {
   };
   return (
     <div className="character-details">
-      {/*Bouton de suppression de personnage*/}
-      {isOwner && (
-        <div className="edit-section">
-          {!isEditing ? (
-            <button
-              className="danger"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsModalOpen(true);
-              }}
-            >
-              <i className="fa-solid fa-trash" />
-            </button>
-          ) : (
-            ""
-          )}
-          {isEditing ? (
-            <>
-              <button className="cancel-btn" onClick={handleCancelEdit}>
-                <i className="fa-solid fa-x"></i>
-              </button>
-              <button className="save-btn" onClick={handleSaveChanges}>
-                <i className="fa-solid fa-check"></i>
-              </button>
-            </>
-          ) : (
-            <button className="edit-btn" onClick={() => setIsEditing(true)}>
-              <i className="fa-solid fa-pen"></i>
-            </button>
-          )}
-        </div>
-      )}
       {/*Barres contenant les boutons*/}
       <div className="character-details--button-list">
         <button onClick={toggleSkills}>
@@ -942,7 +910,9 @@ export default function EditableSheet({ id }: EditableSheetProps) {
             </div>
             
           )}
+          
         </div>
+
       </div>
 
       {/* Modale de confirmation */}
@@ -965,6 +935,39 @@ export default function EditableSheet({ id }: EditableSheetProps) {
           </div>
         </Modal>
       )}
+                        {/*Bouton de suppression de personnage*/}
+                        {isOwner && (
+                    <div className="edit-section">
+                      {!isEditing ? (
+                        <button
+                          className="danger"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsModalOpen(true);
+                          }}
+                        >
+                          <i className="fa-solid fa-trash" />
+                        </button>
+                      ) : (
+                        ""
+                      )}
+                      {isEditing ? (
+                        <>
+                          <button className="cancel-btn" onClick={handleCancelEdit}>
+                            <i className="fa-solid fa-x"></i>
+                          </button>
+                          <button className="save-btn" onClick={handleSaveChanges}>
+                            <i className="fa-solid fa-check"></i>
+                          </button>
+                        </>
+                      ) : (
+                        <button className="edit-btn" onClick={() => setIsEditing(true)}>
+                          <i className="fa-solid fa-pen"></i>
+                        </button>
+                      )}
+                    </div>
+                  )}
     </div>
+
   );
 }

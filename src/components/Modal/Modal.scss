@@ -51,6 +51,8 @@
 
 
 .modal__inside--content {
+  max-width: 730px;
+  max-height: 720px;
   button {
     @include button;
   }
@@ -66,8 +68,7 @@
       color: red;
     }
   }
-  .character-details {
-    width: 730px;
-    height: 720px;
+  .edit-section {
+    bottom: -32px !important;
   }
 }
