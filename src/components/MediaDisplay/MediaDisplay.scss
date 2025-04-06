@@ -14,6 +14,8 @@
     min-height: 560px;
     background-size: cover;
     margin: $spacing-medium 0;
+    border-radius: $spacing-medium;
+
       
     .displayed-text {
         white-space: pre-line;
@@ -32,12 +34,9 @@
     overflow: hidden;
     outline: none;
     height: 700px;
-
     width: 100%;
     box-sizing: border-box;
     margin: auto;
-
-
 
     img {
         height: 100%;

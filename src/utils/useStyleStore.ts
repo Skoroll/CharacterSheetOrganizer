@@ -9,6 +9,7 @@ interface Theme {
   backgroundLight: string;
   backgroundDark: string;
   fontFamily: string;
+  buttonBg: string;
 }
 
 
@@ -19,6 +20,7 @@ interface StyleStore {
 
 const lightTheme: Theme = {
   primaryColor: '#3498db',
+  buttonBg: '#3498db',
   backgroundColor: '#ffffff',
   fontColor: '#000000',
   fontSize: '16px',
@@ -30,17 +32,19 @@ const lightTheme: Theme = {
 
 const darkTheme: Theme = {
   primaryColor: '#ffffff',
+  fontFamily: '"Arial", sans-serif',
   backgroundColor: '#121212',
   fontColor: '#ffffff',
   fontSize: '16px',
   textMuted: 'rgba(240, 240, 240, 0.7)',
   backgroundLight: '#1a1a1a',
   backgroundDark: '#0a0a0a',
-  fontFamily: '"Arial", sans-serif',
+  buttonBg: "#333333",
 };
 
 const medievalTheme: Theme = {
   primaryColor: '#8b4513',
+  buttonBg: '#8b4513',
   backgroundColor: '#3e2a47',
   fontColor: '#e5c07b',
   fontSize: '16px',

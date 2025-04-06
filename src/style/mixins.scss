@@ -24,7 +24,7 @@
   
   // Mixin pour un bouton de base
   @mixin button($bg-color: $primary-color) {
-    background-color: $bg-color;
+    background-color: var(--button-bg, var(--primary-color));
     color: $text-color;
     padding: $spacing-small $spacing-medium;
     border: none;

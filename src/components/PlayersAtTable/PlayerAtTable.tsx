@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useUser } from "../../Context/UserContext";
 import { io, Socket } from "socket.io-client";
 import "./PlayersAtTable.scss";
@@ -54,9 +54,12 @@ const socket: Socket = io(import.meta.env.VITE_API_URL);
 const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [showPersonalMenuOpen, setShowPersonalMenuOpen] = useState(false);
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(
     null
   );
+  const easyAccessRef = useRef<HTMLDivElement | null>(null);
+  const toggleButtonRef = useRef<HTMLButtonElement | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openPanel, setOpenPanel] = useState<{
     playerId: string;
@@ -156,17 +159,29 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        !document
-          .querySelector(".player__easy-acces")
-          ?.contains(event.target as Node)
+        (easyAccessRef.current &&
+          !easyAccessRef.current.contains(event.target as Node)) &&
+        (toggleButtonRef.current &&
+          !toggleButtonRef.current.contains(event.target as Node))
       ) {
         setOpenPanel(null);
+        setShowPersonalMenuOpen(false);
       }
+    };
+    
+
+    // Seulement quand le menu est ouvert
+    if (showPersonalMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
     };
 
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
-  }, []);
+  }, [showPersonalMenuOpen]);
 
   const togglePanel = (
     playerId: string,
@@ -237,128 +252,168 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
                   key={`${tableId}-me-${currentPlayer.playerId}`}
                   className="player is-current-user"
                 >
-                  {/* 🌟 Boutons easy-access visibles uniquement pour le propriétaire */}
-                  {selectedCharacter && (
-                    <div className="player__easy-acces">
-                      {/* Points de vie */}
-                      <div
-                        className="player__easy-acces--hp"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          togglePanel(currentPlayer.playerId, "hp");
-                        }}
-                      >
-                        <p>
-                          <i className="fa-regular fa-heart"></i>
-                        </p>
-                        {openPanel?.playerId === currentPlayer.playerId &&
-                          openPanel?.panel === "hp" && (
-                            <div className="player__easy-acces--inside">
-                              <i
-                                className="fa-solid fa-chevron-down"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  updateHealth(selectedCharacter, -1);
-                                }}
-                              ></i>
-                              <span>{selectedCharacter.pointsOfLife}</span>
-                              <i
-                                className="fa-solid fa-chevron-up"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  updateHealth(selectedCharacter, 1);
-                                }}
-                              ></i>
-                            </div>
-                          )}
-                      </div>
+                  <div className="player__easy-access--wrapper">
+                    {/* 🌟 Boutons easy-access visibles uniquement pour le propriétaire */}
+                    {selectedCharacter && (
+                      <>
+                        <button
+                          ref={toggleButtonRef}
+                          className="chevron"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowPersonalMenuOpen((prev) => !prev);
+                          }}
+                        >
+                          <i
+                            className={`fa-solid ${
+                              showPersonalMenuOpen
+                                ? "fa-chevron-right"
+                                : "fa-chevron-left"
+                            }`}
+                          ></i>
+                        </button>
 
-                      {/* Pièces d'or */}
-                      <div
-                        className="player__easy-acces--coins"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          togglePanel(currentPlayer.playerId, "coins");
-                        }}
-                      >
-                        <p>
-                          <i className="fa-solid fa-coins"></i>
-                        </p>
-                        {openPanel?.playerId === currentPlayer.playerId &&
-                          openPanel?.panel === "coins" && (
-                            <div className="player__easy-acces--inside">
-                              {selectedCharacter.gold} pièces
+                        {showPersonalMenuOpen && (
+                          <div
+                            className="player__easy-access"
+                            ref={easyAccessRef}
+                          >
+                            {/* Boutons */}
+                            <div className="player__easy-access--buttons">
+                              <button
+                                onClick={() =>
+                                  togglePanel(currentPlayer.playerId, "hp")
+                                }
+                              >
+                                <i className="fa-regular fa-heart"></i>
+                              </button>
+                              <button
+                                onClick={() =>
+                                  togglePanel(currentPlayer.playerId, "coins")
+                                }
+                              >
+                                <i className="fa-solid fa-coins"></i>
+                              </button>
+                              <button
+                                onClick={() =>
+                                  togglePanel(
+                                    currentPlayer.playerId,
+                                    "inventory"
+                                  )
+                                }
+                              >
+                                <i className="fa-solid fa-briefcase"></i>
+                              </button>
+                              <button
+                                onClick={() =>
+                                  togglePanel(currentPlayer.playerId, "gear")
+                                }
+                              >
+                                <i className="fa-solid fa-shield"></i>
+                              </button>
                             </div>
-                          )}
-                      </div>
 
-                      {/* Inventaire */}
-                      <div
-                        className="player__easy-acces--inventory"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          togglePanel(currentPlayer.playerId, "inventory");
-                        }}
-                      >
-                        <p>
-                          <i className="fa-solid fa-briefcase"></i>
-                        </p>
-                        {openPanel?.playerId === currentPlayer.playerId &&
-                          openPanel?.panel === "inventory" &&
-                          selectedCharacter.inventory.length !== 0 && (
-                            <div className="player__easy-acces--inside">
-                              {selectedCharacter.inventory.filter(
-                                (item) => item.item.trim() !== ""
-                              ).length > 0 ? (
-                                <table>
-                                  <thead>
-                                    <tr>
-                                      <th className="table-left">Objet</th>
-                                      <th>Quantité</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {selectedCharacter.inventory
-                                      .filter((item) => item.item.trim() !== "")
-                                      .map((item, index) => (
-                                        <tr key={index}>
-                                          <td className="table-left">
-                                            {item.item}
-                                          </td>
-                                          <td>{item.quantity}</td>
+                            {/* Affichage du contenu dynamique */}
+                            {openPanel &&
+                              openPanel.playerId === currentPlayer.playerId && (
+                                <div className="player__easy-access--inside">
+                                  {openPanel.panel === "hp" && (
+                                    <>
+                                      <button className="health-modifier">
+                                        <i
+                                          className="fa-solid fa-chevron-down"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            updateHealth(selectedCharacter, -1);
+                                          }}
+                                        ></i>
+                                      </button>
+                                      <span>
+                                        {selectedCharacter.pointsOfLife}
+                                      </span>
+                                      <button className="health-modifier">
+                                        <i
+                                          className="fa-solid fa-chevron-up"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            updateHealth(selectedCharacter, 1);
+                                          }}
+                                        ></i>
+                                      </button>
+                                    </>
+                                  )}
+
+                                  {openPanel.panel === "coins" && (
+                                    <span className="coins">
+                                      {selectedCharacter.gold} pièces
+                                    </span>
+                                  )}
+
+                                  {openPanel.panel === "inventory" &&
+                                  selectedCharacter.inventory.length > 0 ? (
+                                    <table>
+                                      <thead>
+                                        <tr>
+                                          <th className="table-left">Objet</th>
+                                          <th>Quantité</th>
                                         </tr>
-                                      ))}
-                                  </tbody>
-                                </table>
-                              ) : (
-                                <p>Aucun objet dans l'inventaire</p>
+                                      </thead>
+                                      <tbody>
+                                        {selectedCharacter.inventory
+                                          .filter(
+                                            (item) => item.item.trim() !== ""
+                                          )
+                                          .map((item, index) => (
+                                            <tr key={index}>
+                                              <td className="table-left">
+                                                {item.item}
+                                              </td>
+                                              <td>{item.quantity}</td>
+                                            </tr>
+                                          ))}
+                                      </tbody>
+                                    </table>
+                                  ) : (
+                                    openPanel.panel === "inventory" && (
+                                      <p>Aucun objet dans l'inventaire</p>
+                                    )
+                                  )}
+
+                                  {openPanel.panel === "gear" &&
+                                    (selectedCharacter.weapons.length > 0 ? (
+                                      <table>
+                                        <thead>
+                                          <tr>
+                                            <th className="table-left">Arme</th>
+                                            <th>Dégâts</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {selectedCharacter.weapons
+                                            .filter(
+                                              (weapon) =>
+                                                weapon.name.trim() !== ""
+                                            )
+                                            .map((weapon, index) => (
+                                              <tr key={index}>
+                                                <td className="table-left">
+                                                  {weapon.name}
+                                                </td>
+                                                <td>{weapon.damage}</td>
+                                              </tr>
+                                            ))}
+                                        </tbody>
+                                      </table>
+                                    ) : (
+                                      <p>Aucune arme équipée</p>
+                                    ))}
+                                </div>
                               )}
-                            </div>
-                          )}
-                      </div>
-
-                      {/* Équipement */}
-                      <div
-                        className="player__easy-acces--equipment"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          togglePanel(currentPlayer.playerId, "gear");
-                        }}
-                      >
-                        <p>
-                          <i className="fa-solid fa-shield"></i>
-                        </p>
-                        {openPanel?.playerId === currentPlayer.playerId &&
-                          openPanel?.panel === "gear" &&
-                          selectedCharacter.weapons.length !== 0 && (
-                            <div className="player__easy-acces--inside">
-                              {selectedCharacter.weapons.length} armes
-                            </div>
-                          )}
-                      </div>
-                    </div>
-                  )}
-
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
                   {/* Affichage du personnage */}
                   {selectedCharacter ? (
                     <div

@@ -772,6 +772,77 @@ export default function EditableSheet({ id }: EditableSheetProps) {
           {/* Inventaire + pièces */}
           {isInventoryOpen && (
             <div className="character-details__infos--inventory">
+              {(editedCharacter?.weapons?.length ?? 0) > 0 && (
+  <table>
+    <caption>Équipement</caption>
+    <thead>
+      <tr>
+        <th className="item table-left">Arme</th>
+        <th className="quantity table-center">Dégâts</th>
+      </tr>
+    </thead>
+    <tbody>
+      {(editedCharacter?.weapons ?? [])
+        .filter((weapon) =>
+          isEditing
+            ? true
+            : weapon.name.trim() !== "" && weapon.damage.trim() !== ""
+        )
+        .map((weapon, index) => (
+          <tr key={index}>
+            {isEditing ? (
+              <>
+                <td className="table-left">
+                  <input
+                    className="table-size--large"
+                    type="text"
+                    value={weapon.name}
+                    onChange={(e) =>
+                      handleArrayChange(index, "name", e.target.value, "weapons")
+                    }
+                  />
+                </td>
+                <td className="table-center">
+                  <input
+                    className="table-size--small"
+                    type="text"
+                    value={weapon.damage}
+                    onChange={(e) =>
+                      handleArrayChange(index, "damage", e.target.value, "weapons")
+                    }
+                  />
+                </td>
+              </>
+            ) : (
+              <>
+                <td className="table-left">{weapon.name}</td>
+                <td className="table-center">{weapon.damage}</td>
+              </>
+            )}
+          </tr>
+        ))}
+    </tbody>
+  </table>
+)}
+
+{isEditing && (
+  <button
+    type="button"
+    onClick={() =>
+      setEditedCharacter((prev) =>
+        prev
+          ? {
+              ...prev,
+              weapons: [...(prev.weapons ?? []), { name: "", damage: "" }],
+            }
+          : null
+      )
+    }
+  >
+    Ajouter une arme
+  </button>
+)}
+
               {(editedCharacter?.inventory?.length ?? 0) > 0 ||
               (editedCharacter?.gold ?? 0) > 0 ? (
                 <table>
@@ -869,6 +940,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
                 </button>
               )}
             </div>
+            
           )}
         </div>
       </div>

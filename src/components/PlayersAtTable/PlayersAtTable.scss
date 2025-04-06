@@ -25,14 +25,50 @@
     
     .player {
       position: relative;
-      cursor: pointer;
       @include flex-row;
       margin: auto 0 auto auto;
 
-      &__easy-acces {
-        padding: $spacing-small;
+      &__easy-access {
         @include flex-col;
-        gap: $spacing-medium;
+        position: absolute;
+        padding: $spacing-small;
+        gap: $spacing-small;
+        width: 175px;
+        margin-right: 5px;
+        border: 1px solid transparent;
+        right: 30px;
+        z-index: 501;
+        background-color: $background-color;
+        border-radius: $spacing-small;
+
+        &--buttons {
+          @include flex-row;
+          justify-content: space-between;
+        }
+
+        &--wrapper {
+          position: relative;
+          @include flex-row;
+          flex-direction: row-reverse;
+          height: 95px;
+          background: none;
+          padding: $spacing-small;
+
+
+          button {
+            background: none;
+            color : $text-color;
+            border: 1px solid;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            background: $background-color;
+
+            &:hover {
+              border: 1px solid;
+            }
+          }
+        }
 
         p {
             margin: 0;
@@ -46,14 +82,35 @@
 
         &--inside {
           @include flex-row;
-          min-width: 80px;
+          width: 100%;
           justify-content: center;
           padding: 5px;
           gap: $spacing-small;
-          position: absolute;
-          right: 25px;
-          background-color: $background-color;
-          z-index: 999;
+          z-index: 600;
+          box-sizing: border-box;
+          min-height: 40px;
+
+
+          table {
+            width: 100%;
+            border-collapse: collapse;
+        
+            th,
+            td {
+              padding: 4px;
+            }
+        
+            th:nth-child(2),
+            td:nth-child(2) {
+              text-align: center;
+              vertical-align: middle;
+            }
+          }
+
+          span {
+            display: flex;
+            align-self: center;
+          }
           
           .fa-solid {
             padding: 5px;
@@ -90,6 +147,7 @@
 
       &__image {
         position: relative;
+        cursor: pointer;
         height: 95px;
         width: 95px;
         margin: auto 0 auto auto;
@@ -131,3 +189,51 @@
     }
   }
 }
+
+.chevron {
+  width: 25px;
+  margin: auto;
+}
+
+.health-modifier {
+  display: flex;
+  width: 25px;
+  height: 25px !important;
+  margin: auto 5px;
+  justify-content: center;
+  align-items: center;
+  border: none !important;
+}
+
+
+@keyframes slideFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.player__easy-access {
+  animation: slideFadeIn 0.3s ease-out;
+}
+
+
+@keyframes fadeInOpacity {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+  .player__easy-access--inside {
+    animation: fadeInOpacity 0.7s ease-out;
+  }
+
+
+  

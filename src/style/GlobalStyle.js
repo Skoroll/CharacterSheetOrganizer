@@ -10,6 +10,7 @@ const GlobalStyle = createGlobalStyle`
     --background-dark: ${(props) => props.theme.backgroundDark};
     --primary-color: ${(props) => props.theme.primaryColor};
     --text-color-rgb: ${(props) => props.theme.textColorRgb};
+      --button-bg: ${(props) => props.theme.buttonBg};
 
   }
 
