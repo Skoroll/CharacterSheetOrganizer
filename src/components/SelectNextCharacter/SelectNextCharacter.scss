@@ -31,3 +31,23 @@
 
     }
 }
+
+
+@include media-query($breakpoint-sm, "max") {
+    .select-character-modal {
+        ul {
+            @include flex-col;
+
+            li {
+                
+                flex: 1;
+                padding: $spacing-medium;
+
+                label {
+                    box-sizing: border-box;
+                    width: 100%;                    
+                }
+            }
+        }
+    }
+}

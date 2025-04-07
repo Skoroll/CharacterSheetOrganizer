@@ -36,6 +36,14 @@
             
         }
     }
+
+    &__box {
+        @include flex-row;
+
+        input {
+            flex: 1;
+        }        
+    }
 }
 
 

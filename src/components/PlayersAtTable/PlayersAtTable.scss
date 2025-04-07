@@ -17,7 +17,6 @@
     flex-direction: column-reverse;
     gap: $spacing-small;
     margin: auto 0 auto auto;
-    width: 130px;
 
     @include media-query($breakpoint-sm, "max") {
       flex-direction: row;
@@ -36,7 +35,7 @@
         width: 175px;
         margin-right: 5px;
         border: 1px solid transparent;
-        right: 30px;
+        right: 35px;
         z-index: 501;
         background-color: $background-color;
         border-radius: $spacing-small;
@@ -60,6 +59,7 @@
             color : $text-color;
             border: 1px solid;
             height: 30px;
+            width: 30px;
             border-radius: 50%;
             cursor: pointer;
             background: $background-color;

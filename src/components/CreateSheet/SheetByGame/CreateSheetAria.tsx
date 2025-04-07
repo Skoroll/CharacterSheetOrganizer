@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../CreateSheet.scss";
 import { useNavigate } from "react-router-dom";
 import Helper from "../../Helper/Helper";
+import Modal from "../../Modal/Modal";
 import statsTooltip from "../../../assets/Help/Aria/FR/stats.json";
 import weaponsTooltip from "../../../assets/Help/Aria/FR/weapons.json";
 import healthTooltip from "../../../assets/Help/Aria/FR/health.json";
 import placeholderImage from "../../../assets/placeholder-image.webp";
-import ariaLogo from "../../../assets/Aria_logo_large.webp"
+import ariaLogo from "../../../assets/Aria_logo_large.webp";
 
 interface CreateSheetAriaProps {
   game: string;
@@ -31,25 +32,28 @@ interface InventoryItem {
 
 export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
   const navigate = useNavigate();
+  const [errorModalOpen, setErrorModalOpen] = useState(false);
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [image, setImage] = useState<File | null>(null);
   const [className, setClassName] = useState("");
   const [name, setName] = useState("");
-  const [age, setAge] = useState<number | "">("");
+  const [age, setAge] = useState<number>(0);
   const [origin, setOrigin] = useState("");
-  const [strength, setStrength] = useState<number | "">("");
-  const [dexterity, setDexterity] = useState<number | "">("");
-  const [endurance, setEndurance] = useState<number | "">("");
-  const [intelligence, setIntelligence] = useState<number | "">("");
-  const [charisma, setCharisma] = useState<number | "">("");
+  const [strength, setStrength] = useState<number>(0);
+  const [dexterity, setDexterity] = useState<number>(0);
+  const [endurance, setEndurance] = useState<number>(0);
+  const [intelligence, setIntelligence] = useState<number>(0);
+  const [charisma, setCharisma] = useState<number>(0);
+  const [isPVModifiedManually, setIsPVModifiedManually] = useState(false);
   const [weapons, setWeapons] = useState<Weapon[]>([
     { name: "", damage: "" },
     { name: "", damage: "" },
     { name: "", damage: "" },
   ]);
-  const [pointsOfLife, setPointsOfLife] = useState<number | "">("");
-  const [gold, setGold] = useState<number | "">("");
-  const [injuries, setInjuries] = useState<number | "">("");
-  const [protection, setProtection] = useState<number | "">("");
+  const [pointsOfLife, setPointsOfLife] = useState<number>(0);
+  const [gold, setGold] = useState<number>(0);
+  const [injuries, setInjuries] = useState<number>(0);
+  const [protection, setProtection] = useState<number>(0);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [background, setBackground] = useState("");
@@ -72,6 +76,13 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
       setImage(file);
     }
   };
+
+  useEffect(() => {
+    if (!isPVModifiedManually && typeof endurance === "number") {
+      const autoPV = Math.min(Math.floor(endurance / 5), 14);
+      setPointsOfLife(autoPV);
+    }
+  }, [endurance, isPVModifiedManually]);
 
   const handleWeaponChange = (
     index: number,
@@ -104,7 +115,10 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
   };
 
   const handleAddSkill = () => {
-    setSkills([...skills, { specialSkill: "", link1: "", link2: "", score: "" }]);
+    setSkills([
+      ...skills,
+      { specialSkill: "", link1: "", link2: "", score: "" },
+    ]);
   };
 
   const handleAddInventoryItem = () => {
@@ -124,6 +138,28 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const errors: string[] = [];
+
+    if (!className) errors.push("La classe est obligatoire.");
+    if (!name) errors.push("Le nom est obligatoire.");
+    if (age === 0) errors.push("L'âge est obligatoire.");
+    if (origin === "") errors.push("L'origine est obligatoire.");
+    if (strength === 0) errors.push("La force est obligatoire.");
+    if (dexterity === 0) errors.push("La dextérité est obligatoire.");
+    if (endurance === 0) errors.push("L'endurance est obligatoire.");
+    if (intelligence === 0) errors.push("L'intelligence est obligatoire.");
+    if (charisma === 0) errors.push("Le charisme est obligatoire.");
+    if (pointsOfLife === 0) errors.push("Les points de vie sont obligatoires.");    
+    if (!background) errors.push("L'histoire du personnage est obligatoire.");
+    if (!pros) errors.push("Les qualités sont obligatoires.");
+    if (!cons) errors.push("Les défauts sont obligatoires.");
+
+    if (errors.length > 0) {
+      setErrorMessages(errors);
+      setErrorModalOpen(true);
+      return;
+    }
 
     const updatedSkills = skills.map((skill) => ({
       ...skill,
@@ -181,7 +217,7 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
 
   return (
     <div className="sheet">
-      <img src={ariaLogo} alt="Logo Aria" className="game-logo"/>
+      <img src={ariaLogo} alt="Logo Aria" className="game-logo" />
       <div className="sheet__top">
         <div className="character-identity">
           <div className="character-identity--img">
@@ -250,7 +286,7 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
 
           <div className="character-stats">
             <h3>Caractéristiques </h3>
-            <Helper content={statsTooltip}/>
+            <Helper content={statsTooltip} />
             <label>
               Force
               <input
@@ -296,7 +332,7 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
 
         <div className="character__equipment">
           <h3>Armes</h3>
-          <Helper content={weaponsTooltip}/>
+          <Helper content={weaponsTooltip} />
           {weapons.map((weapon, index) => (
             <div key={index} className="character__equipment--weapon">
               <label>
@@ -326,13 +362,16 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
         </div>
         <div className="character-points">
           <h3>Physique</h3>
-          <Helper content={healthTooltip}/>
+          <Helper content={healthTooltip} />
           <label>
             Points de vie
             <input
               type="number"
               value={pointsOfLife}
-              onChange={(e) => setPointsOfLife(Number(e.target.value))}
+              onChange={(e) => {
+                setPointsOfLife(Number(e.target.value));
+                setIsPVModifiedManually(true); // désactive le calcul auto dès modif manuelle
+              }}
             />
           </label>
           <label>
@@ -370,8 +409,16 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
                 { name: "Artisanat", link1: "DEX", link2: "INT" },
                 { name: "Combat rapproché", link1: "FOR", link2: "DEX" },
                 { name: "Combat à distance", link1: "DEX", link2: "INT" },
-                { name: "Connaissance de la nature", link1: "DEX", link2: "INT" },
-                { name: "Connaissance des secrets", link1: "INT", link2: "CHA" },
+                {
+                  name: "Connaissance de la nature",
+                  link1: "DEX",
+                  link2: "INT",
+                },
+                {
+                  name: "Connaissance des secrets",
+                  link1: "INT",
+                  link2: "CHA",
+                },
                 { name: "Courir/Sauter", link1: "DEX", link2: "END" },
                 { name: "Discrétion", link1: "DEX", link2: "CHA" },
                 { name: "Réflexe", link1: "DEX", link2: "INT" },
@@ -438,7 +485,9 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
                   Score
                   <input
                     type="number"
-                    value={skill.score || calculateScore(skill.link1, skill.link2)}
+                    value={
+                      skill.score || calculateScore(skill.link1, skill.link2)
+                    }
                     onChange={(e) =>
                       handleSkillChange(index, "score", e.target.value)
                     }
@@ -487,6 +536,7 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
               </label>
             </div>
           ))}
+          <h3 className="section-heading">Possession du personnage </h3>
           <button type="button" onClick={handleAddInventoryItem}>
             Ajouter un objet
           </button>
@@ -521,6 +571,18 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
         <button onClick={refreshPage}>Recommencer</button>
         <button onClick={handleSubmit}>Créer le personnage</button>
       </div>
+      {errorModalOpen && (
+        <Modal
+          title="Formulaire incomplet"
+          onClose={() => setErrorModalOpen(false)}
+        >
+          <ul className="error-list">
+            {errorMessages.map((msg, i) => (
+              <li key={i}>{msg}</li>
+            ))}
+          </ul>
+        </Modal>
+      )}
     </div>
   );
 }
