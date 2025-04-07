@@ -1,0 +1,33 @@
+.select-character-modal {
+    @include flex-col;
+
+    ul {
+        li {
+            height: auto !important;
+            input {
+                display: none;
+            }
+
+            label {
+                cursor: pointer;
+                padding: $spacing-small;
+            }
+
+            input:checked + label {
+                border-color: $primary-color; 
+                background-color: $text-color;
+                color: $background-color;
+                transform: scale(1.03);
+                border-radius: $spacing-small
+              }
+        }
+    }
+
+    .button-group {
+        @include flex-row;
+        flex-direction: row-reverse;
+        gap: $spacing-small;
+        margin-top: $spacing-medium;
+
+    }
+}
