@@ -6,9 +6,9 @@
     margin-left: 10px;
   }
 
-  .gm-toolbar {
+  .gm-toolbar--desktop, .gm-toolbar--mobile {
     position: relative;
-    @include flex-row;
+    @include flex-wrap;
     border-top: 1px solid;
     border-bottom: 1px solid;
     gap: $spacing-large;
@@ -25,20 +25,13 @@
     }
 
     button {
-      font-size: 15px;
-      cursor: pointer;
-      border-radius: 50%;
-      border: 1px solid transparent;
-      padding: 8px;
-      transition: all 0.3s;
-      background: none;
-      color: $text-color;
-
-      &:hover {
-        background-color: $background-color;
-        border: 1px solid;
-      }
+      @include button;
+      background: none ;
     }
+  }
+
+  .gm-toolbar--mobile {
+    display: none;
   }
 }
 
@@ -55,8 +48,16 @@
 }
 
 @include media-query($breakpoint-sm, "max") {
-  .gm-toolbar {
+  .gm-toolbar-container {
+
+  .gm-toolbar--mobile {
+    display: flex;
     flex-wrap: wrap;
     gap: $spacing-small;
   }
+
+  .gm-toolbar--desktop {
+    display: none;
+  }
+}
 }
