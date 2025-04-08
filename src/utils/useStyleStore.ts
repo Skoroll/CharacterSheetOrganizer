@@ -10,14 +10,15 @@ interface Theme {
   backgroundDark: string;
   fontFamily: string;
   buttonBg: string;
+  backgroundSecondaryColor: string;
 }
-
 
 interface StyleStore {
   theme: Theme;
   setTheme: (themeName: 'light' | 'dark' | 'medieval') => void;
 }
 
+// Déclaration des thèmes
 const lightTheme: Theme = {
   primaryColor: '#3498db',
   buttonBg: '#3498db',
@@ -28,18 +29,20 @@ const lightTheme: Theme = {
   backgroundLight: '#f5f5f5',
   backgroundDark: '#e0e0e0',
   fontFamily: '"Arial", sans-serif',
+  backgroundSecondaryColor: '#eaeaea',
 };
 
 const darkTheme: Theme = {
   primaryColor: '#ffffff',
-  fontFamily: '"Arial", sans-serif',
+  buttonBg: "#333333",
   backgroundColor: '#121212',
   fontColor: '#ffffff',
   fontSize: '16px',
   textMuted: 'rgba(240, 240, 240, 0.7)',
   backgroundLight: '#1a1a1a',
   backgroundDark: '#0a0a0a',
-  buttonBg: "#333333",
+  fontFamily: '"Arial", sans-serif',
+  backgroundSecondaryColor: '#1e1e1e',
 };
 
 const medievalTheme: Theme = {
@@ -52,26 +55,29 @@ const medievalTheme: Theme = {
   backgroundLight: '#5c3a60',
   backgroundDark: '#2d1b33',
   fontFamily: '"IM Fell English", serif',
+  backgroundSecondaryColor: '#604754',
 };
 
+// Fonction utilitaire
+const getThemeByName = (name: 'light' | 'dark' | 'medieval'): Theme => {
+  switch (name) {
+    case 'light': return lightTheme;
+    case 'medieval': return medievalTheme;
+    case 'dark':
+    default: return darkTheme;
+  }
+};
+
+// Lecture depuis le localStorage au chargement
+const initialThemeName =
+  (localStorage.getItem("selectedTheme") as 'light' | 'dark' | 'medieval') || 'dark';
 
 const useStyleStore = create<StyleStore>((set) => ({
-  theme: darkTheme, // ou lightTheme ou medievalTheme
+  theme: getThemeByName(initialThemeName),
   setTheme: (themeName) => {
-    let newTheme;
-    switch (themeName) {
-      case 'dark':
-        newTheme = darkTheme;
-        break;
-      case 'medieval':
-        newTheme = medievalTheme;
-        break;
-      default:
-        newTheme = lightTheme;
-    }
-    set({ theme: newTheme });
+    localStorage.setItem("selectedTheme", themeName);
+    set({ theme: getThemeByName(themeName) });
   },
 }));
-
 
 export default useStyleStore;

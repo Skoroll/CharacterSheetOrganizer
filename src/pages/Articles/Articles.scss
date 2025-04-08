@@ -1,11 +1,21 @@
 
 
 .news {
+    @include flex-wrap;
     padding: $spacing-small;
+    gap: $spacing-small;
+
+    a {
+        color: inherit;
+        font-weight: 500;
+    }
+
     .news__article {
+        flex: 1;
         border: 1px solid;
         border-radius: $spacing-small;
         padding: $spacing-small;
+        background: $background-secondary-color;
 
         h3,h4 {
             margin: 0;

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import News from "./News";
 import Blog from "./Blog";
+
 interface ArticlesProps {
   flexDir: "row" | "column";
   contentWidth: string;

@@ -11,7 +11,7 @@
     }
 
     &__container {
-      @include flex-row;
+      @include flex-col;
     }
   }
 
@@ -99,6 +99,7 @@
       border: 1px solid;
       align-items: center;
       border-radius: calc($spacing-small * 2);
+      background: $background-secondary-color;
 
       img {
         width: 100%;

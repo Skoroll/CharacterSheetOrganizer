@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import articles from "../../assets/Article/Blog.json";
+import "./Articles.scss"
 
 export default function Blog () {
     useEffect(() => {

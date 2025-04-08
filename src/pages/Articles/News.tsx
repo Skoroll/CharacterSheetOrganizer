@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import news from "../../assets/Article/WhatsNew.json";
+import "./Articles.scss"
 
 export default function NewsDisplay() {
   const location = useLocation();
@@ -16,8 +17,9 @@ export default function NewsDisplay() {
   }, [articleIndex]);
 
   return (
+    <>
+      <h2>Quoi de neuf ?</h2>
     <div className="news">
-      <h2>Nouveautés</h2>
       {news.map((article, index) => (
         <div
           className="news__article"
@@ -30,5 +32,6 @@ export default function NewsDisplay() {
         </div>
       ))}
     </div>
+    </>
   );
 }

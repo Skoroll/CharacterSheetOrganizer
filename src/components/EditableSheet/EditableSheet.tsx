@@ -118,17 +118,16 @@ export default function EditableSheet({ id }: EditableSheetProps) {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value, type } = e.target;
-  
-    const parsedValue =
-      type === "number" ? parseInt(value, 10) || 0 : value;
-  
+
+    const parsedValue = type === "number" ? parseInt(value, 10) || 0 : value;
+
     if (editedCharacter) {
       setEditedCharacter({
         ...editedCharacter,
         [name]: parsedValue,
       });
     }
-  };  
+  };
 
   const handleArrayChange = (
     index: number,
@@ -230,7 +229,6 @@ export default function EditableSheet({ id }: EditableSheetProps) {
             ...editedCharacter,
             baseSkills: mergedBaseSkills,
           }),
-          
         });
 
         if (!response.ok) throw new Error("Erreur lors de la mise à jour");
@@ -280,19 +278,18 @@ export default function EditableSheet({ id }: EditableSheetProps) {
   const calculateScore = (link1: string, link2: string): number => {
     const source = isEditing && editedCharacter ? editedCharacter : character;
     if (!source) return 0;
-  
+
     const stat1 = source[link1 as keyof typeof source];
     const stat2 = source[link2 as keyof typeof source];
-  
+
     if (typeof stat1 === "number" && typeof stat2 === "number") {
       const average = (stat1 + stat2) / 2;
       const percentage = Math.floor(average / 5) * 5;
       return Math.min(100, Math.max(0, percentage));
     }
-  
+
     return 0;
   };
-  
 
   const handleBonusChange = (skillName: string, value: string) => {
     const parsedValue = parseInt(value, 10) || 0;
@@ -391,18 +388,18 @@ export default function EditableSheet({ id }: EditableSheetProps) {
               {isEditing && (
                 <label>
                   <i className="fa-solid fa-pen-to-square"></i>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      setEditedCharacter((prev) =>
-                        prev ? { ...prev, image: file } : null
-                      );
-                    }
-                  }}
-                />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setEditedCharacter((prev) =>
+                          prev ? { ...prev, image: file } : null
+                        );
+                      }
+                    }}
+                  />
                 </label>
               )}
             </div>
@@ -591,105 +588,84 @@ export default function EditableSheet({ id }: EditableSheetProps) {
               </div>
 
               {/* Compétences  spéciales*/}
-              {(editedCharacter?.skills?.length ?? 0) > 0 && (
-                <div className="character-details__skills--special">
-                  <table>
-                    <caption>Compétences spéciales</caption>
-                    <thead>
-                      <tr>
-                        <th className="table-left">Nom</th>
-                        <th className="table-center">Lien</th>
-                        <th className="table-center">Score</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(editedCharacter?.skills ?? [])
-                        .filter((skill) =>
-                          isEditing ? true : skill.specialSkill.trim() !== ""
-                        )
-                        .map((skill, index) => (
-                          <tr key={index}>
-                            {isEditing ? (
-                              <>
-                                <td className="table-left">
-                                  <input
-                                    type="text"
-                                    value={skill.specialSkill}
-                                    onChange={(e) =>
-                                      handleArrayChange(
-                                        index,
-                                        "specialSkill",
-                                        e.target.value,
-                                        "skills"
-                                      )
-                                    }
-                                  />
-                                </td>
-                                <td className="table-center">
-                                  <input
-                                    className="table-size--small"
-                                    type="text"
-                                    value={skill.link1}
-                                    onChange={(e) =>
-                                      handleArrayChange(
-                                        index,
-                                        "link1",
-                                        e.target.value,
-                                        "skills"
-                                      )
-                                    }
-                                  />
-                                  /
-                                  <input
-                                    className="table-size--small"
-                                    type="text"
-                                    value={skill.link2}
-                                    onChange={(e) =>
-                                      handleArrayChange(
-                                        index,
-                                        "link2",
-                                        e.target.value,
-                                        "skills"
-                                      )
-                                    }
-                                  />
-                                </td>
-                                <td>
-                                  <input
-                                    className="table-size--small"
-                                    type="text"
-                                    value={skill.score}
-                                    onChange={(e) =>
-                                      handleArrayChange(
-                                        index,
-                                        "score",
-                                        e.target.value,
-                                        "skills"
-                                      )
-                                    }
-                                  />
-                                </td>
-                              </>
-                            ) : (
-                              <>
-                                <td className="table-left">
-                                  {skill.specialSkill}
-                                </td>
-                                <td className="table-center">{`${skill.link1} / ${skill.link2}`}</td>
-                                <td className="table-center">{skill.score}</td>
-                              </>
-                            )}
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                  {isEditing && (
-                    <button type="button" onClick={handleAddSkill}>
-                      Ajouter une compétence spéciale
-                    </button>
-                  )}
-                </div>
+              {(isEditing || (editedCharacter?.skills?.length ?? 0) > 0) && (
+  <div className="character-details__skills--special">
+    <table>
+      <caption>Compétences spéciales</caption>
+      <thead>
+        <tr>
+          <th className="table-left">Nom</th>
+          <th className="table-center">Lien</th>
+          <th className="table-center">Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        {(editedCharacter?.skills ?? [])
+          .filter((skill) =>
+            isEditing ? true : skill.specialSkill.trim() !== ""
+          )
+          .map((skill, index) => (
+            <tr key={index}>
+              {isEditing ? (
+                <>
+                  <td className="table-left">
+                    <input
+                      type="text"
+                      value={skill.specialSkill}
+                      onChange={(e) =>
+                        handleArrayChange(index, "specialSkill", e.target.value, "skills")
+                      }
+                    />
+                  </td>
+                  <td className="table-center">
+                    <input
+                      className="table-size--small"
+                      type="text"
+                      value={skill.link1}
+                      onChange={(e) =>
+                        handleArrayChange(index, "link1", e.target.value, "skills")
+                      }
+                    />
+                    /
+                    <input
+                      className="table-size--small"
+                      type="text"
+                      value={skill.link2}
+                      onChange={(e) =>
+                        handleArrayChange(index, "link2", e.target.value, "skills")
+                      }
+                    />
+                  </td>
+                  <td>
+                    <input
+                      className="table-size--small"
+                      type="text"
+                      value={skill.score}
+                      onChange={(e) =>
+                        handleArrayChange(index, "score", e.target.value, "skills")
+                      }
+                    />
+                  </td>
+                </>
+              ) : (
+                <>
+                  <td className="table-left">{skill.specialSkill}</td>
+                  <td className="table-center">{`${skill.link1} / ${skill.link2}`}</td>
+                  <td className="table-center">{skill.score}</td>
+                </>
               )}
+            </tr>
+          ))}
+      </tbody>
+    </table>
+    {isEditing && (
+      <button type="button" onClick={handleAddSkill}>
+        Ajouter une compétence spéciale
+      </button>
+    )}
+  </div>
+)}
+
             </div>
           )}
           {isStoryOpen && (
@@ -741,75 +717,89 @@ export default function EditableSheet({ id }: EditableSheetProps) {
           {isInventoryOpen && (
             <div className="character-details__infos--inventory">
               {(editedCharacter?.weapons?.length ?? 0) > 0 && (
-  <table>
-    <caption>Équipement</caption>
-    <thead>
-      <tr>
-        <th className="item table-left">Arme</th>
-        <th className="quantity table-center">Dégâts</th>
-      </tr>
-    </thead>
-    <tbody>
-      {(editedCharacter?.weapons ?? [])
-        .filter((weapon) =>
-          isEditing
-            ? true
-            : weapon.name.trim() !== "" && weapon.damage.trim() !== ""
-        )
-        .map((weapon, index) => (
-          <tr key={index}>
-            {isEditing ? (
-              <>
-                <td className="table-left">
-                  <input
-                    className="table-size--large"
-                    type="text"
-                    value={weapon.name}
-                    onChange={(e) =>
-                      handleArrayChange(index, "name", e.target.value, "weapons")
-                    }
-                  />
-                </td>
-                <td className="table-center">
-                  <input
-                    className="table-size--small"
-                    type="text"
-                    value={weapon.damage}
-                    onChange={(e) =>
-                      handleArrayChange(index, "damage", e.target.value, "weapons")
-                    }
-                  />
-                </td>
-              </>
-            ) : (
-              <>
-                <td className="table-left">{weapon.name}</td>
-                <td className="table-center">{weapon.damage}</td>
-              </>
-            )}
-          </tr>
-        ))}
-    </tbody>
-  </table>
-)}
+                <table>
+                  <caption>Équipement</caption>
+                  <thead>
+                    <tr>
+                      <th className="item table-left">Arme</th>
+                      <th className="quantity table-center">Dégâts</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(editedCharacter?.weapons ?? [])
+                      .filter((weapon) =>
+                        isEditing
+                          ? true
+                          : weapon.name.trim() !== "" &&
+                            weapon.damage.trim() !== ""
+                      )
+                      .map((weapon, index) => (
+                        <tr key={index}>
+                          {isEditing ? (
+                            <>
+                              <td className="table-left">
+                                <input
+                                  className="table-size--large"
+                                  type="text"
+                                  value={weapon.name}
+                                  onChange={(e) =>
+                                    handleArrayChange(
+                                      index,
+                                      "name",
+                                      e.target.value,
+                                      "weapons"
+                                    )
+                                  }
+                                />
+                              </td>
+                              <td className="table-center">
+                                <input
+                                  className="table-size--small"
+                                  type="text"
+                                  value={weapon.damage}
+                                  onChange={(e) =>
+                                    handleArrayChange(
+                                      index,
+                                      "damage",
+                                      e.target.value,
+                                      "weapons"
+                                    )
+                                  }
+                                />
+                              </td>
+                            </>
+                          ) : (
+                            <>
+                              <td className="table-left">{weapon.name}</td>
+                              <td className="table-center">{weapon.damage}</td>
+                            </>
+                          )}
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              )}
 
-{isEditing && (
-  <button
-    type="button"
-    onClick={() =>
-      setEditedCharacter((prev) =>
-        prev
-          ? {
-              ...prev,
-              weapons: [...(prev.weapons ?? []), { name: "", damage: "" }],
-            }
-          : null
-      )
-    }
-  >
-    Ajouter une arme
-  </button>
-)}
+              {isEditing && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    setEditedCharacter((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            weapons: [
+                              ...(prev.weapons ?? []),
+                              { name: "", damage: "" },
+                            ],
+                          }
+                        : null
+                    )
+                  }
+                >
+                  Ajouter une arme
+                </button>
+              )}
 
               {(editedCharacter?.inventory?.length ?? 0) > 0 ||
               (editedCharacter?.gold ?? 0) > 0 ? (
@@ -908,11 +898,8 @@ export default function EditableSheet({ id }: EditableSheetProps) {
                 </button>
               )}
             </div>
-            
           )}
-          
         </div>
-
       </div>
 
       {/* Modale de confirmation */}
@@ -935,39 +922,38 @@ export default function EditableSheet({ id }: EditableSheetProps) {
           </div>
         </Modal>
       )}
-                        {/*Bouton de suppression de personnage*/}
-                        {isOwner && (
-                    <div className="edit-section">
-                      {!isEditing ? (
-                        <button
-                          className="danger"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIsModalOpen(true);
-                          }}
-                        >
-                          <i className="fa-solid fa-trash" />
-                        </button>
-                      ) : (
-                        ""
-                      )}
-                      {isEditing ? (
-                        <>
-                          <button className="cancel-btn" onClick={handleCancelEdit}>
-                            <i className="fa-solid fa-x"></i>
-                          </button>
-                          <button className="save-btn" onClick={handleSaveChanges}>
-                            <i className="fa-solid fa-check"></i>
-                          </button>
-                        </>
-                      ) : (
-                        <button className="edit-btn" onClick={() => setIsEditing(true)}>
-                          <i className="fa-solid fa-pen"></i>
-                        </button>
-                      )}
-                    </div>
-                  )}
+      {/*Bouton de suppression de personnage*/}
+      {isOwner && (
+        <div className="edit-section">
+          {!isEditing ? (
+            <button
+              className="danger"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsModalOpen(true);
+              }}
+            >
+              <i className="fa-solid fa-trash" />
+            </button>
+          ) : (
+            ""
+          )}
+          {isEditing ? (
+            <>
+              <button className="cancel-btn" onClick={handleCancelEdit}>
+                <i className="fa-solid fa-x"></i>
+              </button>
+              <button className="save-btn" onClick={handleSaveChanges}>
+                <i className="fa-solid fa-check"></i>
+              </button>
+            </>
+          ) : (
+            <button className="edit-btn" onClick={() => setIsEditing(true)}>
+              <i className="fa-solid fa-pen"></i>
+            </button>
+          )}
+        </div>
+      )}
     </div>
-
   );
 }

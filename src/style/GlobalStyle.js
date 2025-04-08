@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -10,7 +10,8 @@ const GlobalStyle = createGlobalStyle`
     --background-dark: ${(props) => props.theme.backgroundDark};
     --primary-color: ${(props) => props.theme.primaryColor};
     --text-color-rgb: ${(props) => props.theme.textColorRgb};
-      --button-bg: ${(props) => props.theme.buttonBg};
+    --button-bg: ${(props) => props.theme.buttonBg};
+    --background-secondary-color: ${(props) => props.theme.backgroundSecondaryColor};
 
   }
 

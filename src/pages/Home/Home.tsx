@@ -3,6 +3,7 @@ import Landing from "../Landing/Landing";
 import Menu from "../Menu/Menu";
 import NewsPanel from "../../components/NewsPanel/NewsPanel";
 import PreviousGame from "../../components/PreviousGame/PreviousGame";
+import Welcome from "../../components/Welcome/Welcome";
 import { useUser } from "../../Context/UserContext";
 import {Table} from "../../types/Table"
 import { BeatLoader } from "react-spinners";
@@ -112,6 +113,7 @@ export default function Home() {
           <div className="home-wrapper">
             <div className="home__tables-options">
               <div className="home-wrapper__container">
+                <Welcome/>
                 <div className="home__tables-options--div">
                   <PreviousGame tables={tables} loading={loading} error={error} API_URL={API_URL} />
                 </div>

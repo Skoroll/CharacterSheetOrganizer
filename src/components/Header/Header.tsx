@@ -84,7 +84,7 @@ export default function Header() {
           aria-expanded={isAuthOpen}
           onClick={toggleAuth}
         >
-          Se connecter
+          Se connecter | S'inscrire
         </button>
       )}
       {/* Formulaire d'authentification */}

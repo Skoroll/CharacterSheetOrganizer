@@ -10,7 +10,6 @@
   &__content--header {
     @include flex-row;
     justify-content: space-between;
-
     gap: $spacing-medium;
     h2,
     p {
@@ -20,6 +19,14 @@
 
     h2 {
       font-size: 40px;
+    }
+
+    .header-container {
+      @include flex-col;
+
+      @include media-query($breakpoint-sm, "max") {
+        display: none
+      }
     }
 
     .container {

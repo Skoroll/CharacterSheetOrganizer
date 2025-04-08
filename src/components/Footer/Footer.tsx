@@ -9,6 +9,7 @@ const Footer = () => {
         <div className="footer__cta--kofi">
           <a
             className="kofi-link"
+            target="_blank"
             href="https://ko-fi.com/manage/index?method=externallogin#"
           >
             <img src={kofiLogo} alt="Logo Ko-fi" loading="lazy"/>

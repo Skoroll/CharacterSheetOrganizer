@@ -1,14 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useStyleStore from "../../utils/useStyleStore";
 
 const SelectTheme = () => {
   const { setTheme, theme } = useStyleStore();
   const [selectedTheme, setSelectedTheme] = useState<"light" | "dark" | "medieval">("dark");
 
+  // Appliquer le thème depuis localStorage au premier rendu
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("selectedTheme") as "light" | "dark" | "medieval" | null;
+    if (savedTheme) {
+      setSelectedTheme(savedTheme);
+      setTheme(savedTheme);
+    }
+  }, [setTheme]);
+
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const newTheme = event.target.value as "light" | "dark" | "medieval";
     setSelectedTheme(newTheme);
     setTheme(newTheme);
+    localStorage.setItem("selectedTheme", newTheme); // ⬅️ Enregistrement
   };
 
   return (
