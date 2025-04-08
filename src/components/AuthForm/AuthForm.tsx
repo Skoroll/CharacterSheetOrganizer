@@ -1,15 +1,23 @@
 import { useState, useEffect } from "react";
 import { useUser } from "../../Context/UserContext";
+import Modal from "../Modal/Modal";
 import "./AuthForm.scss";
 
 export default function AuthForm() {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [isResetPassword, setIsResetPassword] = useState(false); // ✅ Nouvel état
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalMessage, setAuthModalMessage] = useState("");
+  const [isResetPassword, setIsResetPassword] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { setUser } = useUser(); // Accède à la fonction setUser pour mettre à jour le contexte
   const API_URL = import.meta.env.VITE_API_URL; // Récupère l'URL du backend
+
+  const showModalMessage = (message: string) => {
+    setAuthModalMessage(message);
+    setAuthModalOpen(true);
+  };
 
   useEffect(() => {
     // Vérifie si un token est déjà présent dans le localStorage lors du chargement du composant
@@ -22,7 +30,7 @@ export default function AuthForm() {
     }
   }, [setUser]);
 
-  // ✅ Fonction pour soumettre le formulaire de connexion/inscription
+  // Fonction pour soumettre le formulaire de connexion/inscription
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -42,16 +50,16 @@ export default function AuthForm() {
       const data = await response.json();
 
       if (!response.ok) {
-        alert(`❌ Erreur : ${data.message}`);
+        showModalMessage(`Erreur : ${data.message}`);
         return;
       }
 
       if (isSignUp) {
         // ✅ Si c'était une inscription, afficher un message et rediriger vers la connexion
-        alert(
+        showModalMessage(
           "✅ Inscription réussie ! Vous pouvez maintenant vous connecter."
         );
-        setIsSignUp(false); // 🔥 Retour au formulaire de connexion
+        setIsSignUp(false); // Retour au formulaire de connexion
         setName("");
         setEmail("");
         setPassword("");
@@ -77,10 +85,10 @@ export default function AuthForm() {
       });
 
       console.log("✅ Connexion réussie ! Redirection...");
-      window.location.reload(); // 🔥 Recharge la page après connexion
+      window.location.reload(); // Recharge la page après connexion
     } catch (error) {
-      console.error("❌ Erreur de connexion :", error);
-      alert("Une erreur est survenue. Vérifiez votre connexion.");
+      console.error("Erreur de connexion :", error);
+      showModalMessage("Une erreur est survenue. Vérifiez votre connexion.");
     }
   };
 
@@ -89,7 +97,7 @@ export default function AuthForm() {
     e.preventDefault();
 
     if (!email) {
-      alert("Veuillez entrer votre adresse e-mail.");
+      showModalMessage("Veuillez entrer votre adresse e-mail.");
       return;
     }
 
@@ -103,18 +111,18 @@ export default function AuthForm() {
       const data = await response.json();
 
       if (!response.ok) {
-        alert(`❌ Erreur : ${data.message}`);
+        showModalMessage(`Erreur : ${data.message}`);
         return;
       }
 
-      alert("📩 Un email de récupération a été envoyé !");
+      showModalMessage("📩 Un email de récupération a été envoyé !");
       setIsResetPassword(false); // Revenir à la connexion
     } catch (error) {
       console.error(
-        "❌ Erreur lors de la récupération du mot de passe :",
+        "Erreur lors de la récupération du mot de passe :",
         error
       );
-      alert("Une erreur est survenue.");
+      showModalMessage("Une erreur est survenue.");
     }
   };
 
@@ -123,14 +131,14 @@ export default function AuthForm() {
       <div className="auth-container__btns">
         <button
           onClick={() => setIsSignUp(false)}
-          className={!isSignUp ? "selected" : ""}
+          className={`btn-log ${!isSignUp ? "selected" : ""}`}
         >
           Se connecter
         </button>
         /
         <button
           onClick={() => setIsSignUp(true)}
-          className={isSignUp ? "selected" : ""}
+          className={`btn-log ${isSignUp ? "selected" : ""}`}
         >
           Créer un compte
         </button>
@@ -139,9 +147,7 @@ export default function AuthForm() {
         // ✅ Formulaire de récupération de mot de passe
         <>
           <h2> Réinitialiser le mot de passe</h2>
-          <form 
-            className="form"
-            onSubmit={handleResetPassword}>
+          <form className="form" onSubmit={handleResetPassword}>
             <div className="form__inputs-div">
               <input
                 type="email"
@@ -199,6 +205,19 @@ export default function AuthForm() {
             Mot de passe oublié ?
           </button>
         </>
+      )}
+      {authModalOpen && (
+        <Modal title="" onClose={() => setAuthModalOpen(false)}>
+          <p>{authModalMessage}</p>
+          <div className="modal__buttons">
+            <button
+              className="modal__confirm-btn"
+              onClick={() => setAuthModalOpen(false)}
+            >
+              OK
+            </button>
+          </div>
+        </Modal>
       )}
     </div>
   );

@@ -238,7 +238,7 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
                     )}
                   </div>
                 ) : (
-                  <p>(Pas de personnage sélectionné)</p>
+                  <p></p>
                 )}
               </div>
             );

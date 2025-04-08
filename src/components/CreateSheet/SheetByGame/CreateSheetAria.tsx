@@ -31,6 +31,7 @@ interface InventoryItem {
 }
 
 export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
+  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const navigate = useNavigate();
   const [errorModalOpen, setErrorModalOpen] = useState(false);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
@@ -568,7 +569,7 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
         </div>
       </div>
       <div className="btn-container">
-        <button onClick={refreshPage}>Recommencer</button>
+      <button onClick={() => setIsResetModalOpen(true)}>Recommencer</button>
         <button onClick={handleSubmit}>Créer le personnage</button>
       </div>
       {errorModalOpen && (
@@ -583,6 +584,26 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
           </ul>
         </Modal>
       )}
+      {isResetModalOpen && (
+  <Modal title="" onClose={() => setIsResetModalOpen(false)}>
+    <p>Vous perdrez toute la progression sur le personnage.</p>
+    <div className="modal__buttons">
+      <button
+        className="modal__cancel-btn"
+        onClick={() => setIsResetModalOpen(false)}
+      >
+        Annuler
+      </button>
+      <button
+        className="modal__confirm-btn"
+        onClick={refreshPage}
+      >
+        Confirmer
+      </button>
+    </div>
+  </Modal>
+)}
+
     </div>
   );
 }

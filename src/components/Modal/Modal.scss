@@ -43,9 +43,11 @@
   @include flex-row;
   gap: $spacing-medium;
   justify-content: right;
-
+  
   button {
     position: relative;
+    @include button;
+    margin: auto;
   }
 }
 

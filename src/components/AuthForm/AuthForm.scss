@@ -23,7 +23,7 @@
       align-items: baseline;
       gap: $spacing-small;
       justify-content: center;
-      background: none !important;
+      background: none ;
       button.selected {
         @include button;
         cursor: default; // Facultatif : désactiver le curseur pointer
@@ -55,7 +55,7 @@
     
   }
   
- button {
+ .btn-log {
   background: none;
   border: none;
   color: inherit;
