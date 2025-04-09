@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Cuir souple",
+    "protection": 1,
+    "price": 300
+  },
+  {
+    "name": "Cuir rigide",
+    "protection": 2,
+    "price": 1000
+  },
+  {
+    "name": "Cuir et métal",
+    "protection": 4,
+    "price": 1800
+  },
+  {
+    "name": "Cotte de maille",
+    "protection": 6,
+    "price": 3500
+  },
+  {
+    "name": "Armure de plaques",
+    "protection": 8,
+    "price": 5000
+  }
+]

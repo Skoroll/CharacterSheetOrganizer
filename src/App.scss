@@ -22,7 +22,7 @@ main {
   margin-top: 110px;
 
   @include media-query($breakpoint-sm, "max") {
-    margin-top: 150px;
+    margin-top: 185px;
   }
 }
 

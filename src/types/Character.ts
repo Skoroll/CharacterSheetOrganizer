@@ -23,7 +23,9 @@ export interface Character {
   pros: string;
   cons: string;
   baseSkills: BaseSkill[];
+  tableId?: string; // ✅ ajoute cette ligne
 }
+
 
 export interface BaseSkill {
   name: string;
@@ -42,5 +44,6 @@ export type Skill = {
 export type EditableCharacter = Omit<Character, "image"> & {
   image?: string | File;
   baseSkills: BaseSkill[];
+  tableId?: string;
 };
 

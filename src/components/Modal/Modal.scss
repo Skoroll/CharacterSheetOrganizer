@@ -77,3 +77,11 @@
     bottom: -32px !important;
   }
 }
+
+
+.modal__actions {
+  @include flex-row;
+  flex-direction: row-reverse;
+  margin-top: $spacing-small;
+  gap: $spacing-medium;
+}

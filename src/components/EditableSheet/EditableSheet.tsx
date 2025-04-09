@@ -16,6 +16,7 @@ interface BaseSkill {
 
 interface EditableSheetProps {
   id: string;
+  tableId?: string;
 }
 
 export default function EditableSheet({ id }: EditableSheetProps) {
@@ -71,48 +72,49 @@ export default function EditableSheet({ id }: EditableSheetProps) {
         inventory: character.inventory || [],
         weapons: character.weapons || [],
         skills: character.skills || [],
+        tableId: character.tableId, // <-- AJOUTE ça !
       });
     }
   }, [character]);
 
   const API_URL = import.meta.env.VITE_API_URL;
 
-  useEffect(() => {
-    async function fetchCharacter() {
-      try {
-        const response = await fetch(`${API_URL}/api/characters/${id}`);
-        if (!response.ok) {
-          throw new Error("Erreur lors de la récupération du personnage");
-        }
-        const data = await response.json();
-
-        // Fusionner les compétences existantes avec la liste complète
-        const mergedBaseSkills = baseSkills.map((baseSkill) => {
-          const existing = data.baseSkills?.find(
-            (skill: BaseSkill) => skill.name === baseSkill.name
-          );
-          return existing
-            ? { ...baseSkill, bonusMalus: existing.bonusMalus }
-            : baseSkill;
-        });
-
-        setCharacter({
-          ...data,
-          baseSkills: mergedBaseSkills,
-        });
-      } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Une erreur inconnue est survenue."
-        );
-      } finally {
-        setLoading(false);
+  const fetchCharacter = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/characters/${id}`);
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération du personnage");
       }
+      const data = await response.json();
+  
+      const mergedBaseSkills = baseSkills.map((baseSkill) => {
+        const existing = data.baseSkills?.find(
+          (skill: BaseSkill) => skill.name === baseSkill.name
+        );
+        return existing
+          ? { ...baseSkill, bonusMalus: existing.bonusMalus }
+          : baseSkill;
+      });
+  
+      setCharacter({
+        ...data,
+        baseSkills: mergedBaseSkills,
+      });
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Une erreur inconnue est survenue."
+      );
+    } finally {
+      setLoading(false);
     }
-
+  };
+  
+  useEffect(() => {
     fetchCharacter();
   }, [id]);
+  
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -204,6 +206,8 @@ export default function EditableSheet({ id }: EditableSheetProps) {
         if (!response.ok) throw new Error("Erreur lors de la mise à jour");
         setCharacter(editedCharacter);
         setIsEditing(false);
+        await fetchCharacter();
+                
       } catch (error) {
         console.error("❌ Upload échoué :", error);
         setError("Impossible de modifier ce personnage.");
@@ -233,7 +237,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
 
         if (!response.ok) throw new Error("Erreur lors de la mise à jour");
         setCharacter(editedCharacter);
-        setIsEditing(false);
+        setIsEditing(false);        
       } catch (error) {
         console.error("❌ JSON update échoué :", error);
         setError("Impossible de modifier ce personnage.");

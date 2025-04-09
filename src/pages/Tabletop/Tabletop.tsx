@@ -222,6 +222,18 @@ const handleSaveNotes = async () => {
   }, [fetchTable]);
 
   useEffect(() => {
+    socket.on("refreshPlayers", () => {
+      console.log("♻️ Rafraîchissement de la table via socket");
+      fetchTable(); // fonction que tu as déjà pour re-fetch la table
+    });
+  
+    return () => {
+      socket.off("refreshPlayers");
+    };
+  }, [socket, fetchTable]);
+  
+
+  useEffect(() => {
     socket.on("refreshTableStyle", () => {
       console.log("🎨 Style de table mis à jour via socket");
       fetchTable(); // recharge les infos de la table (et donc le style)

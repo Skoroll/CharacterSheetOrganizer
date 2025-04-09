@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Arbalète",
+    "range": "50 m",
+    "damages": "2d6",
+    "price": 2500
+  },
+  {
+    "name": "Carreau d'arbalète (20)",
+    "range": "-",
+    "damages": "--",
+    "price": 200
+  },
+  {
+    "name": "Arc",
+    "range": "150 m",
+    "damages": "1d6",
+    "price": 1700
+  },
+  {
+    "name": "Flèche (20)",
+    "range": "-",
+    "damages": "--",
+    "price": 100
+  },
+  {
+    "name": "Bola",
+    "range": "(force/5) x 3 m",
+    "damages": "1d3",
+    "price": 500
+  },
+  {
+    "name": "Dague",
+    "range": "(force/5) x 2 m",
+    "damages": "1d3+2",
+    "price": 300
+  },
+  {
+    "name": "Fronde",
+    "range": "100 m",
+    "damages": "1d6",
+    "price": 100
+  },
+  {
+    "name": "Javelot",
+    "range": "(force/5) x 3 m",
+    "damages": "1d6+1",
+    "price": 300
+  }
+]

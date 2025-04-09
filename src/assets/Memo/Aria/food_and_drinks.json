@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Bière (50cl)",
+    "price": 1
+  },
+  {
+    "name": "Cidre (50cl)",
+    "price": 1
+  },
+  {
+    "name": "Eau de vie (25cl)",
+    "price": 1
+  },
+  {
+    "name": "Epices et aromates",
+    "price": 8
+  },
+  {
+    "name": "Hydromel (1l)",
+    "price": 1
+  },
+  {
+    "name": "Pain",
+    "price": 2
+  },
+  {
+    "name": "Rations de piste (1 semaine)",
+    "price": 10
+  },
+  {
+    "name": "Repas copieux",
+    "price": 5
+  },
+  {
+    "name": "Repas normal",
+    "price": 3
+  },
+  {
+    "name": "Vin (de table)",
+    "price": 3
+  },
+  {
+    "name": "Vin (grand cru)",
+    "price": 1000
+  },
+  {
+    "name": "Vin (fin)",
+    "price": 100
+  }
+]

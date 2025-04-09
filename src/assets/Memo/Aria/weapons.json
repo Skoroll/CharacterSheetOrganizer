@@ -1,0 +1,176 @@
+[
+  {
+    "Name":"Bâton",
+    "Use":"2 mains",
+    "Damages":"1d6",
+    "Price":10
+  },
+  {
+    "Name":"Bouclier",
+    "Use":"1 main",
+    "Damages":"--",
+    "Price":600
+  },
+  {
+    "Name":"Canne",
+    "Use":"1 main",
+    "Damages":"1d4",
+    "Price":10
+  },
+  {
+    "Name":"Cimeterre",
+    "Use":"1 main",
+    "Damages":"1d8",
+    "Price":1000
+  },
+  {
+    "Name":"Couteau",
+    "Use":"1 main",
+    "Damages":"1d3",
+    "Price":200
+  },
+  {
+    "Name":"Dague",
+    "Use":"1 main",
+    "Damages":"1d4",
+    "Price":300
+  },
+  {
+    "Name":"Epée",
+    "Use":"1 main",
+    "Damages":"1d6+1",
+    "Price":1000
+  },
+  {
+    "Name":"Epée bâtarde",
+    "Use":"1 ou 2 mains",
+    "Damages":"1d6+2",
+    "Price":1800
+  },
+  {
+    "Name":"Epieu",
+    "Use":"1 main",
+    "Damages":"1d6",
+    "Price":800
+  },
+  {
+    "Name":"Espadon",
+    "Use":"2 mains",
+    "Damages":"2d6",
+    "Price":2000
+  },
+  {
+    "Name":"Etoile du matin",
+    "Use":"1 main",
+    "Damages":"1d6+2",
+    "Price":200
+  },
+  {
+    "Name":"Filet",
+    "Use":"1 main",
+    "Damages":"--",
+    "Price":500
+  },
+  {
+    "Name":"Fléau d'arme",
+    "Use":"1 main",
+    "Damages":"1d6+2",
+    "Price":1600
+  },
+  {
+    "Name":"Fouet",
+    "Use":"1 main",
+    "Damages":"1d3",
+    "Price":700
+  },
+  {
+    "Name":"Gourdin",
+    "Use":"1 main",
+    "Damages":"1d6",
+    "Price":1900
+  },
+  {
+    "Name":"Hache",
+    "Use":"1 main",
+    "Damages":"1d6+1",
+    "Price":200
+  },
+  {
+    "Name":"Hache de bataille",
+    "Use":"1 main",
+    "Damages":"2d6",
+    "Price":1300
+  },
+  {
+    "Name":"Hachette",
+    "Use":"1 main",
+    "Damages":"1d6",
+    "Price":500
+  },
+  {
+    "Name":"Hallebarde",
+    "Use":"2 mains",
+    "Damages":"3d6",
+    "Price":1400
+  },
+  {
+    "Name":"Harpon",
+    "Use":"2 mains",
+    "Damages":"1d8",
+    "Price":400
+  },
+  {
+    "Name":"Javelot",
+    "Use":"1 main",
+    "Damages":"1d6+1",
+    "Price":300
+  },
+  {
+    "Name":"Lance",
+    "Use":"1 main",
+    "Damages":"1d6+1",
+    "Price":200
+  },
+  {
+    "Name":"Masse",
+    "Use":"1 main",
+    "Damages":"1d6+1",
+    "Price":600
+  },
+  {
+    "Name":"Marteau de guerre",
+    "Use":"1 main",
+    "Damages":"2d6",
+    "Price":1500
+  },
+  {
+    "Name":"Pertuisane",
+    "Use":"1 main",
+    "Damages":"1d6+2",
+    "Price":1200
+  },
+  {
+    "Name":"Pique",
+    "Use":"1 main",
+    "Damages":"2d6",
+    "Price":200
+  },
+  {
+    "Name":"Poignard",
+    "Use":"1 main",
+    "Damages":"1d3+2",
+    "Price":300
+  },
+  {
+    "Name":"Rapière",
+    "Use":"1 main",
+    "Damages":"1d6",
+    "Price":1300
+  },
+  {
+    "Name":"Sabre",
+    "Use":"1 main",
+    "Damages":"1d6+1",
+    "Price":900
+  }
+]

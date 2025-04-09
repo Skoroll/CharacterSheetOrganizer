@@ -1,0 +1,58 @@
+[
+  {
+    "name": "Ane",
+    "price": 3200
+  },
+  {
+    "name": "Bateau (petit)",
+    "price": 7000
+  },
+  {
+    "name": "Bateau (moyen)",
+    "price": 11000
+  },
+  {
+    "name": "Canot",
+    "price": 7000
+  },
+  {
+    "name": "Chameau",
+    "price": 12000
+  },
+  {
+    "name": "Chariot",
+    "price": 6000
+  },
+  {
+    "name": "Chariot bâché",
+    "price": 8000
+  },
+  {
+    "name": "Charrette",
+    "price": 3000
+  },
+  {
+    "name": "Cheval de guerre",
+    "price": 20000
+  },
+  {
+    "name": "Cheval de trait",
+    "price": 8000
+  },
+  {
+    "name": "Cheval léger",
+    "price": 4500
+  },
+  {
+    "name": "Cheval",
+    "price": 6000
+  },
+  {
+    "name": "Mule",
+    "price": 3200
+  },
+  {
+    "name": "Poney",
+    "price": 4000
+  }
+]

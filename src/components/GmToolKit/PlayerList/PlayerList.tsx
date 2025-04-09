@@ -1,102 +1,119 @@
-import { useEffect, useState } from "react";
-import "./PlayerList.scss"
+import { useEffect, useMemo, useState } from "react";
+import { io } from "socket.io-client";
+import Modal from "../../Modal/Modal";
+import "./PlayerList.scss";
+
+type ActionType = "ban" | "removeCharacter" | null;
 
 type Player = {
   _id: string;
-  playerId?: string;
+  userId: string | { _id: string; name: string }; // peut être string ou objet si peuplé
   playerName: string;
   selectedCharacter: string | null;
-  isGameMaster: boolean; // Ajouter la propriété isGameMaster ici
+  isGameMaster: boolean;
 };
 
 type PlayerListProps = {
   players: Player[];
+  bannedPlayer: BannedPlayer[];
   tableId: string;
-  isGameMaster: boolean; // Assurez-vous que isGameMaster est ici
+  isGameMaster: boolean;
 };
 
-export default function PlayerList({
-  players,
-  tableId,
+type BannedPlayer = {
+  _id: string;
+  name: string;
+};
 
-}: PlayerListProps) {
+export default function PlayerList({ players, tableId }: PlayerListProps) {
   const [playerList, setPlayerList] = useState<Player[]>([]);
-  console.log(setPlayerList);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [targetPlayerId, setTargetPlayerId] = useState<string | null>(null);
+  const [actionType, setActionType] = useState<ActionType>(null);
+  const [bannedPlayers, setBannedPlayers] = useState<BannedPlayer[]>([]);
   const API_URL = import.meta.env.VITE_API_URL;
 
-  // Mettre à jour la liste des joueurs (en excluant les GameMasters)
+  // socket.io client
+  const socket = useMemo(() => io(API_URL), [API_URL]);
+
   useEffect(() => {
-    const updatedPlayers = players.filter((player) => !player.isGameMaster); // Exclure les GameMasters
-    setPlayerList(updatedPlayers);
+    const fetchBanned = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/tabletop/tables/${tableId}`);
+        const data = await res.json();
+        const bannedIds: string[] = data.bannedPlayers || [];
+
+        // Optionnel : fetch noms des utilisateurs si nécessaire
+        const detailed = await Promise.all(
+          bannedIds.map(async (id) => {
+            const res = await fetch(`${API_URL}/api/users/${id}`);
+            const user = await res.json();
+            return { _id: id, name: user.name };
+          })
+        );
+
+        setBannedPlayers(detailed);
+      } catch (e) {
+        console.error("❌ Erreur fetch bannis :", e);
+      }
+    };
+
+    fetchBanned();
+  }, [tableId]);
+  
+
+  useEffect(() => {
+    const updated = players.filter((p) => !p.isGameMaster);
+    setPlayerList(updated);
   }, [players]);
 
-  // Fonction pour supprimer un joueur
-  const removePlayer = async (tableId: string, userId: string) => {
-    if (!userId) {
-      console.error("Erreur : `userId` est undefined !");
-      return;
-    }
+  const confirmAction = async () => {
+    if (!targetPlayerId || !actionType) return;
+
+    const endpoint =
+      actionType === "ban"
+        ? `/api/tabletop/tables/${tableId}/removePlayer/${targetPlayerId}`
+        : `/api/tabletop/tables/${tableId}/removeCharacter/${targetPlayerId}`;
 
     try {
-      const response = await fetch(
-        `${API_URL}/api/tabletop/tables/${tableId}/removePlayer/${userId}`,
-        {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const response = await fetch(`${API_URL}${endpoint}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
 
-      if (!response.ok) {
-        const errorMessage = await response.text();
-        console.error(`Erreur ${response.status}: ${errorMessage}`);
-        throw new Error(
-          `Erreur lors de la suppression du joueur, statut: ${response.status}`
+      if (!response.ok) throw new Error("Erreur côté serveur");
+
+      if (actionType === "ban") {
+        setPlayerList((prev) => prev.filter((p) => p._id !== targetPlayerId));
+      } else {
+        setPlayerList((prev) =>
+          prev.map((p) =>
+            p._id === targetPlayerId ? { ...p, selectedCharacter: null } : p
+          )
         );
       }
 
-      setPlayerList((prevPlayers) =>
-        prevPlayers.filter((player) => player.playerId !== userId)
-      );
+      // ✅ Notifier tous les clients
+      socket.emit("refreshPlayers", { tableId });
     } catch (error) {
-      console.error("Erreur lors de la suppression du joueur", error);
+      console.error("❌ Erreur action modale :", error);
+    } finally {
+      setModalVisible(false);
+      setTargetPlayerId(null);
+      setActionType(null);
     }
   };
 
-  // Fonction pour supprimer le personnage du joueur
-  const removeCharacter = async (tableId: string, userId: string) => {
-    if (!userId) {
-      console.error("Erreur : `userId` est undefined !");
-      return;
-    }
+  useEffect(() => {
+    socket.on("refreshPlayers", () => {
+      // ⚠️ Tu dois fetch à nouveau la table ici (ou un callback pour refresh)
+      window.location.reload(); // ou une méthode plus propre
+    });
 
-    try {
-      const response = await fetch(
-        `${API_URL}/api/tabletop/tables/${tableId}/removeCharacter/${userId}`,
-        {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-
-      if (!response.ok) {
-        const errorMessage = await response.text();
-        console.error(`Erreur ${response.status}: ${errorMessage}`);
-        throw new Error(
-          `Erreur lors de la suppression du personnage, statut: ${response.status}`
-        );
-      }
-
-      setPlayerList((prevPlayers) =>
-        prevPlayers.map((player) =>
-          player.playerId === userId
-            ? { ...player, selectedCharacter: null }
-            : player
-        )
-      );
-    } catch (error) {
-      console.error("Erreur lors de la suppression du personnage", error);
-    }
-  };
+    return () => {
+      socket.off("refreshPlayers");
+    };
+  }, [socket]);
 
   return (
     <div className="gm-tool table-user">
@@ -104,30 +121,96 @@ export default function PlayerList({
       <ul>
         {playerList.map((player) => (
           <li key={player._id}>
-            {/* Vérifier si ce n'est pas un GameMaster avant d'afficher les icônes */}
-            {!player.isGameMaster && (
-              <div className="table-user__buttons">
-                <i
-                  className="fa-solid fa-gavel"
-                  onClick={() =>
-                    removePlayer(tableId, player.playerId || player._id)
-                  }
-                />
-                <i
-                  className="fa-solid fa-skull"
-                  onClick={() =>
-                    removeCharacter(tableId, player.playerId || player._id)
-                  }
-                />
-              </div>
-            )}
+            <div className="table-user__buttons">
+              <i
+                className="fa-solid fa-gavel"
+                onClick={() => {
+                  setTargetPlayerId(
+                    typeof player.userId === "object"
+                      ? player.userId._id
+                      : player.userId
+                  );
+                  setActionType("ban");
+                  setModalVisible(true);
+                }}
+                title="Bannir le joueur"
+              />
+              <i
+                className="fa-solid fa-skull"
+                onClick={() => {
+                  setTargetPlayerId(
+                    typeof player.userId === "object"
+                      ? player.userId._id
+                      : player.userId
+                  );
+                  setActionType("removeCharacter");
+                  setModalVisible(true);
+                }}
+                title="Retirer le personnage"
+              />
+            </div>
             <div className="table-user__info">
-              <p>Nom du joueur : {player.playerName}</p>
-              <p>ID personnage : {player.selectedCharacter}</p>
+              <p>
+                Nom du joueur :{" "}
+                {(player as any).userId?.name || player.playerName}
+              </p>
+              <p>ID personnage : {player.selectedCharacter ?? "Aucun"}</p>
             </div>
           </li>
         ))}
       </ul>
+
+      {bannedPlayers.length > 0 && (
+        <>
+          <h4>Joueurs bannis</h4>
+          <ul>
+            {bannedPlayers.map((player) => (
+              <li key={player._id}>
+                {player.name}
+                <button
+                  onClick={async () => {
+                    await fetch(
+                      `${API_URL}/api/tabletop/tables/${tableId}/unbanPlayer/${player._id}`,
+                      {
+                        method: "PATCH",
+                      }
+                    );
+                    setBannedPlayers((prev) =>
+                      prev.filter((p) => p._id !== player._id)
+                    );
+                    socket.emit("refreshPlayers", { tableId });
+                  }}
+                >
+                  Débannir
+                </button>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      {/* ✅ MODALE DE CONFIRMATION */}
+      {modalVisible && (
+        <Modal
+          title={
+            actionType === "ban"
+              ? "Confirmer le bannissement"
+              : "Confirmer le retrait du personnage"
+          }
+          onClose={() => setModalVisible(false)}
+        >
+          <p>
+            Es-tu sûr de vouloir{" "}
+            {actionType === "ban"
+              ? "bannir ce joueur de la table ? Cette action est irréversible."
+              : "retirer le personnage de ce joueur ?"}
+          </p>
+          <div className="modal__actions">
+            <button onClick={confirmAction}>Oui</button>
+            <button onClick={() => setModalVisible(false)}>Annuler</button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }

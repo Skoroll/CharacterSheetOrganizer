@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useUser } from "../../Context/UserContext";
 import { Sword } from "phosphor-react";
-import { io, Socket } from "socket.io-client";
+import socket from "../../utils/socket";
 import "./PlayersAtTable.scss";
 import EditableSheet from "../EditableSheet/EditableSheet";
 import Modal from "../Modal/Modal";
@@ -33,7 +33,7 @@ interface Character {
     link2: string;
   }[];
   inventory: { item: string; quantity: number }[];
-  tableId?: string; // ✅ Correction ici
+  tableId?: string;
 }
 
 interface Player {
@@ -51,18 +51,15 @@ interface PlayerAtTableProps {
   selectedCharacterId: string | null;
 }
 
-const socket: Socket = io(import.meta.env.VITE_API_URL);
 
 const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [showPersonalMenuOpen, setShowPersonalMenuOpen] = useState(false);
-  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(
-    null
-  );
   const easyAccessRef = useRef<HTMLDivElement | null>(null);
   const toggleButtonRef = useRef<HTMLButtonElement | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalCharacter, setModalCharacter] = useState<Character | null>(null);
   const [openPanel, setOpenPanel] = useState<{
     playerId: string;
     panel: string;
@@ -72,10 +69,10 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
 
   useEffect(() => {
     if (!tableId) return;
+  
     fetchPlayers();
-
     socket.emit("joinTable", tableId);
-
+  
     socket.on("updateHealth", ({ characterId, pointsOfLife }) => {
       setPlayers((prevPlayers) =>
         prevPlayers.map((player) =>
@@ -92,11 +89,15 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
         )
       );
     });
-
+     
+    
+  
     return () => {
       socket.off("updateHealth");
+      socket.off("characterUpdated");
     };
   }, [tableId]);
+  
 
   const fetchPlayers = async () => {
     if (!tableId) return;
@@ -109,7 +110,14 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
         throw new Error(`Erreur HTTP ${response.status}`);
       }
       const data = await response.json();
-      setPlayers(data);
+      const clonedData = data.map((player: Player) => ({
+        ...player,
+        selectedCharacter: player.selectedCharacter
+          ? { ...player.selectedCharacter }
+          : null,
+      }));
+      
+      setPlayers(clonedData);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Erreur inconnue");
       console.log(error);
@@ -138,14 +146,10 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
 
       if (!response.ok) {
         const errorResponse = await response.json();
-        console.error("❌ Erreur réponse serveur :", errorResponse);
         throw new Error(
           `Erreur HTTP ${response.status}: ${errorResponse.message}`
         );
       }
-
-      const updatedCharacter = await response.json();
-      console.log("✅ Réponse serveur :", updatedCharacter);
     } catch (error) {
       console.error("❌ Erreur mise à jour des PV :", error);
     }
@@ -153,7 +157,7 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
 
   const handlePlayerClick = (character: Character | null) => {
     if (character) {
-      setSelectedCharacter(character);
+      setModalCharacter(character);
       setIsModalOpen(true);
     }
   };
@@ -171,7 +175,6 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
       }
     };
 
-    // Seulement quand le menu est ouvert
     if (showPersonalMenuOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
@@ -179,9 +182,6 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
   }, [showPersonalMenuOpen]);
 
   const togglePanel = (
@@ -202,7 +202,8 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
   const currentPlayer = players.find(
     (player) => !player.isGameMaster && player.userId === currentUserId
   );
-
+  const currentCharacter = currentPlayer?.selectedCharacter;
+  
   return (
     <div className="players-at-table">
       {players.length > 0 ? (
@@ -226,11 +227,7 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
                     </p>
                     {selectedCharacter.image && (
                       <img
-                        src={
-                          typeof selectedCharacter.image === "string"
-                            ? selectedCharacter.image
-                            : URL.createObjectURL(selectedCharacter.image)
-                        }
+                        src={selectedCharacter.image}
                         alt={selectedCharacter.name}
                         onError={(e) => {
                           e.currentTarget.src = defaultImg;
@@ -245,229 +242,145 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
             );
           })}
 
-          {currentPlayer &&
-            (() => {
-              const { selectedCharacter } = currentPlayer;
-              return (
-                <div
-                  key={`${tableId}-me-${currentPlayer.playerId}`}
-                  className="player is-current-user"
-                >
-                  <div className="player__easy-access--wrapper">
-                    {/* Boutons easy-access visibles uniquement pour le propriétaire */}
-                    {selectedCharacter && (
-                      <>
-                      <ToolTip text="Menu rapide" position="top" classTooltip="chevron">
-                        <button
-                          ref={toggleButtonRef}
-                          className="chevron"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowPersonalMenuOpen((prev) => !prev);
-                          }}
-                        >
-                          <i
-                            className={`fa-solid ${
-                              showPersonalMenuOpen
-                                ? "fa-chevron-right"
-                                : "fa-chevron-left"
-                            }`}
-                          ></i>
-                        </button>
-                        </ToolTip>
-                        {showPersonalMenuOpen && (
-                          <div
-                            className="player__easy-access"
-                            ref={easyAccessRef}
-                          >
-                            {/* Boutons */}
-                            <div className="player__easy-access--buttons">
-                            <ToolTip text="Santé" position="top">
-                              <button
-                                onClick={() =>
-                                  togglePanel(currentPlayer.playerId, "hp")
-                                }
-                              >
-                                <i className="fa-regular fa-heart"></i>
-                              </button>
-                              </ToolTip>
-                              <ToolTip text="Argent" position="top">
-                              <button
-                                onClick={() =>
-                                  togglePanel(currentPlayer.playerId, "coins")
-                                }
-                              >
-                                <i className="fa-solid fa-coins"></i>
-                              </button>
-                              </ToolTip>
-                              <ToolTip text="Inventaire" position="top">
-                              <button
-                                onClick={() =>
-                                  togglePanel(
-                                    currentPlayer.playerId,
-                                    "inventory"
-                                  )
-                                }
-                              >
-                                <i className="fa-solid fa-briefcase"></i>
-                              </button>
-                              </ToolTip>
-                              <ToolTip text="Arme(s)" position="top">
-                              <button
-                                onClick={() =>
-                                  togglePanel(currentPlayer.playerId, "gear")
-                                }
-                              >
-                                <Sword size={18} />
-                              </button>
-                              </ToolTip>
-                            </div>
-
-                            {/* Affichage du contenu dynamique */}
-                            {openPanel &&
-                              openPanel.playerId === currentPlayer.playerId && (
-                                <div className="player__easy-access--inside">
-                                  {openPanel.panel === "hp" && (
-                                    <>
-                                      <button className="health-modifier">
-                                        <i
-                                          className="fa-solid fa-chevron-down"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            updateHealth(selectedCharacter, -1);
-                                          }}
-                                        ></i>
-                                      </button>
-                                      <span>
-                                        {selectedCharacter.pointsOfLife}
-                                      </span>
-                                      <button className="health-modifier">
-                                        <i
-                                          className="fa-solid fa-chevron-up"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            updateHealth(selectedCharacter, 1);
-                                          }}
-                                        ></i>
-                                      </button>
-                                    </>
-                                  )}
-
-                                  {openPanel.panel === "coins" && (
-                                    <span className="coins">
-                                      {selectedCharacter.gold} pièces
-                                    </span>
-                                  )}
-
-                                  {openPanel.panel === "inventory" &&
-                                  selectedCharacter.inventory.length > 0 ? (
-                                    <table>
-                                      <thead>
-                                        <tr>
-                                          <th className="table-left">Objet</th>
-                                          <th>Quantité</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        {selectedCharacter.inventory
-                                          .filter(
-                                            (item) => item.item.trim() !== ""
-                                          )
-                                          .map((item, index) => (
-                                            <tr key={index}>
-                                              <td className="table-left">
-                                                {item.item}
-                                              </td>
-                                              <td>{item.quantity}</td>
-                                            </tr>
-                                          ))}
-                                      </tbody>
-                                    </table>
-                                  ) : (
-                                    openPanel.panel === "inventory" && (
-                                      <p>Aucun objet dans l'inventaire</p>
-                                    )
-                                  )}
-
-                                  {openPanel.panel === "gear" &&
-                                    (selectedCharacter.weapons.length > 0 ? (
-                                      <table>
-                                        <thead>
-                                          <tr>
-                                            <th className="table-left">Arme</th>
-                                            <th>Dégâts</th>
-                                          </tr>
-                                        </thead>
-                                        <tbody>
-                                          {selectedCharacter.weapons
-                                            .filter(
-                                              (weapon) =>
-                                                weapon.name.trim() !== ""
-                                            )
-                                            .map((weapon, index) => (
-                                              <tr key={index}>
-                                                <td className="table-left">
-                                                  {weapon.name}
-                                                </td>
-                                                <td>{weapon.damage}</td>
-                                              </tr>
-                                            ))}
-                                        </tbody>
-                                      </table>
-                                    ) : (
-                                      <p>Aucune arme équipée</p>
-                                    ))}
-                                </div>
-                              )}
-                          </div>
+          {currentPlayer && currentCharacter && (
+            <div
+              key={`${tableId}-me-${currentPlayer.playerId}`}
+              className="player is-current-user"
+            >
+              <div className="player__easy-access--wrapper">
+                <ToolTip text="Menu rapide" position="top" classTooltip="chevron">
+                  <button
+                    ref={toggleButtonRef}
+                    className="chevron"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowPersonalMenuOpen((prev) => !prev);
+                    }}
+                  >
+                    <i
+                      className={`fa-solid ${
+                        showPersonalMenuOpen ? "fa-chevron-right" : "fa-chevron-left"
+                      }`}
+                    ></i>
+                  </button>
+                </ToolTip>
+                {showPersonalMenuOpen && (
+                  <div className="player__easy-access" ref={easyAccessRef}>
+                    <div className="player__easy-access--buttons">
+                      <ToolTip text="Santé" position="top">
+                        <button onClick={() => togglePanel(currentPlayer.playerId, "hp")}> <i className="fa-regular fa-heart"></i> </button>
+                      </ToolTip>
+                      <ToolTip text="Argent" position="top">
+                        <button onClick={() => togglePanel(currentPlayer.playerId, "coins")}> <i className="fa-solid fa-coins"></i> </button>
+                      </ToolTip>
+                      <ToolTip text="Inventaire" position="top">
+                        <button onClick={() => togglePanel(currentPlayer.playerId, "inventory")}> <i className="fa-solid fa-briefcase"></i> </button>
+                      </ToolTip>
+                      <ToolTip text="Arme(s)" position="top">
+                        <button onClick={() => togglePanel(currentPlayer.playerId, "gear")}> <Sword size={18} /> </button>
+                      </ToolTip>
+                    </div>
+                    {openPanel && openPanel.playerId === currentPlayer.playerId && (
+                      <div className="player__easy-access--inside">
+                        {openPanel.panel === "hp" && (
+                          <>
+                            <button className="health-modifier" onClick={(e) => { e.stopPropagation(); updateHealth(currentCharacter, -1); }}> <i className="fa-solid fa-chevron-down"></i> </button>
+                            <span>{currentCharacter.pointsOfLife}</span>
+                            <button className="health-modifier" onClick={(e) => { e.stopPropagation(); updateHealth(currentCharacter, 1); }}> <i className="fa-solid fa-chevron-up"></i> </button>
+                          </>
                         )}
-                      </>
+                        {openPanel.panel === "coins" && (
+                          <span className="coins">{currentCharacter.gold} pièces</span>
+                        )}
+                        {openPanel.panel === "inventory" && (
+                          currentCharacter.inventory.length > 0 ? (
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th className="table-left">Objet</th>
+                                  <th>Quantité</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {currentCharacter.inventory
+                                  .filter((item) => item.item.trim() !== "")
+                                  .map((item, index) => (
+                                    <tr key={index}>
+                                      <td className="table-left">{item.item}</td>
+                                      <td>{item.quantity}</td>
+                                    </tr>
+                                  ))}
+                              </tbody>
+                            </table>
+                          ) : (
+                            <p>Aucun objet dans l'inventaire</p>
+                          )
+                        )}
+                        {openPanel.panel === "gear" && (
+                          currentCharacter.weapons.length > 0 ? (
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th className="table-left">Arme</th>
+                                  <th>Dégâts</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {currentCharacter.weapons
+                                  .filter((weapon) => weapon.name.trim() !== "")
+                                  .map((weapon, index) => (
+                                    <tr key={index}>
+                                      <td className="table-left">{weapon.name}</td>
+                                      <td>{weapon.damage}</td>
+                                    </tr>
+                                  ))}
+                              </tbody>
+                            </table>
+                          ) : (
+                            <p>Aucune arme équipée</p>
+                          )
+                        )}
+                      </div>
                     )}
                   </div>
-                  {/* Affichage du personnage */}
-                  {selectedCharacter ? (
-                    <div
-                      className="player__image"
-                      onClick={() => handlePlayerClick(selectedCharacter)}
-                    >
-                      <p className="character-hp">
-                        <i className="fa-regular fa-heart"></i>
-                        <i className="fa-solid fa-heart"></i>
-                        <span>{selectedCharacter.pointsOfLife}</span>
-                      </p>
-                      {selectedCharacter.image && (
-                        <img
-                          src={
-                            typeof selectedCharacter.image === "string"
-                              ? selectedCharacter.image
-                              : URL.createObjectURL(selectedCharacter.image)
-                          }
-                          alt={selectedCharacter.name}
-                          onError={(e) => {
-                            e.currentTarget.src = defaultImg;
-                          }}
-                        />
-                      )}
-                    </div>
-                  ) : (
-                    <p>(Pas de personnage sélectionné)</p>
-                  )}
-                </div>
-              );
-            })()}
+                )}
+              </div>
+              <div className="player__image" onClick={() => handlePlayerClick(currentCharacter)}>
+                <p className="character-hp">
+                  <i className="fa-regular fa-heart"></i>
+                  <i className="fa-solid fa-heart"></i>
+                  <span>{currentCharacter.pointsOfLife}</span>
+                </p>
+                {currentCharacter.image && (
+                  <img
+                    src={currentCharacter.image}
+                    alt={currentCharacter.name}
+                    onError={(e) => {
+                      e.currentTarget.src = defaultImg;
+                    }}
+                  />
+                )}
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <p>Aucun joueur trouvé.</p>
       )}
 
-      {isModalOpen && selectedCharacter?._id && (
-        <Modal
-          title="Fiche du personnage"
-          onClose={() => setIsModalOpen(false)}
-        >
-          <EditableSheet id={selectedCharacter._id} />
-        </Modal>
-      )}
+{isModalOpen && modalCharacter?._id && (
+  <Modal
+  title="Fiche du personnage"
+  onClose={() => {
+    setIsModalOpen(false);
+    fetchPlayers(); // ✅ Refresh général des joueurs et personnages
+  }}
+>
+  <EditableSheet id={modalCharacter._id} tableId={tableId} />
+</Modal>
+
+)}
+
     </div>
   );
 };

@@ -4,9 +4,10 @@
 
 
     &__buttons {
-        @include flex-col;
+        @include flex-row;
+        flex-direction: row-reverse;
         @include flex-center;
-        flex-direction: column-reverse;
+
 
         .fa-gavel, .fa-skull {
             @include flex-center;

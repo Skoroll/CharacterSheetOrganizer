@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Bain (à l'abreuvoir)",
+    "price": 1
+  },
+  {
+    "name": "Bain chaud privé",
+    "price": 2
+  },
+  {
+    "name": "Bibliothèque",
+    "price": 100
+  },
+  {
+    "name": "Ecuries",
+    "price": 1
+  },
+  {
+    "name": "Hospice",
+    "price": 6
+  },
+  {
+    "name": "Logement confortable (1 nuit)",
+    "price": 3
+  },
+  {
+    "name": "Logement moyen (1 nuit)",
+    "price": 2
+  },
+  {
+    "name": "Logement sommaire (dortoir)",
+    "price": 1
+  },
+  {
+    "name": "Médecin (consultation)",
+    "price": 10
+  },
+  {
+    "name": "Médecin (opération)",
+    "price": 20
+  },
+  {
+    "name": "Passage en bateau",
+    "price": "2/km"
+  },
+  {
+    "name": "Péage",
+    "price": 10
+  }
+]
