@@ -2,7 +2,8 @@
 
 .chat {
     margin-top: $spacing-medium;
-    width: 250px;
+
+    width: 100%;
     
     &__header {
         @include flex-row;
@@ -26,6 +27,7 @@
         overflow-y: auto;
         overflow-x: hidden;
         scroll-behavior: smooth;
+
         
         p {
             margin: $spacing-small 0;
@@ -39,9 +41,23 @@
 
     &__box {
         @include flex-row;
+        border: 1px solid $button-bg;
+        border-radius: $spacing-small;
+        background-color: $background-color;
 
         input {
             flex: 1;
+            color: $text-color;
+            padding: $spacing-small;
+            border: none;
+            border-radius: $spacing-small 0 0 $spacing-small;
+            background: none;
+
+            &:focus {
+                outline: none;
+                box-shadow: none;
+                border: none;
+              }
         }        
     }
 }

@@ -1,9 +1,11 @@
 import { useEffect, useState, useRef } from "react";
 import { useUser } from "../../Context/UserContext";
+import { Sword } from "phosphor-react";
 import { io, Socket } from "socket.io-client";
 import "./PlayersAtTable.scss";
 import EditableSheet from "../EditableSheet/EditableSheet";
 import Modal from "../Modal/Modal";
+import ToolTip from "../Tooltip/Tooltip";
 import defaultImg from "../../assets/person-placeholder-5.webp";
 
 interface Character {
@@ -159,16 +161,15 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        (easyAccessRef.current &&
-          !easyAccessRef.current.contains(event.target as Node)) &&
-        (toggleButtonRef.current &&
-          !toggleButtonRef.current.contains(event.target as Node))
+        easyAccessRef.current &&
+        !easyAccessRef.current.contains(event.target as Node) &&
+        toggleButtonRef.current &&
+        !toggleButtonRef.current.contains(event.target as Node)
       ) {
         setOpenPanel(null);
         setShowPersonalMenuOpen(false);
       }
     };
-    
 
     // Seulement quand le menu est ouvert
     if (showPersonalMenuOpen) {
@@ -253,9 +254,10 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
                   className="player is-current-user"
                 >
                   <div className="player__easy-access--wrapper">
-                    {/* 🌟 Boutons easy-access visibles uniquement pour le propriétaire */}
+                    {/* Boutons easy-access visibles uniquement pour le propriétaire */}
                     {selectedCharacter && (
                       <>
+                      <ToolTip text="Menu rapide" position="top" classTooltip="chevron">
                         <button
                           ref={toggleButtonRef}
                           className="chevron"
@@ -272,7 +274,7 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
                             }`}
                           ></i>
                         </button>
-
+                        </ToolTip>
                         {showPersonalMenuOpen && (
                           <div
                             className="player__easy-access"
@@ -280,6 +282,7 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
                           >
                             {/* Boutons */}
                             <div className="player__easy-access--buttons">
+                            <ToolTip text="Santé" position="top">
                               <button
                                 onClick={() =>
                                   togglePanel(currentPlayer.playerId, "hp")
@@ -287,6 +290,8 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
                               >
                                 <i className="fa-regular fa-heart"></i>
                               </button>
+                              </ToolTip>
+                              <ToolTip text="Argent" position="top">
                               <button
                                 onClick={() =>
                                   togglePanel(currentPlayer.playerId, "coins")
@@ -294,6 +299,8 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
                               >
                                 <i className="fa-solid fa-coins"></i>
                               </button>
+                              </ToolTip>
+                              <ToolTip text="Inventaire" position="top">
                               <button
                                 onClick={() =>
                                   togglePanel(
@@ -304,13 +311,16 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
                               >
                                 <i className="fa-solid fa-briefcase"></i>
                               </button>
+                              </ToolTip>
+                              <ToolTip text="Arme(s)" position="top">
                               <button
                                 onClick={() =>
                                   togglePanel(currentPlayer.playerId, "gear")
                                 }
                               >
-                                <i className="fa-solid fa-shield"></i>
+                                <Sword size={18} />
                               </button>
+                              </ToolTip>
                             </div>
 
                             {/* Affichage du contenu dynamique */}

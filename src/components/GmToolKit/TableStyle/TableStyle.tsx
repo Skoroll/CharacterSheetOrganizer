@@ -7,6 +7,7 @@ import woodBg from "../../../assets/backgrounds/wood.webp";
 import stoneBg from "../../../assets/backgrounds/stone.webp";
 import ivyStoneBg from "../../../assets/backgrounds/ivy-stone.webp";
 import scrollBg from "../../../assets/backgrounds/scroll.webp";
+import { io } from "socket.io-client";
 
 interface TableStyleProps {
   tableId: string;
@@ -19,6 +20,7 @@ const TableStyle: React.FC<TableStyleProps> = ({
   API_URL,
   onStyleUpdate,
 }) => {
+  const socket = io(import.meta.env.VITE_API_URL);
   const [bannerImage, setBannerImage] = useState<File | null>(null);
   const [bannerPreview, setBannerPreview] = useState<string | null>(null);
   const [borderWidth, setBorderWidth] = useState("0px");
@@ -89,7 +91,9 @@ const TableStyle: React.FC<TableStyleProps> = ({
       }
 
       console.log("✅ Style mis à jour !");
-      onStyleUpdate(); // ✅ Rafraîchir la bannière
+      onStyleUpdate(); // Rafraîchir la bannière
+      socket.emit("tableStyleUpdated", { tableId });
+
       setBannerImage(null);
       setBannerPreview(null);
     } catch (error) {

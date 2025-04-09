@@ -60,12 +60,7 @@ export default function TableComponent() {
   );
   const selectedCharacterId = currentPlayer?.selectedCharacter || null;
   const [activePanel, setActivePanel] = useState<
-    | "npcs"
-    | "sendDocs"
-    | "playerList"
-    | "soundBoard"
-    | "tableStyle"
-    | null
+    "npcs" | "sendDocs" | "playerList" | "soundBoard" | "tableStyle" | null
   >(null);
 
   useEffect(() => {
@@ -73,7 +68,6 @@ export default function TableComponent() {
       window.scrollTo(0, 0);
     }, 1000);
   }, []);
-  
 
   const refreshTables = async () => {
     try {
@@ -137,21 +131,21 @@ const handleSaveNotes = async () => {
 
   useEffect(() => {
     if (!table) return;
-  
+
     socket.emit("joinTable", table._id);
-  
+
     const handleNewMessage = (newMessage: MessageType) => {
       if (newMessage.tableId !== table._id) return;
-    
+
       const isDiceRoll = newMessage.messageType === "diceRoll";
-    
+
       setMessages((prev) => {
         const alreadyExists = prev.some(
           (msg) => msg._id && msg._id === newMessage._id
         );
-    
+
         if (!isDiceRoll && alreadyExists) return prev;
-    
+
         return [
           ...prev,
           {
@@ -161,16 +155,13 @@ const handleSaveNotes = async () => {
         ];
       });
     };
-    
-  
+
     socket.on("newMessage", handleNewMessage);
-  
+
     return () => {
       socket.off("newMessage", handleNewMessage);
     };
   }, [table, socket]);
-  
-  
 
   const togglePanel = (
     panel:
@@ -186,48 +177,70 @@ const handleSaveNotes = async () => {
 
   const fetchTable = useCallback(async () => {
     if (!id) return;
-  
+
     try {
       const response = await fetch(`${API_URL}/api/tabletop/tables/${id}`);
-      if (!response.ok) throw new Error("Erreur lors de la récupération de la table.");
-  
+      if (!response.ok)
+        throw new Error("Erreur lors de la récupération de la table.");
+
       const data = await response.json();
       setTable(data);
-      
+
       // Vérifie si le joueur actuel est GM
-      const currentPlayer = data.players.find((player: Player) => player.userId === user._id);
+      const currentPlayer = data.players.find(
+        (player: Player) => player.userId === user._id
+      );
       if (currentPlayer?.selectedCharacter) {
-        const characterResponse = await fetch(`${API_URL}/api/characters/${currentPlayer.selectedCharacter}`);
+        const characterResponse = await fetch(
+          `${API_URL}/api/characters/${currentPlayer.selectedCharacter}`
+        );
         const characterData = await characterResponse.json();
-  
+
         setUser((prevUser) => ({
           ...prevUser,
-          selectedCharacterName: characterData.name || "Nom du personnage non défini",
+          selectedCharacterName:
+            characterData.name || "Nom du personnage non défini",
         }));
       }
-  
+
       if (data.gameMaster === user._id) {
         setIsGameMaster(true);
       } else {
         setIsGameMaster(false);
       }
-  
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Une erreur inconnue est survenue.");
+      setError(
+        err instanceof Error ? err.message : "Une erreur inconnue est survenue."
+      );
     } finally {
       setLoading(false);
     }
   }, [id, API_URL, user._id, setUser]);
-  
+
   useEffect(() => {
     fetchTable();
   }, [fetchTable]);
-  
 
-  if (loading) return <p><BeatLoader/></p>;
+  useEffect(() => {
+    socket.on("refreshTableStyle", () => {
+      console.log("🎨 Style de table mis à jour via socket");
+      fetchTable(); // recharge les infos de la table (et donc le style)
+      setRefreshTrigger((prev) => prev + 1); // si nécessaire pour forcer un rerender (comme pour Banner)
+    });
+  
+    return () => {
+      socket.off("refreshTableStyle");
+    };
+  }, [socket, fetchTable]);  
+
+  if (loading)
+    return (
+      <p>
+        <BeatLoader />
+      </p>
+    );
   if (error) return <p>Erreur : {error}</p>;
   if (!table) return <p>Table non trouvée.</p>;
-
 
   return (
     <div className="table">
@@ -235,7 +248,9 @@ const handleSaveNotes = async () => {
         {/* Heading */}
         <div>
           <div className="table__content--header">
-          <h2 className={`font-${table?.selectedFont || ""}`}>{table?.name}</h2>
+            <h2 className={`font-${table?.selectedFont || ""}`}>
+              {table?.name}
+            </h2>
             <div className="header-container">
               <p>Maître du Jeu : {table?.gameMasterName}</p>
               <p>Système de jeu : {table.game}</p>
@@ -270,66 +285,67 @@ const handleSaveNotes = async () => {
               await fetchTable(); // attendre la mise à jour de table (donc de la font)
               setRefreshTrigger((prev) => prev + 1); // ensuite seulement on refresh Banner
             }}
-                    
           />
         )}
 
         <div className="table__content--main-container">
-          <div className="table-content__media-container"
-              style={{
-                backgroundImage: tableBG ? `url(${tableBG})` : "none",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
+          <div
+            className="table-content__media-container"
+            style={{
+              backgroundImage: tableBG ? `url(${tableBG})` : "none",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
           >
-            <MediaDisplay 
-              tableId={table._id} 
-              API_URL={API_URL} 
-              isGameMaster = {isGameMaster}
+            <MediaDisplay
+              tableId={table._id}
+              API_URL={API_URL}
+              isGameMaster={isGameMaster}
             />
           </div>
           <PlayerAtTable
-          tableId={table._id}
-          API_URL={API_URL}
-          gameMaster={table.gameMaster}
-          selectedCharacterId={selectedCharacterId}
-        />
-
-          {isComOpen &&
-          <div className="table-side-pannel">
-            <DiceRoller
-              socket={socket}
-              tableId={table._id}
-              userCharacterName={
-                isGameMaster
-                  ? "Maître de jeu"
-                  : user.selectedCharacterName || "Nom de personnage non défini"
-              }
-              userPseudo={user.userPseudo}
-            />
-
-            <Chat
-              messages={messages}
-              setMessages={setMessages}
-              tableId={table._id}
-              socket={socket}
-              userCharacterName={
-                isGameMaster
-                  ? "Maître de jeu"
-                  : user.selectedCharacterName || "Nom de personnage non défini"
-              }
-              userPseudo={user.userPseudo}
-            />
-          </div>}
+            tableId={table._id}
+            API_URL={API_URL}
+            gameMaster={table.gameMaster}
+            selectedCharacterId={selectedCharacterId}
+          />
         </div>
       </div>
       <div className="table__low-bar">
         <SoundPlayer />
-        <button
-          onClick={() => setIsComOpen((prev) => !prev)}
-        >
+        <button onClick={() => setIsComOpen((prev) => !prev)}>
           Discussion/Jet de dés
         </button>
+
+        {isComOpen && (
+            <div className="table-side-pannel">
+              <DiceRoller
+                socket={socket}
+                tableId={table._id}
+                userCharacterName={
+                  isGameMaster
+                    ? "Maître de jeu"
+                    : user.selectedCharacterName ||
+                      "Nom de personnage non défini"
+                }
+                userPseudo={user.userPseudo}
+              />
+
+              <Chat
+                messages={messages}
+                setMessages={setMessages}
+                tableId={table._id}
+                socket={socket}
+                userCharacterName={
+                  isGameMaster
+                    ? "Maître de jeu"
+                    : user.selectedCharacterName ||
+                      "Nom de personnage non défini"
+                }
+                userPseudo={user.userPseudo}
+              />
+            </div>
+          )}
       </div>
     </div>
   );

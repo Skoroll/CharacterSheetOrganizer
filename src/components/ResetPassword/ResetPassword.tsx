@@ -3,8 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import "./ResetPassword.scss";
 
 export default function ResetPassword() {
-  const { token } = useParams(); // 🔄 Récupère le token dans l'URL
-  const navigate = useNavigate(); // 🔄 Pour rediriger après la réinitialisation
+  const { token } = useParams(); // Récupère le token dans l'URL
+  const navigate = useNavigate(); // Pour rediriger après la réinitialisation
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const API_URL = import.meta.env.VITE_API_URL;
@@ -13,7 +13,7 @@ export default function ResetPassword() {
     e.preventDefault();
 
     if (newPassword !== confirmPassword) {
-      alert("⚠️ Les mots de passe ne correspondent pas !");
+      alert("Les mots de passe ne correspondent pas !");
       return;
     }
 
@@ -29,14 +29,14 @@ export default function ResetPassword() {
 
       const data = await response.json();
       if (!response.ok) {
-        alert(`❌ Erreur : ${data.message}`);
+        alert(`Erreur : ${data.message}`);
         return;
       }
 
       alert("✅ Mot de passe réinitialisé avec succès !");
       navigate("/"); // 🔄 Redirige vers la page de connexion
     } catch (error) {
-      console.error("❌ Erreur :", error);
+      console.error("Erreur :", error);
       alert("Une erreur est survenue.");
     }
   };

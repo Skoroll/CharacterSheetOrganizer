@@ -36,13 +36,18 @@
         margin-right: 5px;
         border: 1px solid transparent;
         right: 35px;
+        top: 32px;
         z-index: 501;
         background-color: $background-color;
         border-radius: $spacing-small;
+        border: 1px solid;
 
         &--buttons {
           @include flex-row;
           justify-content: space-between;
+
+
+          
         }
 
         &--wrapper {
@@ -89,15 +94,27 @@
           z-index: 600;
           box-sizing: border-box;
           min-height: 40px;
+          white-space: pre-line;
 
 
           table {
             width: 100%;
+            max-width: 100%;
             border-collapse: collapse;
+            word-wrap: break-word;
+            table-layout: fixed;
         
             th,
             td {
               padding: 4px;
+              padding: 4px;
+              word-break: break-word;
+              overflow-wrap: break-word;
+              text-align: left;
+            }
+
+            td {
+              border-top: 1px solid;
             }
         
             th:nth-child(2),
@@ -115,6 +132,7 @@
           .fa-solid {
             padding: 5px;
           }
+
         }
       }
 
@@ -236,4 +254,10 @@
   }
 
 
+  .icon-sword-wrapper svg {
+    width: 30px;
+    height: 30px;
+    stroke: red;
+    fill: red;
+  }
   

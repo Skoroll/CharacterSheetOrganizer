@@ -11,9 +11,11 @@ interface GalleryProps {
     content?: string;
     title?: string;
     textFont?: string;
+    textColor?: string;
+    isBG?: boolean;
   }>;
   API_URL: string;
-  onDeleteFile: (fileId: string) => void; // ✅ Nouvelle prop
+  onDeleteFile: (fileId: string) => void;
 }
 
 const Gallery: React.FC<GalleryProps> = ({ files, API_URL, onDeleteFile }) => {
@@ -63,20 +65,28 @@ const Gallery: React.FC<GalleryProps> = ({ files, API_URL, onDeleteFile }) => {
     socketRef.current.emit("sendMedia", mediaObject);
   };
 
-  const sendTextToMediaDisplay = (text?: string) => {
-    if (!text) {
-      return;
-    }
-    if (!socketRef.current.connected) {
-      return;
-    }
-    const textObject = { tableId, textContent: text };
-    socketRef.current.emit("sendText", textObject);
+  const sendTextToMediaDisplay = (
+    text?: string,
+    textFont?: string,
+    textColor?: string,
+    isBG: boolean = true
+  ) => {
+    if (!text) return;
+    if (!socketRef.current.connected) return;
+  
+    socketRef.current.emit("sendText", {
+      tableId,
+      textContent: text,
+      textFont,
+      textColor,
+      isBG, 
+    });
   };
+  
 
   return (
     <div className="gallery">
-      {/* 🔴 Bouton pour retirer le média affiché */}
+      {/* Bouton pour retirer le média affiché */}
       <h3>📂 Fichiers enregistrés</h3>
       {files.length > 0 ? (
         <ul>
@@ -112,20 +122,39 @@ const Gallery: React.FC<GalleryProps> = ({ files, API_URL, onDeleteFile }) => {
                 </>
               ) : file.type === "text" ? (
                 <>
-                  <p style={{ fontFamily: file.textFont || "inherit" }}>
+                  <p
+                    style={{
+                      fontFamily: file.textFont || "inherit",
+                      color: file.textColor,
+                    }}
+                  >
                     {file.content || "📄 Aucun contenu disponible"}
                   </p>
 
                   <button
-                    className="show-btn"
-                    onClick={() =>
-                      sendTextToMediaDisplay(
-                        file.content || "📄 Aucun contenu disponible"
-                      )
-                    }
-                  >
-                    <i className="fa-solid fa-upload"></i>
-                  </button>
+  className="show-btn"
+  onClick={() => {
+    console.log("📤 Envoi via socket :", {
+      content: file.content,
+      font: file.textFont,
+      color: file.textColor,
+      isBG: file.isBG,
+      type: typeof file.isBG,
+    });
+
+    sendTextToMediaDisplay(
+      file.content,
+      file.textFont,
+      file.textColor,
+      file.isBG ?? true
+    );
+  }}
+>
+  <i className="fa-solid fa-upload"></i>
+</button>
+
+
+
                   <button
                     onClick={() => handleDeleteFile(file._id)}
                     className="file-item--remove"

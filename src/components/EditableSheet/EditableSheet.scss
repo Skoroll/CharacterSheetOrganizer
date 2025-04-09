@@ -2,6 +2,8 @@
 
 .character-details {
   position: relative;
+  display: flex;
+  flex-direction: column;
 
   .content-wrapper {
     @include flex-row;
@@ -15,6 +17,7 @@
 
   .edit-section {
     @include flex-row;
+    flex-direction: row-reverse;
     position: sticky;
     gap: $spacing-small;
     bottom: -0;
@@ -24,6 +27,7 @@
     justify-content: right;
     padding: $spacing-medium;
     box-sizing: border-box;
+    margin: auto auto 0 auto;
 
     button {
       position: relative;

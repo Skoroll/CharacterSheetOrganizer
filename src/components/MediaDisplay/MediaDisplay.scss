@@ -1,34 +1,33 @@
- 
-
 .table-content__media-container {
-    display: flex;
-    padding: $spacing-small;
-    z-index: 1;
-    position: relative;
-    height: 100%;
-    margin: auto;
-    flex: 1;
-    min-width: 0;
-    max-width: calc(100% - 220px); //La dernière valeur est celle de la box des personnages sur la table
-    margin-top: 15px;
-    min-height: 560px;
+  display: flex;
+  padding: $spacing-small;
+  z-index: 1;
+  position: relative;
+  height: 100%;
+  margin: auto;
+  flex: 1;
+  min-width: 0;
+  max-width: calc(
+    100% - 220px
+  ); //La dernière valeur est celle de la box des personnages sur la table
+  margin-top: 15px;
+  min-height: 560px;
+  background-size: cover;
+  margin: $spacing-medium 0;
+  border-radius: $spacing-medium;
+
+  .displayed-text {
+    white-space: pre-line;
     background-size: cover;
-    margin: $spacing-medium 0;
-    border-radius: $spacing-medium;
+    word-wrap: break-word;
+    padding: $spacing-large;
+    margin: auto;
+    overflow: auto;
+    max-height: 560px;
+  }
 
-      
-    .displayed-text {
-        white-space: pre-line;
-        background: url("../../assets/backgrounds/scroll.webp") no-repeat;
-        background-size: cover;
-        word-wrap: break-word;
-        padding: $spacing-large;
-        margin: auto;
-        overflow: auto;
-        max-height: 560px;
-    }
-
-.media-container, .zoom-wrapper {
+  .media-container,
+  .zoom-wrapper {
     position: relative;
     display: flex;
     overflow: hidden;
@@ -39,52 +38,63 @@
     margin: auto;
 
     img {
-        height: 100%;
-        width: 100%;
-        z-index: 2;
-        margin: auto;
-        object-fit: contain;
+      height: 100%;
+      width: 100%;
+      z-index: 2;
+      margin: auto;
+      object-fit: contain;
     }
 
     .zoom-controls {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        @include flex-row;
-        
-        gap: $spacing-small;
-        padding: $spacing-small;
-        position: absolute;
-        z-index: 50;
-        bottom: 0;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      @include flex-row;
 
-        button {
-            @include button;
-            height: 35px;
-            width: 35px;
-            padding: 0;
-        }
+      gap: $spacing-small;
+      padding: $spacing-small;
+      position: absolute;
+      z-index: 50;
+      bottom: 0;
+
+      button {
+        @include button;
+        height: 35px;
+        width: 35px;
+        padding: 0;
+      }
     }
 
-    .remove-btn{
-        position: absolute;
-        background: rgba(0, 0, 0, 0.178);
-        border: none;
-        color: white;
-        top: 0;
-        left: 0;
-        padding: $spacing-small;
-        cursor: pointer;
-        z-index: 5;
+    .remove-btn {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.178);
+      border: none;
+      color: white;
+      top: 0;
+      left: 0;
+      padding: $spacing-small;
+      cursor: pointer;
+      z-index: 5;
     }
-}
+  }
 }
 
+.bg-scroll {
+  background: url("../../assets/backgrounds/scroll.webp") no-repeat;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.bg-dark {
+  background-color: rgba(80, 80, 80, 0.26);
+}
 
 @include media-query($breakpoint-sm, "max") {
-    .table-content__media-container, .media-container, .zoom-controls {
-        width: auto;
-        flex: 1;
-        max-width: 100%;
-    }
+  .table-content__media-container,
+  .media-container,
+  .zoom-controls {
+    width: auto;
+    flex: 1;
+    max-width: 100%;
+  }
 }

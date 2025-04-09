@@ -8,14 +8,20 @@ interface MediaDisplayProps {
   isGameMaster: boolean;
 }
 
-export default function MediaDisplay({ tableId, API_URL, isGameMaster }: MediaDisplayProps) {
+export default function MediaDisplay({
+  tableId,
+  API_URL,
+  isGameMaster,
+}: MediaDisplayProps) {
   const [media, setMedia] = useState<string | null>(null);
   const [displayedText, setDisplayedText] = useState<string | null>(null);
+  const [font, setFont] = useState("inherit");
+  const [color, setColor] = useState("#000000");
+  const [isBG, setIsBG] = useState(true); // ✅ nouvel état pour gérer le fond
 
   const socketRef = useRef(io(API_URL, { autoConnect: false }));
   const containerRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
-
   const [zoom, setZoom] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -34,10 +40,20 @@ export default function MediaDisplay({ tableId, API_URL, isGameMaster }: MediaDi
       setOffset({ x: 0, y: 0 });
     });
 
-    socketRef.current.on("newText", ({ textContent }) => {
+    socketRef.current.on("newText", ({ textContent, textFont, textColor, isBG }) => {
+      console.log("📩 Texte reçu via socket :", {
+        textContent,
+        textFont,
+        textColor,
+        isBG,
+      });
       setMedia(null);
       setDisplayedText(textContent);
+      setFont(textFont || "inherit");
+      setColor(textColor || "#000000");
+      setIsBG(isBG !== false); // <= on en reparle juste en dessous
     });
+    
 
     socketRef.current.on("removeMedia", () => {
       setMedia(null);
@@ -126,15 +142,19 @@ export default function MediaDisplay({ tableId, API_URL, isGameMaster }: MediaDi
           </div>
         </div>
       ) : displayedText ? (
-        <p className="displayed-text">{displayedText}</p>
+        <p
+          className={`displayed-text ${isBG ? "bg-scroll" : "bg-dark"}`}
+          style={{ fontFamily: font, color }}
+        >
+          {displayedText}
+        </p>
       ) : (
         <p></p>
       )}
 
       {(media || displayedText) && isGameMaster && (
-
         <button className="remove-btn" onClick={removeDisplayedMedia}>
-         <i className="fa-solid fa-x" />
+          <i className="fa-solid fa-x" />
         </button>
       )}
     </div>

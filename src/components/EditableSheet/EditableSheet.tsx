@@ -949,7 +949,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
             </>
           ) : (
             <button className="edit-btn" onClick={() => setIsEditing(true)}>
-              <i className="fa-solid fa-pen"></i>
+              <i className="fa-solid fa-pen"></i> Modifier
             </button>
           )}
         </div>

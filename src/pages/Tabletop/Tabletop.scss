@@ -58,19 +58,7 @@
     gap: $spacing-medium;
     
 
-    .table-side-pannel {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      border-left: 1px solid;
-      border-top: 1px solid;
-      border-radius: $spacing-medium 0;
-      @include flex-col;
-      padding: $spacing-medium;
-      z-index: 500;
-      background-color: $background-color;
-      margin-bottom: $spacing-medium;
-    }
+
 
     @include media-query($breakpoint-sm, "max") {
       flex-direction: column-reverse;
@@ -99,9 +87,29 @@
   &__low-bar {
     @include flex-row;
     position: sticky;
+    bottom: 0;
+    background-color: $background-color;
+    z-index: 650;
+    padding: calc($spacing-small/2);
+    height: 50px;
 
     button {
       @include button;
+    }
+
+    .table-side-pannel {
+      position: absolute;
+      right: 0;
+      bottom: 40px;
+      border-left: 1px solid;
+      border-top: 1px solid;
+      border-bottom: 1px solid;
+      border-radius: $spacing-medium 0 0 $spacing-medium;
+      @include flex-col;
+      padding: $spacing-medium;
+      z-index: 500;
+      background-color: $background-color;
+      margin-bottom: $spacing-medium;
     }
   }
 }

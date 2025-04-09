@@ -100,6 +100,11 @@
       align-items: center;
       border-radius: calc($spacing-small * 2);
       background: $background-secondary-color;
+      transition: all 0.3s;
+
+      &:hover {
+        background-color: $background-color;
+      }
 
       img {
         width: 100%;
