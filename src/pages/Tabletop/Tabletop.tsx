@@ -60,7 +60,7 @@ export default function TableComponent() {
   );
   const selectedCharacterId = currentPlayer?.selectedCharacter || null;
   const [activePanel, setActivePanel] = useState<
-    "npcs" | "sendDocs" | "playerList" | "soundBoard" | "tableStyle" | null
+    "npcs" | "sendDocs" | "playerList" | "soundBoard" | "tableStyle" | "itemListing" | null
   >(null);
 
   useEffect(() => {
@@ -170,6 +170,7 @@ const handleSaveNotes = async () => {
       | "playerList"
       | "soundBoard"
       | "tableStyle"
+      | "itemListing"
       | null
   ) => {
     setActivePanel(activePanel === panel ? null : panel);

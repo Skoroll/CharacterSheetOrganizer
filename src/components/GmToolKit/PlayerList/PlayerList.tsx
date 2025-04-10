@@ -15,7 +15,6 @@ type Player = {
 
 type PlayerListProps = {
   players: Player[];
-  bannedPlayer: BannedPlayer[];
   tableId: string;
   isGameMaster: boolean;
 };

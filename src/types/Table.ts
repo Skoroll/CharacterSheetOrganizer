@@ -11,6 +11,7 @@ export type Table = {
     borderWidth: string;
     borderColor: string;
     bannerStyle: string;
+    itemListing: string;
     
   };
   

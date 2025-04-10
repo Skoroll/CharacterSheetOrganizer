@@ -103,7 +103,7 @@ const TableStyle: React.FC<TableStyleProps> = ({
   };
 
   return (
-    <div className="gm-tool table-style">
+    <div className="table-style gm-tool ">
       <h2>Style de la table</h2>
       <h3 className={`table-style--name font-${selectedFont}`}>{tableName}</h3>
       <form onSubmit={handleSubmit}>
@@ -111,7 +111,7 @@ const TableStyle: React.FC<TableStyleProps> = ({
         <div className="table-style__img-prev">
           <label>
             Bannière
-            <input type="file" accept="image/*" onChange={handleImageUpload} />
+            <input className="input-file" type="file" accept="image/*" onChange={handleImageUpload} />
           </label>
 
           {/* 📌 Prévisualisation de l'image */}

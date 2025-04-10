@@ -1,0 +1,42 @@
+.item-listing {
+    @include flex-col;
+    gap: $spacing-small;
+    
+    &__buttons {
+        @include flex-wrap;
+        gap: $spacing-small;
+
+        button {
+            @include button;
+        }
+    }
+    
+    input {
+        background: $background-secondary-color;
+        padding: $spacing-small;
+        border: 1px solid;
+        border-radius: $spacing-small
+    }
+    
+    &__content {
+        @include flex-col;
+        gap: $spacing-medium;
+        max-height: 300px;
+        overflow-y: auto;
+        margin-top: $spacing-small;
+        
+        h4 {
+            margin: 0;
+        }
+
+
+        .item-header {
+            @include flex-row;
+
+            .fa-x {
+                cursor: pointer;
+     
+            }
+        }
+    }
+}
