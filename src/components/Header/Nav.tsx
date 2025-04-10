@@ -88,8 +88,10 @@ export default function Nav({ className, toggleNav }: NavProps) {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (target.closest("#menu-toggle")) return;
       if (navRef.current && !navRef.current.contains(event.target as Node)) {
-        toggleNav(); // Ferme la navigation si on clique en dehors
+        toggleNav();
       }
     };
 

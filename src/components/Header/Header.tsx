@@ -14,7 +14,11 @@ export default function Header() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isUnfoldOpen, setIsUnfoldOpen] = useState(false);
   const { user } = useUser();
-  const toggleNav = () => setIsOpen((prev) => !prev);
+  const toggleNav = () => {
+    console.log("🔁 toggleNav", isOpen ? "Fermeture" : "Ouverture");
+    setIsUnfoldOpen(false);
+    setIsOpen((prev) => !prev);
+  };
   const toggleAuth = () => setIsAuthOpen((prev) => !prev);
 
   return (
@@ -33,10 +37,14 @@ export default function Header() {
           <button onClick={() => navigate("/")}>Accueil</button>
           {/* Conteneur du menu déroulant */}
           <div
-            className="dropdown"
-            onMouseEnter={() => setIsUnfoldOpen(true)}
-            onMouseLeave={() => setIsUnfoldOpen(false)}
-          >
+  className="dropdown"
+  onMouseEnter={() => {
+    if (!isOpen) setIsUnfoldOpen(true);
+  }}
+  onMouseLeave={() => {
+    if (!isOpen) setIsUnfoldOpen(false);
+  }}
+>
             <button>
               Parties <i className="fa-solid fa-caret-down"></i>
             </button>
@@ -64,13 +72,20 @@ export default function Header() {
       {/* Bouton pour le menu utilisateur (si connecté) */}
       {user?.isAuthenticated && (
         <button
-          className="menu-toggle"
-          onClick={toggleNav}
-          aria-label="Affiche la navigation"
-          aria-expanded={isOpen}
-        >
-          <i className={`fa-solid ${isOpen ? "fa-xmark" : "fa-bars"}`}></i>
-        </button>
+  id="menu-toggle"
+  className="menu-toggle"
+  onClick={(e) => {
+    e.stopPropagation();
+    toggleNav();
+  }}
+  aria-label="Affiche la navigation"
+  aria-expanded={isOpen}
+>
+  <i className={`fa-solid ${isOpen ? "fa-xmark" : "fa-bars"}`}></i>
+</button>
+
+
+
       )}
       {/* Navigation utilisateur (dans le menu déroulant) */}
       {isOpen && (

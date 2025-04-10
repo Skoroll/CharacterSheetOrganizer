@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import DeleteTable from "../DeleteTable/DeleteTable";
+import ItemListing from "../ItemListing/ItemListing";
 import Npcs from "../Npcs/Npcs";
 import PlayerList from "../PlayerList/PlayerList";
 import SendDocs from "../SendDocs/SendDocs";
@@ -17,10 +18,11 @@ interface GmToolBarProps {
     playerName: string;
     selectedCharacter: string | null;
     isGameMaster: boolean;
+
   }[];
   isGameMaster: boolean;
-  activePanel: "npcs" | "sendDocs" | "playerList" | "soundBoard" | "tableStyle" | null;
-  togglePanel: (panel: "npcs" | "sendDocs" | "playerList" | "soundBoard" | "tableStyle" | null) => void;
+  activePanel: "npcs" | "sendDocs" | "playerList" | "soundBoard" | "tableStyle" | "itemListing" | null;
+  togglePanel: (panel: "npcs" | "sendDocs" | "playerList" | "soundBoard" | "tableStyle" | "itemListing"  | null) => void;
   onStyleUpdate: () => void;
 }
 
@@ -50,7 +52,7 @@ const GmToolBar: React.FC<GmToolBarProps> = ({ tableId, API_URL, players, isGame
         <button onClick={() => togglePanel("soundBoard")} title="Sons"><i className="fa-solid fa-music"></i></button>
         <button onClick={() => togglePanel("npcs")} title="Créer des pnj"><i  className="fa-solid fa-ghost"></i></button>
         <button><i className="fa-solid fa-hat-wizard"></i></button>
-        <button><i className="fa-solid fa-suitcase"></i></button>
+        <button onClick={() => togglePanel("itemListing")}><i className="fa-solid fa-suitcase"></i></button>
         <button onClick={() => togglePanel("tableStyle")}><i  className="fa-solid fa-brush"></i></button>
 
         {/* ✅ L'icône ouvre directement la modale de suppression */}
@@ -63,7 +65,7 @@ const GmToolBar: React.FC<GmToolBarProps> = ({ tableId, API_URL, players, isGame
         <button onClick={() => togglePanel("soundBoard")} > Sons </button>
         <button onClick={() => togglePanel("npcs")}> Créer des pnj </button>
         <button> Magies </button>
-        <button> Objets </button>
+        <button onClick={() => togglePanel("itemListing")}> Objets </button>
         <button onClick={() => togglePanel("tableStyle")}>Personnalisation</button>
 
         {/* ✅ L'icône ouvre directement la modale de suppression */}
@@ -83,9 +85,10 @@ const GmToolBar: React.FC<GmToolBarProps> = ({ tableId, API_URL, players, isGame
       {/* Affichage des panneaux */}
       {activePanel === "npcs" && <Npcs tableId={tableId} />}
       {activePanel === "sendDocs" && <SendDocs />}
-      {activePanel === "playerList" && <PlayerList players={players} tableId={tableId} isGameMaster={isGameMaster} />}
+      {activePanel === "playerList" && <PlayerList players={players} tableId={tableId} isGameMaster={isGameMaster}/>}
       {activePanel === "soundBoard" && <SoundBoard />}
       {activePanel === "tableStyle" && <TableStyle tableId={tableId} API_URL={API_URL} onStyleUpdate={onStyleUpdate} />}
+      {activePanel === "itemListing" && <ItemListing/>}
     </div>
   );
 };

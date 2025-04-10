@@ -1,11 +1,9 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import TableTopLeave from "../../ModalContent/ModalTabletop/TableTopLeave/TableTopLeave";
-import Modal from "../../Modal/Modal";
+import { useModal } from "../../../Context/ModalContext";
 
 export default function NewGame() {
   const navigate = useNavigate();
-  const [showLeaveModal, setShowLeaveModal] = useState(false); // 👈 gestion modale
+  const { openLeaveModal } = useModal();
 
   const menuOptions = [
     {
@@ -19,17 +17,11 @@ export default function NewGame() {
       action: () => navigate("/rejoindre"),
     },
     {
-      name: "Quitter une table", // 👈 nouveau bouton
+      name: "Quitter une table",
       goTo: null,
-      action: () => setShowLeaveModal(true),
+      action: openLeaveModal,
     },
   ];
-
-  // ➕ callback fictif (remplace le joueur dans la table)
-  const handleLeaveTable = (tableId: string) => {
-    console.log("🔁 Table quittée :", tableId);
-    // 👉 fais un fetch DELETE ou PATCH ici si besoin
-  };
 
   return (
     <div className="new-game">
@@ -40,19 +32,6 @@ export default function NewGame() {
           </li>
         ))}
       </ul>
-
-      {/* ✅ Affiche modale si showLeaveModal est true */}
-      {showLeaveModal && (
-        <Modal onClose={() => setShowLeaveModal(false)} title="Quitter une table">
-          <TableTopLeave
-            tables={[]} // 👉 injecte tes tables ici
-            loading={false}
-            API_URL={import.meta.env.VITE_API_URL}
-            error={null}
-            onLeave={handleLeaveTable}
-          />
-        </Modal>
-      )}
     </div>
   );
 }

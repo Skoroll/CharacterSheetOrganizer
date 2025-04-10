@@ -1,7 +1,8 @@
-import PlaceHolderTableImg from "../../../../assets/dice-solid.svg";
+import { useState } from "react";
 import { BeatLoader } from "react-spinners";
-import defaultTableImg from "../../../../assets/dice-solid.svg";
 import { Table } from "../../../../types/Table";
+import Modal from "../../../Modal/Modal";
+import "./TableTopLeave.scss"
 
 interface TableTopLeaveProps {
   tables?: Table[];
@@ -15,11 +16,10 @@ export default function TableTopLeave({
   tables = [],
   loading,
   error,
-  API_URL,
   onLeave,
 }: TableTopLeaveProps) {
-
-
+  const [tableToLeave, setTableToLeave] = useState<Table | null>(null);
+  console.log("Tables reçues :", tables);
   return (
     <div className="leave-tables">
       {error && <p className="error">Erreur : {error}</p>}
@@ -31,56 +31,30 @@ export default function TableTopLeave({
 
       {tables.length > 0 && !loading && (
         <>
-          <p>Quitter une table :</p>
           <ul>
-            {tables.map((table) => (
-              <li className="leave-tables--item" key={table._id}>
-                <div className="table__banner">
-                  {table.bannerImage ? (
-                    <img
-                      style={{
-                        backgroundImage: table.bannerImage ? `url(${table.bannerImage})` : "none",
-                        border: table.bannerImage ? `${table.borderWidth} solid ${table.borderColor}` : "none",
-                        borderRadius: table.bannerStyle === "rounded" ? "20px" : "0px",
-                        boxShadow:
-                          table.bannerStyle === "shadow"
-                            ? "5px 5px 10px rgba(0,0,0,0.3)"
-                            : "none",
-                        transition: "height 0.3s ease-in-out",
-                      }}
-                      src={
-                        table.bannerImage?.startsWith("http")
-                          ? table.bannerImage
-                          : `${API_URL}${table.bannerImage}`
-                      }
-                      alt={`Bannière de ${table.name}`}
-                      onError={(e) => {
-                        e.currentTarget.src = defaultTableImg;
-                      }}
-                    />
-                  ) : (
-                    <img src={PlaceHolderTableImg} alt={`${table.name}`} />
-                  )}
-                </div>
+          {tables.map((table) => (
+  <li key={table._id} className="leave-tables--item">
+    <p>{table.name}</p>
+    {/* ... Image et infos de la table comme tu le fais déjà */}
+    <button onClick={() => setTableToLeave(table)}>Quitter la table</button>
+  </li>
+))}
 
-                <div className="table__recap">
-                  <p>
-                    <span className={`table__recap--name font-${table?.selectedFont || ""}`}>{table.name}</span>
-                    <span>MJ : {table.gameMasterName}</span>
-                    <span>
-                      <i className="fa-regular fa-user"></i> {table.players?.length || 0}
-                    </span>
-                    <span>Jeu : {table.game}</span>
-                  </p>
-                  <button
-                    className="leave-btn"
-                    onClick={() => onLeave(table._id)}
-                  >
-                    Quitter la table
-                  </button>
-                </div>
-              </li>
-            ))}
+{tableToLeave && (
+  <Modal
+    title="Confirmation"
+    onClose={() => setTableToLeave(null)}
+  >
+    <p>Êtes-vous sûr de vouloir quitter la table "{tableToLeave.name}" ?</p>
+    <div className="modal__actions">
+      <button onClick={() => setTableToLeave(null)}>Annuler</button>
+      <button onClick={() => {
+        onLeave(tableToLeave._id);
+        setTableToLeave(null);
+      }}>Oui, quitter</button>
+    </div>
+  </Modal>
+)}
           </ul>
         </>
       )}
