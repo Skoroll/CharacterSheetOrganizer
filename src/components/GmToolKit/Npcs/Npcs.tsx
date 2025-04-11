@@ -15,7 +15,9 @@ interface Npc {
   inventory: { item: string; quantity: number }[];
   specialSkills: { name: string; score: number }[];
   story: string;
-  tableId?: string; // ✅ Ajout de tableId
+  tableId?: string;
+  image?: string | File | null;
+
 }
 
 interface NpcsProps {
@@ -38,6 +40,7 @@ export default function Npcs({ tableId }: NpcsProps) {
   const [npcData, setNpcData] = useState<Npc>({
     _id: "",
     type: "Friendly",
+    image: null,
     name: "",
     age: 1,
     strength: 50,
@@ -184,26 +187,41 @@ export default function Npcs({ tableId }: NpcsProps) {
       alert("Impossible de créer un PNJ : ID de la table introuvable.");
       return;
     }
-
+  
     try {
+      const formData = new FormData();
+      formData.append("tableId", tableId);
+      formData.append("type", npcData.type);
+      formData.append("name", npcData.name);
+      formData.append("age", npcData.age.toString());
+      formData.append("strength", npcData.strength.toString());
+      formData.append("dexterity", npcData.dexterity.toString());
+      formData.append("intelligence", npcData.intelligence.toString());
+      formData.append("charisma", npcData.charisma.toString());
+      formData.append("endurance", npcData.endurance.toString());
+      formData.append("inventory", JSON.stringify(npcData.inventory));
+      formData.append("specialSkills", JSON.stringify(npcData.specialSkills));
+      formData.append("story", npcData.story);
+  
+      if (npcData.image instanceof File) {
+        formData.append("image", npcData.image);
+      }
+  
       const response = await fetch(`${API_URL}/api/npcs`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(npcData),
+        body: formData,
       });
-
+  
       if (!response.ok) throw new Error("Erreur lors de la création du PNJ.");
-
+  
       alert("✅ PNJ créé avec succès !");
-
-      setTimeout(() => {
-        fetchNpcs(); // 🔄 Attendre un peu avant de récupérer la liste mise à jour
-      }, 500); // Ajout d'un délai pour assurer la mise à jour
+      setTimeout(fetchNpcs, 500);
     } catch (error) {
       console.error("❌ Erreur :", error);
+      alert("Erreur lors de la création du PNJ.");
     }
   };
-
+  
   return (
     <div className="npcs gm-tool">
       <div className="npcs__bar">
@@ -226,7 +244,21 @@ export default function Npcs({ tableId }: NpcsProps) {
                 <option value="Friendly">Amical</option>
                 <option value="Hostile">Hostile</option>
               </select>
+              <label>
+                Image :
+                <input
+  type="file"
+  name="image"
+  accept="image/*"
+  onChange={(e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setNpcData((prev) => ({ ...prev, image: file }));
+    }
+  }}
+/>
 
+              </label>
               <label>Nom :</label>
               <input
                 type="text"
@@ -360,6 +392,17 @@ export default function Npcs({ tableId }: NpcsProps) {
                       <i className="fa-solid fa-trash"></i>
                     </button>
                   </h2>
+                  {npc.image && typeof npc.image === "string" && (
+  <img
+    src={npc.image}
+    alt={npc.name}
+    className="npc__image"
+    width={90}
+    height={90}
+    style={{ borderRadius: "6px", objectFit: "cover" }}
+  />
+)}
+
                   <p>{npc.age} ans</p>
                   <div className="npc__stats">
                     <ul>

@@ -7,6 +7,9 @@ import woodBg from "../../../assets/backgrounds/wood.webp";
 import stoneBg from "../../../assets/backgrounds/stone.webp";
 import ivyStoneBg from "../../../assets/backgrounds/ivy-stone.webp";
 import scrollBg from "../../../assets/backgrounds/scroll.webp";
+import seaBg from "../../../assets/backgrounds/sea-7086932_960_720.webp";
+import mountainBg from "../../../assets/backgrounds/mountain-5195052_960_720.webp";
+import riverBg from "../../../assets/backgrounds/sunset-3932032_960_720.webp";
 import { io } from "socket.io-client";
 
 interface TableStyleProps {
@@ -185,6 +188,9 @@ const TableStyle: React.FC<TableStyleProps> = ({
             <option value={stoneBg}>Pierre</option>
             <option value={ivyStoneBg}>Pierre avec lierre</option>
             <option value={scrollBg}>Parchemin</option>
+            <option value={seaBg}>Mer</option>
+            <option value={riverBg}>Rivière</option>
+            <option value={mountainBg}>Montagne</option>
           </select>
         </label>
 

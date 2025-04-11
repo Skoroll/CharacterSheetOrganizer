@@ -11,12 +11,33 @@
         }
     }
     
-    input {
-        background: $background-secondary-color;
-        padding: $spacing-small;
-        border: 1px solid;
-        border-radius: $spacing-small
+    .item-form {
+        @include flex-row;
+        gap: $spacing-small;
+
+        label {
+            @include flex-col;
+
+            input, select, textarea {
+                background: $background-secondary-color;
+                border-radius: $spacing-small;
+                padding: $spacing-small;
+                resize: none;
+                border: 1px solid $text-color;
+                color: $text-muted;
+            }
+
+            textarea {
+                height: 15px
+            }
+
+        }
+        button {
+            @include button;
+
+        }
     }
+
     
     &__content {
         @include flex-col;
@@ -29,13 +50,28 @@
             margin: 0;
         }
 
-
-        .item-header {
+        .item-listing__item {
             @include flex-row;
 
-            .fa-x {
-                cursor: pointer;
-     
+            button {
+                @include button;
+                display: flex;
+                
+                padding: 0;
+                height: 25px;
+                width: 25px;
+                background: none;
+                border: 1px solid;
+                justify-content: center;
+
+                .fa-x {
+                    margin: auto;
+                }
+
+            }
+
+            &--details {
+                margin-left: $spacing-small
             }
         }
     }

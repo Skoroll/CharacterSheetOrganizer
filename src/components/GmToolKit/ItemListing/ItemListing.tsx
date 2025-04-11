@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
-import weapons from "../../../assets/Memo/Aria/weapons.json";
+import accessories from "../../../assets/Memo/Aria/accessories.json";
 import armors from "../../../assets/Memo/Aria/armor.json";
 import foodDrinks from "../../../assets/Memo/Aria/food_and_drinks.json";
 import rangedWeapons from "../../../assets/Memo/Aria/ranged.json";
-import vehicles from "../../../assets/Memo/Aria/vehicles.json";
 import services from "../../../assets/Memo/Aria/services.json";
+import vehicles from "../../../assets/Memo/Aria/vehicles.json";
+import weapons from "../../../assets/Memo/Aria/weapons.json";
 import Modal from "../../Modal/Modal";
 import "./ItemListing.scss";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const typeOptions = [
+  { value: "accessories", label: "Accessoires" },
   { value: "melee", label: "Armes" },
   { value: "ranged", label: "Armes à distance" },
   { value: "equipment", label: "Équipements" },
@@ -20,6 +22,7 @@ const typeOptions = [
 ];
 
 const jsonData = [
+  { type: "accessories", label: "Accessoires", data: accessories },
   { type: "melee", label: "Armes", data: weapons },
   { type: "ranged", label: "Armes à distance", data: rangedWeapons },
   { type: "equipment", label: "Équipements", data: armors },
@@ -30,7 +33,10 @@ const jsonData = [
 
 const ItemListing: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<{ _id: string; name: string } | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<{
+    _id: string;
+    name: string;
+  } | null>(null);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedType, setSelectedType] = useState<string | null>("melee");
   const [createdItems, setCreatedItems] = useState<any[]>([]);
@@ -104,7 +110,9 @@ const ItemListing: React.FC = () => {
 
       if (!res.ok) throw new Error("Erreur lors de la suppression");
 
-      setCreatedItems((prev) => prev.filter((item) => item._id !== itemToDelete._id));
+      setCreatedItems((prev) =>
+        prev.filter((item) => item._id !== itemToDelete._id)
+      );
       setModalVisible(false);
       setItemToDelete(null);
     } catch (err) {
@@ -118,10 +126,14 @@ const ItemListing: React.FC = () => {
       return (
         <>
           {item.use && (
-            <p><strong>Utilisation :</strong> {item.use}</p>
+            <p>
+              <strong>Utilisation :</strong> {item.use}
+            </p>
           )}
           {item.damages && (
-            <p><strong>Dégâts :</strong> {item.damages}</p>
+            <p>
+              <strong>Dégâts :</strong> {item.damages}
+            </p>
           )}
         </>
       );
@@ -130,17 +142,23 @@ const ItemListing: React.FC = () => {
       return (
         <>
           {item.range && (
-            <p><strong>Portée :</strong> {item.range}</p>
+            <p>
+              <strong>Portée :</strong> {item.range}
+            </p>
           )}
           {item.damages && (
-            <p><strong>Dégâts :</strong> {item.damages}</p>
+            <p>
+              <strong>Dégâts :</strong> {item.damages}
+            </p>
           )}
         </>
       );
     }
     if (["equipment", "food", "vehicle", "service"].includes(type)) {
       return item.description ? (
-        <p><strong>Description :</strong> {item.description}</p>
+        <p>
+          <strong>Description :</strong> {item.description}
+        </p>
       ) : null;
     }
     return null;
@@ -226,11 +244,19 @@ const ItemListing: React.FC = () => {
             <>
               <label>
                 Utilisation
-                <input name="use" value={formData.use} onChange={handleChange} />
+                <input
+                  name="use"
+                  value={formData.use}
+                  onChange={handleChange}
+                />
               </label>
               <label>
                 Dégâts
-                <input name="damages" value={formData.damages} onChange={handleChange} />
+                <input
+                  name="damages"
+                  value={formData.damages}
+                  onChange={handleChange}
+                />
               </label>
             </>
           )}
@@ -239,19 +265,32 @@ const ItemListing: React.FC = () => {
             <>
               <label>
                 Portée
-                <input name="range" value={formData.range} onChange={handleChange} />
+                <input
+                  name="range"
+                  value={formData.range}
+                  onChange={handleChange}
+                />
               </label>
               <label>
                 Dégâts
-                <input name="damages" value={formData.damages} onChange={handleChange} />
+                <input
+                  name="damages"
+                  value={formData.damages}
+                  onChange={handleChange}
+                />
               </label>
             </>
           )}
 
-          {["equipment", "food", "vehicle", "service"].includes(formData.type) && (
+          {["equipment", "food", "vehicle", "service", "accessories"].includes(formData.type) && (
+
             <label>
               Description
-              <textarea name="description" value={formData.description} onChange={handleChange} />
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+              />
             </label>
           )}
 
@@ -267,21 +306,26 @@ const ItemListing: React.FC = () => {
             )
             .map((item, idx) => (
               <div key={`${cat.label}-${idx}`} className="item-listing__item">
-                <div className="item-header">
-                  {"_id" in item && (
-                    <button
-                    title="Supprimer cet objet"
+                    {"_id" in item && (
+                      <button
+                        title="Supprimer cet objet"
                         onClick={() => {
-                        setItemToDelete({ _id: item._id, name: item.name });
-                        setModalVisible(true);
-                        }}>
-                    <i className="fa-solid fa-x"/>
-                    </button>
-                  )}
-                  <h4>{item.name}</h4>
+                          setItemToDelete({ _id: item._id, name: item.name });
+                          setModalVisible(true);
+                        }}
+                      >
+                        <i className="fa-solid fa-x" />
+                      </button>
+                    )}
+                <div className="item-listing__item--details">
+                  <div className="item-header">
+                    <h4>{item.name}</h4>
+                  </div>
+                  <p>
+                    <strong>Prix :</strong> {item.price} 🪙
+                  </p>
+                  {renderItemDetails(item, cat.type)}
                 </div>
-                <p><strong>Prix :</strong> {item.price} 🪙</p>
-                {renderItemDetails(item, cat.type)}
               </div>
             ))
         )}
@@ -295,7 +339,9 @@ const ItemListing: React.FC = () => {
             setItemToDelete(null);
           }}
         >
-          <p>Supprimer <strong>{itemToDelete.name}</strong> ?</p>
+          <p>
+            Supprimer <strong>{itemToDelete.name}</strong> ?
+          </p>
           <div className="modal__actions">
             <button onClick={confirmDelete}>Oui</button>
             <button onClick={() => setModalVisible(false)}>Annuler</button>
