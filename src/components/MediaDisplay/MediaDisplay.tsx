@@ -13,11 +13,12 @@ export default function MediaDisplay({
   API_URL,
   isGameMaster,
 }: MediaDisplayProps) {
+  const [npcsToDisplay, setNpcsToDisplay] = useState<any[]>([]);
   const [media, setMedia] = useState<string | null>(null);
   const [displayedText, setDisplayedText] = useState<string | null>(null);
   const [font, setFont] = useState("inherit");
   const [color, setColor] = useState("#000000");
-  const [isBG, setIsBG] = useState(true); // ✅ nouvel état pour gérer le fond
+  const [isBG, setIsBG] = useState(true);
 
   const socketRef = useRef(io(API_URL, { autoConnect: false }));
   const containerRef = useRef<HTMLDivElement>(null);
@@ -28,40 +29,43 @@ export default function MediaDisplay({
   const [startDrag, setStartDrag] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    if (!socketRef.current.connected) socketRef.current.connect();
-    socketRef.current.on("connect", () => {
-      socketRef.current.emit("joinTable", tableId);
-    });
+    const socket = socketRef.current;
+    if (!socket.connected) socket.connect();
 
-    socketRef.current.on("newMedia", (mediaUrl: string) => {
+    socket.emit("joinTable", tableId);
+
+    const handleNpc = (npc: any) => {
+      console.log("📥 PNJ reçu dans MediaDisplay :", npc);
+      setNpcsToDisplay((prev) =>
+        prev.some((p) => p._id === npc._id) ? prev : [...prev, npc]
+      );
+    };
+
+    socket.on("sendNpcToDisplay", handleNpc);
+
+    socket.on("newMedia", (mediaUrl: string) => {
       setDisplayedText(null);
       setMedia(mediaUrl);
       setZoom(1);
       setOffset({ x: 0, y: 0 });
     });
 
-    socketRef.current.on("newText", ({ textContent, textFont, textColor, isBG }) => {
-      console.log("📩 Texte reçu via socket :", {
-        textContent,
-        textFont,
-        textColor,
-        isBG,
-      });
+    socket.on("newText", ({ textContent, textFont, textColor, isBG }) => {
       setMedia(null);
       setDisplayedText(textContent);
       setFont(textFont || "inherit");
       setColor(textColor || "#000000");
-      setIsBG(isBG !== false); // <= on en reparle juste en dessous
+      setIsBG(isBG !== false);
     });
-    
 
-    socketRef.current.on("removeMedia", () => {
+    socket.on("removeMedia", () => {
       setMedia(null);
       setDisplayedText(null);
     });
 
     return () => {
-      socketRef.current.disconnect();
+      socket.off("sendNpcToDisplay", handleNpc);
+      socket.disconnect();
     };
   }, [tableId]);
 
@@ -127,7 +131,9 @@ export default function MediaDisplay({
             src={media}
             alt="Contenu média"
             style={{
-              transform: `scale(${zoom}) translate(${offset.x / zoom}px, ${offset.y / zoom}px)`,
+              transform: `scale(${zoom}) translate(${offset.x / zoom}px, ${
+                offset.y / zoom
+              }px)`,
               transformOrigin: "top left",
               transition: isDragging ? "none" : "transform 0.1s ease-out",
               userSelect: "none",
@@ -152,11 +158,29 @@ export default function MediaDisplay({
         <p></p>
       )}
 
-      {(media || displayedText) && isGameMaster && (
-        <button className="remove-btn" onClick={removeDisplayedMedia}>
-          <i className="fa-solid fa-x" />
-        </button>
+      {npcsToDisplay.length > 0 && (
+        <div className="npc-display-list">
+          {npcsToDisplay.map((npc, index) => (
+            <div key={index} className="npc-card">
+              {npc.image && <img src={npc.image} alt={npc.name} className="npc-img" />}
+              <p>{npc.name}</p>
+            </div>
+          ))}
+        </div>
       )}
+
+      <div className="remove-btn-wrapper">
+        {(media || displayedText) && isGameMaster && (
+          <button className="remove-doc-btn" onClick={removeDisplayedMedia}>
+            <i className="fa-solid fa-x" />
+          </button>
+        )}
+        {npcsToDisplay.length > 0 && isGameMaster && (
+          <button className="remove-npc-btn" onClick={() => setNpcsToDisplay([])}>
+            <i className="fa-solid fa-users-slash" />
+          </button>
+        )}
+      </div>
     </div>
   );
 }

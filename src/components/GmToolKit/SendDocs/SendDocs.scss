@@ -2,7 +2,7 @@
 .share-pannel {
   z-index: 700;
   margin: auto;
-  min-height: 500px;
+  max-height: 500px;
 
   h2 {
     margin: 0;
@@ -51,10 +51,6 @@
       width: 90%;
     }
   }
-}
-
-.share-pannel--preview {
-
 }
 .preview-container {
 
@@ -114,17 +110,18 @@
   width: 150px;
   height: 150px;
 
-  strong {
-
-
-  }
-
   &--remove {
     position: absolute;
-    background: none !important;
-    left: 0;
+    background: rgba(0, 0, 0, 0.336) !important;
+    left: $spacing-small;
     bottom: 8px;
+  }
 
+  &__header {
+    position: absolute;
+    box-sizing: border-box;
+    padding: $spacing-small;
+    background: rgba(0, 0, 0, 0.336);
   }
 
   p {
@@ -137,5 +134,20 @@
     position: absolute;
     bottom: 8px;
     right: 8px;
+  }
+}
+
+
+@include media-query($breakpoint-sm, "max") {
+  .share-pannel {
+    max-height: 450px;
+    .share-pannel--wrapper {
+      .gallery {
+        ul {
+          max-height: 300px;
+          overflow: auto;
+        }
+      }
+    }
   }
 }

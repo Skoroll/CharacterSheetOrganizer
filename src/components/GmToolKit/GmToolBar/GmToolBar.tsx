@@ -29,6 +29,25 @@ interface GmToolBarProps {
 const GmToolBar: React.FC<GmToolBarProps> = ({ tableId, API_URL, players, isGameMaster, activePanel, refreshTables, togglePanel, onStyleUpdate }) => {
   const toolbarRef = useRef<HTMLDivElement | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // ✅ État pour afficher la modale de suppression
+  const [isSticky, setIsSticky] = useState(false);
+
+  useEffect(() => {
+    const toolbarEl = toolbarRef.current;
+    if (!toolbarEl) return;
+  
+    const toolbarTop = toolbarEl.offsetTop;
+  
+    const handleScroll = () => {
+      if (window.scrollY >= toolbarTop) {
+        setIsSticky(true);
+      } else {
+        setIsSticky(false);
+      }
+    };
+  
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -44,13 +63,13 @@ const GmToolBar: React.FC<GmToolBarProps> = ({ tableId, API_URL, players, isGame
   }, [togglePanel]);
 
   return (
-    <div className="gm-toolbar-container" ref={toolbarRef}>
+    <div className={`gm-toolbar-container ${isSticky ? "is-sticky" : ""}`} ref={toolbarRef}>
       <p className="gm-toolbar__heading">Outils du Maître de Jeu</p>
       <div className="gm-toolbar--mobile">
         <button onClick={() => togglePanel("sendDocs")} title="Importer des documents"><i className="fa-solid fa-file-import"></i></button>
         <button onClick={() => togglePanel("playerList")} title="Liste des joueurs"><i className="fa-solid fa-user"></i></button>
         <button onClick={() => togglePanel("soundBoard")} title="Sons"><i className="fa-solid fa-music"></i></button>
-        <button onClick={() => togglePanel("npcs")} title="Créer des pnj"><i  className="fa-solid fa-ghost"></i></button>
+        <button onClick={() => togglePanel("npcs")} title="Personnages non-joueurs"><i  className="fa-solid fa-ghost"></i></button>
         <button><i className="fa-solid fa-hat-wizard"></i></button>
         <button onClick={() => togglePanel("itemListing")}><i className="fa-solid fa-suitcase"></i></button>
         <button onClick={() => togglePanel("tableStyle")}><i  className="fa-solid fa-brush"></i></button>
@@ -63,7 +82,7 @@ const GmToolBar: React.FC<GmToolBarProps> = ({ tableId, API_URL, players, isGame
         <button onClick={() => togglePanel("sendDocs")}> Importer des documents </button>
         <button onClick={() => togglePanel("playerList")}> Liste des joueurs </button>
         <button onClick={() => togglePanel("soundBoard")} > Sons </button>
-        <button onClick={() => togglePanel("npcs")}> Créer des pnj </button>
+        <button onClick={() => togglePanel("npcs")}> Personnages non-joueurs </button>
         <button> Magies </button>
         <button onClick={() => togglePanel("itemListing")}> Objets </button>
         <button onClick={() => togglePanel("tableStyle")}>Personnalisation</button>

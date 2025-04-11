@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import Modal from "../../Modal/Modal";
 import { BeatLoader } from "react-spinners";
+import { io } from "socket.io-client";
 import "./Npcs.scss";
 
 interface Npc {
@@ -17,7 +19,7 @@ interface Npc {
   story: string;
   tableId?: string;
   image?: string | File | null;
-
+  location?: string;
 }
 
 interface NpcsProps {
@@ -25,10 +27,15 @@ interface NpcsProps {
 }
 
 export default function Npcs({ tableId }: NpcsProps) {
+  const sentNpcIds = useRef<Set<string>>(new Set());
   const API_URL = import.meta.env.VITE_API_URL;
+  const socketRef = useRef(io(API_URL, { autoConnect: false }));
   const [npcs, setNpcs] = useState<Npc[]>([]); // Liste des PNJs récupérés
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+
 
   const categories = [
     { label: "+ Nouveau PNJ", key: "new" },
@@ -63,6 +70,29 @@ export default function Npcs({ tableId }: NpcsProps) {
     endurance: "Endurance",
   };
 
+  const validateNpcData = () => {
+    if (!npcData.name.trim()) return "Le nom du PNJ est requis.";
+    if (npcData.age <= 0) return "L'âge doit être supérieur à 0.";
+    if (npcData.inventory.some(item => !item.item.trim())) return "Chaque objet d'inventaire doit avoir un nom.";
+    if (npcData.specialSkills.some(skill => !skill.name.trim())) return "Chaque compétence spéciale doit avoir un nom.";
+    return null;
+  };
+  
+
+  useEffect(() => {
+    if (!socketRef.current.connected) {
+      socketRef.current.connect();
+    }
+
+    socketRef.current.on("connect", () =>
+      socketRef.current.emit("joinTable", tableId)
+    );
+
+    return () => {
+      socketRef.current.disconnect();
+    };
+  }, [API_URL, tableId]);
+
   const handleDeleteNpc = async (npcId: string) => {
     if (!window.confirm("⚠️ Êtes-vous sûr de vouloir supprimer ce PNJ ?"))
       return;
@@ -78,13 +108,12 @@ export default function Npcs({ tableId }: NpcsProps) {
       alert("✅ PNJ supprimé !");
       fetchNpcs(); // 🔄 Met à jour la liste des PNJs
     } catch (error) {
-      console.error("❌ Erreur suppression PNJ :", error);
+      console.error("Erreur suppression PNJ :", error);
       alert("Erreur lors de la suppression du PNJ.");
     }
   };
 
   const handleCategoryClick = (key: string) => {
-
     setSelectedCategory(key);
   };
 
@@ -170,7 +199,7 @@ export default function Npcs({ tableId }: NpcsProps) {
       const data: Npc[] = await response.json();
       setNpcs(data);
     } catch (err) {
-      console.error("❌ Erreur lors du fetch des PNJs :", err);
+      console.error("Erreur lors du fetch des PNJs :", err);
       setError("Impossible de récupérer les PNJs.");
     } finally {
       setLoading(false);
@@ -183,8 +212,10 @@ export default function Npcs({ tableId }: NpcsProps) {
   }, [tableId]); // Re-fetch si le tableId change
 
   const handleSubmit = async () => {
-    if (!tableId) {
-      alert("Impossible de créer un PNJ : ID de la table introuvable.");
+    const validationError = validateNpcData();
+    if (validationError) {
+      setErrorMessage(validationError);
+      setIsErrorModalOpen(true);
       return;
     }
   
@@ -194,6 +225,7 @@ export default function Npcs({ tableId }: NpcsProps) {
       formData.append("type", npcData.type);
       formData.append("name", npcData.name);
       formData.append("age", npcData.age.toString());
+      formData.append("location", npcData.location?.toString() || "");
       formData.append("strength", npcData.strength.toString());
       formData.append("dexterity", npcData.dexterity.toString());
       formData.append("intelligence", npcData.intelligence.toString());
@@ -214,11 +246,10 @@ export default function Npcs({ tableId }: NpcsProps) {
   
       if (!response.ok) throw new Error("Erreur lors de la création du PNJ.");
   
-      alert("✅ PNJ créé avec succès !");
-      setTimeout(fetchNpcs, 500);
+      fetchNpcs();
     } catch (error) {
-      console.error("❌ Erreur :", error);
-      alert("Erreur lors de la création du PNJ.");
+      setErrorMessage("Une erreur est survenue lors de la création du PNJ.");
+      setIsErrorModalOpen(true);
     }
   };
   
@@ -247,17 +278,16 @@ export default function Npcs({ tableId }: NpcsProps) {
               <label>
                 Image :
                 <input
-  type="file"
-  name="image"
-  accept="image/*"
-  onChange={(e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setNpcData((prev) => ({ ...prev, image: file }));
-    }
-  }}
-/>
-
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setNpcData((prev) => ({ ...prev, image: file }));
+                    }
+                  }}
+                />
               </label>
               <label>Nom :</label>
               <input
@@ -266,7 +296,13 @@ export default function Npcs({ tableId }: NpcsProps) {
                 value={npcData.name}
                 onChange={handleChange}
               />
-
+              <label>Lieu :</label>
+              <input
+                type="text"
+                name="location"
+                value={npcData.location}
+                onChange={handleChange}
+              />
               <label>Âge :</label>
               <input
                 type="number"
@@ -376,7 +412,9 @@ export default function Npcs({ tableId }: NpcsProps) {
           </h3>
 
           {loading ? (
-            <p><BeatLoader/></p>
+            <p>
+              <BeatLoader />
+            </p>
           ) : error ? (
             <p>Erreur : {error}</p>
           ) : filteredNpcs.length > 0 ? (
@@ -393,15 +431,30 @@ export default function Npcs({ tableId }: NpcsProps) {
                     </button>
                   </h2>
                   {npc.image && typeof npc.image === "string" && (
-  <img
-    src={npc.image}
-    alt={npc.name}
-    className="npc__image"
-    width={90}
-    height={90}
-    style={{ borderRadius: "6px", objectFit: "cover" }}
-  />
-)}
+                    <img
+                      src={npc.image}
+                      alt={npc.name}
+                      className="npc__image"
+                      width={90}
+                      height={90}
+                      style={{ borderRadius: "6px", objectFit: "cover" }}
+                    />
+                  )}
+                  <button
+                    className="show-btn"
+                    title="Afficher ce PNJ"
+                    onClick={() => {
+                      if (!sentNpcIds.current.has(npc._id)) {
+                        socketRef.current.emit("sendNpcToDisplay", {
+                          ...npc,
+                          tableId,
+                        });
+                        sentNpcIds.current.add(npc._id);
+                      }
+                    }}
+                  >
+                    <i className="fa-solid fa-arrow-up-right-from-square"></i>
+                  </button>
 
                   <p>{npc.age} ans</p>
                   <div className="npc__stats">
@@ -451,6 +504,12 @@ export default function Npcs({ tableId }: NpcsProps) {
           )}
         </div>
       )}
+      {isErrorModalOpen && errorMessage && (
+  <Modal title="Erreur" onClose={() => setIsErrorModalOpen(false)}>
+    <p>{errorMessage}</p>
+  </Modal>
+)}
+
     </div>
   );
 }

@@ -65,16 +65,54 @@
       }
     }
 
-    .remove-btn {
+    .remove-btn-wrapper {
+      @include flex-row;
+      gap: $spacing-small;
       position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .remove-doc-btn,
+    .remove-npc-btn {
       background: rgba(0, 0, 0, 0.178);
       border: none;
       color: white;
-      top: 0;
-      left: 0;
+
       padding: $spacing-small;
       cursor: pointer;
-      z-index: 5;
+      width: 32px;
+      height: 32px;
+      z-index: 51;
+    }
+  }
+  .npc-display-list {
+    height: 100%;
+    z-index: 50;
+    left: 0;
+    top: 40px;
+    position: absolute;
+    overflow: auto;
+    .npc-card {
+      position: relative;
+
+      img {
+        border-radius: $spacing-small;
+        width: 100px;
+        height: 100px;
+      }
+
+      p {
+        position: absolute;
+        bottom: 3px;
+        z-index: 52;
+        margin: 0;
+        padding: $spacing-small;
+        width: 100%;
+        background: rgba(22, 22, 22, 0.349);
+        box-sizing: border-box;
+        border-radius: 0 0 $spacing-small $spacing-small;
+      }
     }
   }
 }
@@ -96,5 +134,20 @@
     width: auto;
     flex: 1;
     max-width: 100%;
+  }
+
+  .table-content__media-container .npc-display-list {
+    @include flex-row;
+    gap: $spacing-small;
+    height: 105px;
+    width: 100%;
+
+    .npc-card {
+      height: 100px;
+
+      p {
+        bottom: 0;
+      }
+    }
   }
 }
