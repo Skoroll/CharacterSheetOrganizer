@@ -1,7 +1,7 @@
 
 
 .news {
-    @include flex-wrap;
+    @include flex-col;
     padding: $spacing-small;
     gap: $spacing-small;
 
@@ -21,6 +21,11 @@
             margin: 0;
         }
 
+        h3 {
+            border-bottom: 1px solid;
+            padding: $spacing-small 0;
+        }
+        
         h4 {
             padding-left: $spacing-medium;
             font-style: italic;

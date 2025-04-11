@@ -66,7 +66,7 @@ function App() {
                   <Route path="/mentions-legales" element={<Legal />} />
                   <Route path="*" element={<NotFound />} />
                   <Route path="/news" element={<NewsPage />} />
-                  <Route path="/tutorial" element={<Blog />} />
+                  <Route path="/tutoriel/:sectionId" element={<Blog />} />
                   <Route path="/creer-partie" element={<TabletopCreation />} />
                   <Route path="/rejoindre" element={<TableTopBrowse />} />
                   <Route
