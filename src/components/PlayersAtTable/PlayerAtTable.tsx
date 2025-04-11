@@ -2,11 +2,11 @@ import { useEffect, useState, useRef } from "react";
 import { useUser } from "../../Context/UserContext";
 import { Sword } from "phosphor-react";
 import socket from "../../utils/socket";
-import "./PlayersAtTable.scss";
 import EditableSheet from "../EditableSheet/EditableSheet";
 import Modal from "../Modal/Modal";
 import ToolTip from "../Tooltip/Tooltip";
 import defaultImg from "../../assets/person-placeholder-5.webp";
+import "./PlayersAtTable.scss";
 
 interface Character {
   _id: string;
@@ -213,7 +213,7 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
             return (
               <div
                 key={`${tableId}-${player.playerId || index}`}
-                className="player"
+                className="player bordered"
               >
                 {selectedCharacter ? (
                   <div

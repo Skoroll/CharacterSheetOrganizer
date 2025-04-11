@@ -12,13 +12,14 @@ const GlobalStyle = createGlobalStyle`
     --text-color-rgb: ${(props) => props.theme.textColorRgb};
     --button-bg: ${(props) => props.theme.buttonBg};
     --background-secondary-color: ${(props) => props.theme.backgroundSecondaryColor};
-
+     --font-family: ${(props) => props.theme.fontFamily};
   }
 
   body {
     background-color: var(--background-color);
     color: var(--text-color);
     font-size: var(--font-size-base);
+    font-family: var(--font-family);
     transition: all 0.3s ease;
   }
 `;
