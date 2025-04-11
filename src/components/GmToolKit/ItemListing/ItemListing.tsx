@@ -9,6 +9,10 @@ import weapons from "../../../assets/Memo/Aria/weapons.json";
 import Modal from "../../Modal/Modal";
 import "./ItemListing.scss";
 
+interface ItemListingProps {
+  tableId: string;
+}
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 const typeOptions = [
@@ -31,7 +35,7 @@ const jsonData = [
   { type: "service", label: "Services", data: services },
 ];
 
-const ItemListing: React.FC = () => {
+const ItemListing: React.FC<ItemListingProps> = ({ tableId }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{
     _id: string;
@@ -52,11 +56,11 @@ const ItemListing: React.FC = () => {
   });
 
   useEffect(() => {
-    fetch(`${API_URL}/api/items`)
+    fetch(`${API_URL}/api/items?tableId=${tableId}`)
       .then((res) => res.json())
       .then((data) => setCreatedItems(data))
       .catch((err) => console.error("Erreur récupération objets :", err));
-  }, []);
+  }, [tableId]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -77,7 +81,7 @@ const ItemListing: React.FC = () => {
       const res = await fetch(`${API_URL}/api/items`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, price: parseInt(formData.price) }),
+        body: JSON.stringify({ ...formData, tableId, price: parseInt(formData.price) }),
       });
 
       if (!res.ok) throw new Error("Erreur lors de la création");

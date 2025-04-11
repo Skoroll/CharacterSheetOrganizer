@@ -107,7 +107,7 @@ const GmToolBar: React.FC<GmToolBarProps> = ({ tableId, API_URL, players, isGame
       {activePanel === "playerList" && <PlayerList players={players} tableId={tableId} isGameMaster={isGameMaster}/>}
       {activePanel === "soundBoard" && <SoundBoard />}
       {activePanel === "tableStyle" && <TableStyle tableId={tableId} API_URL={API_URL} onStyleUpdate={onStyleUpdate} />}
-      {activePanel === "itemListing" && <ItemListing/>}
+      {activePanel === "itemListing" && <ItemListing tableId={tableId}/>}
     </div>
   );
 };
