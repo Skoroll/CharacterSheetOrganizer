@@ -76,27 +76,15 @@ const GmToolBar: React.FC<GmToolBarProps> = ({
   return (
     <div className={`gm-toolbar-container ${isSticky ? "is-sticky" : ""}`} ref={toolbarRef}>
       <p className="gm-toolbar__heading">Outils du Maître de Jeu</p>
-      <div className="gm-toolbar--mobile">
-        <button onClick={() => togglePanel("sendDocs")} title="Importer des documents"><i className="fa-solid fa-file-import"></i></button>
-        <button onClick={() => togglePanel("playerList")} title="Liste des joueurs"><i className="fa-solid fa-user"></i></button>
-        <button onClick={() => togglePanel("soundBoard")} title="Sons"><i className="fa-solid fa-music"></i></button>
-        <button onClick={() => togglePanel("npcs")} title="Personnages non-joueurs"><i  className="fa-solid fa-ghost"></i></button>
-        <button><i className="fa-solid fa-hat-wizard"></i></button>
-        <button onClick={() => togglePanel("itemListing")}><i className="fa-solid fa-suitcase"></i></button>
-        <button onClick={() => togglePanel("tableStyle")}><i  className="fa-solid fa-brush"></i></button>
 
-        {/* ✅ L'icône ouvre directement la modale de suppression */}
-       <button onClick={() => setIsDeleteModalOpen(true)}> <i className="fa-solid fa-trash"></i></button>
-      </div>
-
-      <div className="gm-toolbar--desktop">
-        <button onClick={() => togglePanel("sendDocs")}> Importer des documents </button>
-        <button onClick={() => togglePanel("playerList")}> Liste des joueurs </button>
-        <button onClick={() => togglePanel("soundBoard")} > Sons </button>
-        <button onClick={() => togglePanel("npcs")}> Personnages non-joueurs </button>
-        <button> Magies </button>
-        <button onClick={() => togglePanel("itemListing")}> Objets </button>
-        <button onClick={() => togglePanel("tableStyle")}>Personnalisation</button>
+      <div className="gm-toolbar--buttons">
+        <button onClick={() => togglePanel("sendDocs")}> <i className="fa-solid fa-file-import"/> <span>Importer des documents</span> </button>
+        <button onClick={() => togglePanel("playerList")}> <i className="fa-solid fa-user"/> <span>Liste des joueurs</span> </button>
+        <button onClick={() => togglePanel("soundBoard")}> <i className="fa-solid fa-music"/><span> Sons </span> </button>
+        <button onClick={() => togglePanel("npcs")}> <i  className="fa-solid fa-ghost"/><span> Personnages non-joueurs </span></button>
+        <button> <i className="fa-solid fa-hat-wizard"/> <span>Magies </span> </button>
+        <button onClick={() => togglePanel("itemListing")}> <i className="fa-solid fa-suitcase"/> <span>Objets</span> </button>
+        <button onClick={() => togglePanel("tableStyle")}> <i  className="fa-solid fa-brush"/> <span>Personnalisation</span></button>
 
         {/* ✅ L'icône ouvre directement la modale de suppression */}
        <button onClick={() => setIsDeleteModalOpen(true)}> <i className="fa-solid fa-trash"></i></button>

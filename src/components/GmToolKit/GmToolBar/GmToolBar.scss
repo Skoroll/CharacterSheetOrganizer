@@ -16,8 +16,7 @@
     padding: 5px;
   }
 
-  .gm-toolbar--desktop,
-  .gm-toolbar--mobile {
+  .gm-toolbar--buttons {
     position: relative;
     @include flex-wrap;
     border-top: 1px solid;
@@ -31,9 +30,6 @@
     }
   }
 
-  .gm-toolbar--mobile {
-    display: none;
-  }
 }
 
 .gm-tool {
@@ -62,14 +58,15 @@
 
 @include media-query($breakpoint-sm, "max") {
   .gm-toolbar-container {
-    .gm-toolbar--mobile {
-      display: flex;
-      flex-wrap: wrap;
-      gap: $spacing-small;
-    }
 
-    .gm-toolbar--desktop {
-      display: none;
+    .gm-toolbar--buttons {
+      span {
+        display: none;
+      }
+
+      i {
+        font-size: 20px;
+      }
     }
   }
 
@@ -79,9 +76,5 @@
     border-top: none !important;
     z-index: 1000;
     backdrop-filter: blur(5px);
-
-    .gm-toolbar--mobile {
-      border: 1px transparent;
-    }
   }
 }

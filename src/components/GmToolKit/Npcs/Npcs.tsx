@@ -256,13 +256,13 @@ export default function Npcs({ tableId }: NpcsProps) {
   return (
     <div className="npcs gm-tool">
       <div className="npcs__bar">
-        <ul>
+        <div className="npcs__bar--buttons">
           {categories.map(({ label, key }) => (
-            <li key={key} onClick={() => handleCategoryClick(key)}>
+            <button key={key} onClick={() => handleCategoryClick(key)}>
               {label}
-            </li>
+            </button>
           ))}
-        </ul>
+        </div>
       </div>
 
       {selectedCategory === "new" && (

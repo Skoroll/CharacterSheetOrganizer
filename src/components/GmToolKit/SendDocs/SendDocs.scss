@@ -2,6 +2,7 @@
 .share-pannel {
   z-index: 700;
   margin: auto;
+  min-width: 410px;
 
 
   h2 {
@@ -13,11 +14,11 @@
   }
 
   &--wrapper {
-    @include flex-row;
+    @include flex-col;
   }
 
   &__buttons {
-    @include flex-col;
+    @include flex-row;
     gap: $spacing-medium;
     margin: $spacing-medium 0;
     padding: $spacing-small;
@@ -28,7 +29,7 @@
   }
   &__container {
     @include flex-wrap;
-    margin: auto;
+
 
     &--box {
       @include flex-col;
@@ -124,6 +125,7 @@
     background: rgba(0, 0, 0, 0.336) !important;
     left: $spacing-small;
     bottom: 8px;
+    color: white !important;
   }
 
   &__header {

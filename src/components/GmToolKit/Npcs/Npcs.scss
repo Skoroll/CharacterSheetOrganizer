@@ -1,10 +1,21 @@
 
 .npcs {
-    @include flex-row;
-    max-width: 700px;
+    @include flex-col;
+    max-width: 50vh;
+    min-width: 480px;
+
+    @include media-query($breakpoint-sm, "max") {
+        @include flex-col;
+        overflow: auto;
+    }
     .form-content {
         @include flex-row;
         gap: $spacing-small;
+
+        @include media-query($breakpoint-sm, "max") {
+            @include flex-col;
+        }
+
     }
 
     &__scroll {
@@ -17,26 +28,32 @@
 
     &__bar {
         min-width: 150px;
-        ul {
+        &--buttons {
             @include ul-base;
-            @include flex-col;
+            @include flex-row;
             gap: $spacing-medium;
             padding: $spacing-small;
-
-            li {
-                @include button;
-            }
         }
     }
 
     &__form {
+        max-height: 55vh; // ou ajuste selon ton besoin
+        overflow-y: auto;
+        padding-right: $spacing-small;
+
+        @include media-query($breakpoint-sm, "max") {
+            &__form {
+              max-height: 50vh;
+              overflow-y: auto;
+            }
+        }
 
         &--base, &--details {
             @include flex-col;
             gap: $spacing-small;
 
             label {
-                @include flex-row;
+                @include flex-col;
             }
         }
 
@@ -78,7 +95,7 @@
         }
         
         &__stats {
-            @include flex-row;
+            @include flex-col;
             gap: $spacing-medium;
         }
 
@@ -87,7 +104,7 @@
                 @include ul-base;
     
                 li {
-                    @include flex-row;
+                    @include flex-col;
                     justify-content: space-between;
                     min-width: 100px
                 }
