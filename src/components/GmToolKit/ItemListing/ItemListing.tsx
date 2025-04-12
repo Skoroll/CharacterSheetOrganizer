@@ -1,41 +1,40 @@
 import React, { useEffect, useState } from "react";
-import accessories from "../../../assets/Memo/Aria/accessories.json";
-import armors from "../../../assets/Memo/Aria/armor.json";
-import foodDrinks from "../../../assets/Memo/Aria/food_and_drinks.json";
-import rangedWeapons from "../../../assets/Memo/Aria/ranged.json";
-import services from "../../../assets/Memo/Aria/services.json";
-import vehicles from "../../../assets/Memo/Aria/vehicles.json";
-import weapons from "../../../assets/Memo/Aria/weapons.json";
+import accessoriesAria from "../../../assets/Memo/Aria/accessories.json";
+import armorsAria from "../../../assets/Memo/Aria/armor.json";
+import foodDrinksAria from "../../../assets/Memo/Aria/food_and_drinks.json";
+import rangedWeaponsAria from "../../../assets/Memo/Aria/ranged.json";
+import servicesAria from "../../../assets/Memo/Aria/services.json";
+import vehiclesAria from "../../../assets/Memo/Aria/vehicles.json";
+import weaponsAria from "../../../assets/Memo/Aria/weapons.json";
 import Modal from "../../Modal/Modal";
 import "./ItemListing.scss";
 
 interface ItemListingProps {
   tableId: string;
+  game: string;
 }
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const typeOptions = [
-  { value: "accessories", label: "Accessoires" },
+  { value: "food", label: "Alimentaire" },
   { value: "melee", label: "Armes" },
   { value: "ranged", label: "Armes à distance" },
   { value: "equipment", label: "Équipements" },
-  { value: "food", label: "Alimentaire" },
-  { value: "vehicle", label: "Véhicules" },
+  { value: "accessories", label: "Objets" },
   { value: "service", label: "Services" },
+  { value: "vehicle", label: "Véhicules" },
 ];
 
-const jsonData = [
-  { type: "accessories", label: "Accessoires", data: accessories },
-  { type: "melee", label: "Armes", data: weapons },
-  { type: "ranged", label: "Armes à distance", data: rangedWeapons },
-  { type: "equipment", label: "Équipements", data: armors },
-  { type: "food", label: "Alimentaire", data: foodDrinks },
-  { type: "vehicle", label: "Véhicules", data: vehicles },
-  { type: "service", label: "Services", data: services },
-];
+type JsonCategory = {
+  type: string;
+  label: string;
+  data: any[]; // tu peux affiner ici selon les objets, ex : { name: string; price: number; damages?: string }
+};
 
-const ItemListing: React.FC<ItemListingProps> = ({ tableId }) => {
+
+const ItemListing: React.FC<ItemListingProps> = ({ tableId, game }) => {
+  const [jsonData, setJsonData] = useState<JsonCategory[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{
     _id: string;
@@ -61,6 +60,22 @@ const ItemListing: React.FC<ItemListingProps> = ({ tableId }) => {
       .then((data) => setCreatedItems(data))
       .catch((err) => console.error("Erreur récupération objets :", err));
   }, [tableId]);
+
+  useEffect(() => {
+    if (game === "Aria") {
+      setJsonData([
+        { type: "accessories", label: "Accessoires", data: accessoriesAria },
+        { type: "melee", label: "Armes", data: weaponsAria },
+        { type: "ranged", label: "Armes à distance", data: rangedWeaponsAria },
+        { type: "equipment", label: "Équipements", data: armorsAria },
+        { type: "food", label: "Alimentaire", data: foodDrinksAria },
+        { type: "vehicle", label: "Véhicules", data: vehiclesAria },
+        { type: "service", label: "Services", data: servicesAria },
+      ]);
+    } else {
+      setJsonData([]); // ou autre jeu dans le futur
+    }
+  }, [game]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -206,6 +221,7 @@ const ItemListing: React.FC<ItemListingProps> = ({ tableId }) => {
 
       {formVisible && (
         <form className="item-form" onSubmit={handleSubmit}>
+          <div className="item-form__column">
           <label>
             Type d'objet *
             <select
@@ -232,18 +248,8 @@ const ItemListing: React.FC<ItemListingProps> = ({ tableId }) => {
               required
             />
           </label>
-
-          <label>
-            Prix *
-            <input
-              name="price"
-              value={formData.price}
-              onChange={handleChange}
-              required
-              type="number"
-            />
-          </label>
-
+          </div>
+          <div className="item-form__column">
           {formData.type === "melee" && (
             <>
               <label>
@@ -285,7 +291,18 @@ const ItemListing: React.FC<ItemListingProps> = ({ tableId }) => {
               </label>
             </>
           )}
-
+</div>
+<div className="item-form__column">
+<label>
+            Prix *
+            <input
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              required
+              type="number"
+            />
+          </label>
           {["equipment", "food", "vehicle", "service", "accessories"].includes(formData.type) && (
 
             <label>
@@ -297,7 +314,7 @@ const ItemListing: React.FC<ItemListingProps> = ({ tableId }) => {
               />
             </label>
           )}
-
+</div>
           <button type="submit">Créer l’objet</button>
         </form>
       )}

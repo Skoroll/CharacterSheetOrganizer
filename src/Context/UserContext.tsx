@@ -73,9 +73,7 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   };
 
   // ✅ Fonction de déconnexion améliorée (sans `useNavigate()`)
-  const logout = () => {
-    console.log("🔥 Déconnexion en cours...");
-  
+  const logout = () => {  
     // ✅ Supprimer les tokens AVANT la mise à jour de l'état
     localStorage.removeItem("token");
     localStorage.removeItem("refreshToken");
@@ -88,8 +86,6 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
       selectedCharacterName: "",
       isAdmin: false,
     });
-  
-    console.log("✅ Déconnecté : Token supprimé.");
   };
   
 

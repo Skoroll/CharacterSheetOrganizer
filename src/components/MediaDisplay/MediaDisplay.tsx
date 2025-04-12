@@ -35,7 +35,6 @@ export default function MediaDisplay({
     socket.emit("joinTable", tableId);
 
     const handleNpc = (npc: any) => {
-      console.log("📥 PNJ reçu dans MediaDisplay :", npc);
       setNpcsToDisplay((prev) =>
         prev.some((p) => p._id === npc._id) ? prev : [...prev, npc]
       );

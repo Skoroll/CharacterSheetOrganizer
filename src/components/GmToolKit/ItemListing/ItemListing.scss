@@ -15,6 +15,10 @@
         @include flex-row;
         gap: $spacing-small;
 
+        &__column {
+            @include flex-col;
+        }
+
         label {
             @include flex-col;
 

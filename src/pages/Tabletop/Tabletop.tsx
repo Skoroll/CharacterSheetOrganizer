@@ -74,7 +74,6 @@ export default function TableComponent() {
       const response = await fetch(`${API_URL}/api/tabletop/tables`);
       if (!response.ok)
         throw new Error("Erreur lors de la mise à jour des tables.");
-      console.log("✅ Tables mises à jour !");
     } catch (err) {
       console.error("❌ Erreur lors du rafraîchissement des tables :", err);
     }
@@ -224,7 +223,6 @@ const handleSaveNotes = async () => {
 
   useEffect(() => {
     socket.on("refreshPlayers", () => {
-      console.log("♻️ Rafraîchissement de la table via socket");
       fetchTable(); // fonction que tu as déjà pour re-fetch la table
     });
   
@@ -236,7 +234,6 @@ const handleSaveNotes = async () => {
 
   useEffect(() => {
     socket.on("refreshTableStyle", () => {
-      console.log("🎨 Style de table mis à jour via socket");
       fetchTable(); // recharge les infos de la table (et donc le style)
       setRefreshTrigger((prev) => prev + 1); // si nécessaire pour forcer un rerender (comme pour Banner)
     });
@@ -287,18 +284,21 @@ const handleSaveNotes = async () => {
 
         {isGameMaster && (
           <GmToolBar
-            tableId={table?._id ?? ""}
-            players={table?.players ?? []}
-            isGameMaster={isGameMaster}
-            activePanel={activePanel}
-            togglePanel={togglePanel}
-            API_URL={API_URL}
-            refreshTables={refreshTables}
-            onStyleUpdate={async () => {
-              await fetchTable(); // attendre la mise à jour de table (donc de la font)
-              setRefreshTrigger((prev) => prev + 1); // ensuite seulement on refresh Banner
-            }}
-          />
+  tableId={table?._id ?? ""}
+  game={table.game} // ✅ ICI
+  players={table?.players ?? []}
+  isGameMaster={isGameMaster}
+  activePanel={activePanel}
+  togglePanel={togglePanel}
+  API_URL={API_URL}
+  refreshTables={refreshTables}
+  onStyleUpdate={async () => {
+    await fetchTable();
+    setRefreshTrigger((prev) => prev + 1);
+  }}
+/>
+
+
         )}
 
         <div className="table__content--main-container">

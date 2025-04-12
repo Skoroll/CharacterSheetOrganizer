@@ -22,7 +22,6 @@ const Banner = ({ tableId, API_URL, refreshTrigger }: BannerProps) => {
                 if (!response.ok) throw new Error("Erreur lors du chargement des styles");
 
                 const data = await response.json();
-                console.log("📸 Image reçue :", data.bannerImage);
 
                 setBannerData({
                     bannerImage: data.bannerImage || "",

@@ -51,7 +51,7 @@ const Chat = ({
           throw new Error("Erreur lors du chargement des messages");
 
         const data: MessageType[] = await response.json();
-        console.log("🔍 [API] Messages récupérés :", data);
+
         
         // ✅ TRIER du plus ancien au plus récent
         const sortedMessages = [...data].sort((a, b) => {
@@ -67,7 +67,7 @@ const Chat = ({
             (msg) => !existingMessageIds.has(msg._id)
           );
         
-          console.log("✅ [API] Messages après tri et filtrage :", newMessages);
+
           return [...prevMessages, ...newMessages];
         });
         
@@ -109,10 +109,6 @@ const Chat = ({
       }
 
       const savedMessage: MessageType = await response.json();
-      console.log(
-        "📨 [WebSocket] Envoi du message via WebSocket :",
-        savedMessage
-      );
 
       // ✅ Ajoute directement le message valide renvoyé par l'API
       setMessages((prevMessages) => [...prevMessages, savedMessage]);

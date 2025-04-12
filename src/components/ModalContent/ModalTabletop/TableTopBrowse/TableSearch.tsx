@@ -26,7 +26,7 @@ export default function TableSearch({ onSearch }: TableSearchProps) {
               type="text"
               value={searchInput}
               onChange={handleChange}
-              placeholder="Rechercher une table..."
+              placeholder="Rechercher ..."
             />
             <button type="submit">
               <i className="fa-solid fa-magnifying-glass"></i>

@@ -19,7 +19,6 @@ export default function TableTopLeave({
   onLeave,
 }: TableTopLeaveProps) {
   const [tableToLeave, setTableToLeave] = useState<Table | null>(null);
-  console.log("Tables reçues :", tables);
   return (
     <div className="leave-tables">
       {error && <p className="error">Erreur : {error}</p>}

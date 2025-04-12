@@ -100,9 +100,6 @@ export const loginUser = async (name: string, password: string) => {
       name,
       password,
     });
-
-    console.log("✅ Réponse du serveur :", response.data);
-
     if (!response.data.accessToken || !response.data.user) {
       throw new Error("Réponse invalide du serveur (aucun token reçu).");
     }

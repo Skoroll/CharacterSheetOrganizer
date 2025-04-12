@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import "../CreateSheet.scss";
 import { useNavigate } from "react-router-dom";
-import Helper from "../../Helper/Helper";
+import ToolTip from "../../Tooltip/Tooltip";
 import Modal from "../../Modal/Modal";
+import baseSkillsTooltip from "../../../assets/Help/Aria/FR/baseSkills.json";
+import healthTooltip from "../../../assets/Help/Aria/FR/health.json";
+import sepcialSkillsTooltip from "../../../assets/Help/Aria/FR/specialSkills.json";
 import statsTooltip from "../../../assets/Help/Aria/FR/stats.json";
 import weaponsTooltip from "../../../assets/Help/Aria/FR/weapons.json";
-import healthTooltip from "../../../assets/Help/Aria/FR/health.json";
 import placeholderImage from "../../../assets/placeholder-image.webp";
 import ariaLogo from "../../../assets/Aria_logo_large.webp";
 
@@ -286,8 +288,12 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
           </div>
 
           <div className="character-stats">
-            <h3>Caractéristiques </h3>
-            <Helper content={statsTooltip} />
+            <h3>Caractéristiques
+            <ToolTip text={statsTooltip} position="left">
+            <span className="tooltip-ancor">?</span>
+            </ToolTip>
+            </h3>
+              
             <label>
               Force
               <input
@@ -332,8 +338,11 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
         </div>
 
         <div className="character__equipment">
-          <h3>Armes</h3>
-          <Helper content={weaponsTooltip} />
+          <h3>Armes
+          <ToolTip text={weaponsTooltip} position="left">
+          <span className="tooltip-ancor">?</span>
+          </ToolTip>
+          </h3>
           {weapons.map((weapon, index) => (
             <div key={index} className="character__equipment--weapon">
               <label>
@@ -362,8 +371,11 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
           ))}
         </div>
         <div className="character-points">
-          <h3>Physique</h3>
-          <Helper content={healthTooltip} />
+          <h3>Physique
+          <ToolTip text={healthTooltip} position="left">
+            <span className="tooltip-ancor">?</span>
+            </ToolTip>
+            </h3>
           <label>
             Points de vie
             <input
@@ -396,7 +408,11 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
 
       <div className="sheet__bottom">
         <div className="sheet__bottom--fixed">
-          <h3>Compétences</h3>
+          <h3>Compétences           
+            <ToolTip text={baseSkillsTooltip} position="right">
+            <span className="tooltip-ancor">?</span>
+            </ToolTip>
+            </h3>
           <table>
             <thead>
               <tr>
@@ -446,7 +462,11 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
         </div>
 
         <form className="sheet__bottom--skills">
-          <h3>Vos compétences spéciales</h3>
+          <h3>Vos compétences spéciales
+          <ToolTip text={sepcialSkillsTooltip} position="left">
+            <span className="tooltip-ancor">?</span>
+            </ToolTip>
+            </h3>
           {skills.map((skill, index) => (
             <div key={index}>
               <div className="what-skil">

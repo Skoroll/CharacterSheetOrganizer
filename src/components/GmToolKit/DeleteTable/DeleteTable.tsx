@@ -43,7 +43,6 @@ const navigate = useNavigate();
         throw new Error(errorData.message || "Erreur lors de la suppression de la table.");
       }
   
-      console.log("✅ Table supprimée !");
       onTableDeleted(); // ✅ Met à jour l'UI après suppression
     } catch (err) {
       console.error("❌ Erreur lors de la suppression :", err);

@@ -42,11 +42,7 @@ const Gallery: React.FC<GalleryProps> = ({ files, API_URL, onDeleteFile }) => {
       socketRef.current.connect();
     }
 
-    socketRef.current.on("connect", () =>
-      console.log(
-        `✅ [DEBUG] WebSocket connecté avec ID : ${socketRef.current.id}`
-      )
-    );
+    socketRef.current.on("connect", () =>"");
 
     return () => {
       socketRef.current.disconnect();
@@ -87,7 +83,7 @@ const Gallery: React.FC<GalleryProps> = ({ files, API_URL, onDeleteFile }) => {
   return (
     <div className="gallery">
       {/* Bouton pour retirer le média affiché */}
-      <h3>📂 Fichiers enregistrés</h3>
+      <h3>Fichiers enregistrés</h3>
       {files.length > 0 ? (
         <ul>
           {files.map((file, index) => (
@@ -128,19 +124,12 @@ const Gallery: React.FC<GalleryProps> = ({ files, API_URL, onDeleteFile }) => {
                       color: file.textColor,
                     }}
                   >
-                    {file.content || "📄 Aucun contenu disponible"}
+                    {file.content || " Aucun contenu disponible"}
                   </p>
 
                   <button
   className="show-btn"
   onClick={() => {
-    console.log("📤 Envoi via socket :", {
-      content: file.content,
-      font: file.textFont,
-      color: file.textColor,
-      isBG: file.isBG,
-      type: typeof file.isBG,
-    });
 
     sendTextToMediaDisplay(
       file.content,

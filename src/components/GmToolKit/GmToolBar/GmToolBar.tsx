@@ -10,6 +10,7 @@ import "./GmToolBar.scss";
 
 interface GmToolBarProps {
   tableId: string;
+  game: string; // ✅ ajoute cette ligne
   API_URL: string;
   refreshTables: () => void;
   players: {
@@ -18,15 +19,25 @@ interface GmToolBarProps {
     playerName: string;
     selectedCharacter: string | null;
     isGameMaster: boolean;
-
   }[];
   isGameMaster: boolean;
   activePanel: "npcs" | "sendDocs" | "playerList" | "soundBoard" | "tableStyle" | "itemListing" | null;
-  togglePanel: (panel: "npcs" | "sendDocs" | "playerList" | "soundBoard" | "tableStyle" | "itemListing"  | null) => void;
+  togglePanel: (panel: "npcs" | "sendDocs" | "playerList" | "soundBoard" | "tableStyle" | "itemListing" | null) => void;
   onStyleUpdate: () => void;
 }
 
-const GmToolBar: React.FC<GmToolBarProps> = ({ tableId, API_URL, players, isGameMaster, activePanel, refreshTables, togglePanel, onStyleUpdate }) => {
+const GmToolBar: React.FC<GmToolBarProps> = ({
+  tableId,
+  game,
+  API_URL,
+  players,
+  isGameMaster,
+  activePanel,
+  refreshTables,
+  togglePanel,
+  onStyleUpdate
+}) => {
+
   const toolbarRef = useRef<HTMLDivElement | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // ✅ État pour afficher la modale de suppression
   const [isSticky, setIsSticky] = useState(false);
@@ -107,7 +118,7 @@ const GmToolBar: React.FC<GmToolBarProps> = ({ tableId, API_URL, players, isGame
       {activePanel === "playerList" && <PlayerList players={players} tableId={tableId} isGameMaster={isGameMaster}/>}
       {activePanel === "soundBoard" && <SoundBoard />}
       {activePanel === "tableStyle" && <TableStyle tableId={tableId} API_URL={API_URL} onStyleUpdate={onStyleUpdate} />}
-      {activePanel === "itemListing" && <ItemListing tableId={tableId}/>}
+      {activePanel === "itemListing" && <ItemListing tableId={tableId} game={game} />}
     </div>
   );
 };

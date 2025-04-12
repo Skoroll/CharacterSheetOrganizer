@@ -18,9 +18,8 @@ export default function Header() {
 
   const { user } = useUser();
   const toggleNav = () => {
-    console.log("🔁 toggleNav", isOpen ? "Fermeture" : "Ouverture");
     setIsPartyMenuOpen(false);
-setIsTutorialMenuOpen(false);
+    setIsTutorialMenuOpen(false);
     setIsOpen((prev) => !prev);
   };
   const toggleAuth = () => setIsAuthOpen((prev) => !prev);
@@ -58,39 +57,38 @@ setIsTutorialMenuOpen(false);
 
           <button onClick={() => navigate("/news")}>Nouveautés</button>
           <div
-  className="dropdown"
-  onMouseEnter={() => {
-    if (!isOpen) setIsTutorialMenuOpen(true);
-  }}
-  onMouseLeave={() => {
-    if (!isOpen) setIsTutorialMenuOpen(false);
-  }}
->
-  <button>
-    Tutoriel <i className="fa-solid fa-caret-down"></i>
-  </button>
+            className="dropdown"
+            onMouseEnter={() => {
+              if (!isOpen) setIsTutorialMenuOpen(true);
+            }}
+            onMouseLeave={() => {
+              if (!isOpen) setIsTutorialMenuOpen(false);
+            }}
+          >
+            <button>
+              Tutoriel <i className="fa-solid fa-caret-down"></i>
+            </button>
 
-  {isTutorialMenuOpen && (
-    <UnfoldingMenu
-      content={
-        <ul className="tutorial-menu">
-          {tutorialSections.map((section) => (
-            <li
-              key={section.anchor}
-              onClick={() => {
-                navigate(`/tutoriel/${section.anchor}`);
-                setIsTutorialMenuOpen(false);
-              }}
-            >
-              {section.label}
-            </li>
-          ))}
-        </ul>
-      }
-    />
-  )}
-</div>
-
+            {isTutorialMenuOpen && (
+              <UnfoldingMenu
+                content={
+                  <ul className="tutorial-menu">
+                    {tutorialSections.map((section) => (
+                      <li
+                        key={section.anchor}
+                        onClick={() => {
+                          navigate(`/tutoriel/${section.anchor}`);
+                          setIsTutorialMenuOpen(false);
+                        }}
+                      >
+                        {section.label}
+                      </li>
+                    ))}
+                  </ul>
+                }
+              />
+            )}
+          </div>
 
           <a
             href="https://elder-craft.com/"

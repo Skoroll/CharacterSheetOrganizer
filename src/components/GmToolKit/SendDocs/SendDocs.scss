@@ -2,7 +2,7 @@
 .share-pannel {
   z-index: 700;
   margin: auto;
-  max-height: 500px;
+
 
   h2 {
     margin: 0;
@@ -30,8 +30,12 @@
     @include flex-wrap;
     margin: auto;
 
-    form {
+    &--box {
       @include flex-col;
+    }
+
+    form {
+      @include flex-row;
 
       input[type=text] {
         width: 180px;
@@ -55,10 +59,14 @@
 .preview-container {
 
   .preview-grid {
-    min-height: 150px;
     @include flex-wrap;
+    min-height: 150px;
+    gap: $spacing-small;
+    
     .preview-item {
       @include flex-col;
+
+
 
       &__buttons {
         @include flex-row;
@@ -73,6 +81,7 @@
         width: 200px;
         height: 200px;
         object-fit: cover;
+        margin: auto
       }
     }
   }

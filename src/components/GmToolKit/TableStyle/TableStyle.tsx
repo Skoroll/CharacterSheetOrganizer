@@ -69,14 +69,6 @@ const TableStyle: React.FC<TableStyleProps> = ({
     formData.append("selectedFont", selectedFont); //Correspond à la police d'écriture choisie
     formData.append("tableBG", tableBG); //Pour le fond de table sélectionné dans le formulaire
 
-    console.log("📤 Données envoyées :", {
-      bannerImage: bannerImage?.name,
-      borderWidth,
-      borderColor,
-      bannerStyle,
-      tableBG, // Affichage de la sélection du background
-    });
-
     try {
       const response = await fetch(
         `${API_URL}/api/tabletop/tables/${tableId}/style`,
@@ -93,7 +85,6 @@ const TableStyle: React.FC<TableStyleProps> = ({
         );
       }
 
-      console.log("✅ Style mis à jour !");
       onStyleUpdate(); // Rafraîchir la bannière
       socket.emit("tableStyleUpdated", { tableId });
 

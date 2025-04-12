@@ -16,9 +16,14 @@
   button {
     @include button;
   }
+
   h3 {
     margin: 0 0 $spacing-small 0;
     text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: $spacing-small;
   }
 
   label {
@@ -176,7 +181,7 @@
     &--img {
       @include flex-col;
       position: relative;
-      z-index: 999;
+      z-index: 200;
       input {
         display: none;
       }
@@ -194,6 +199,8 @@
         width: 260px;
         height: 260px;
         background-color: $background-dark;
+        transition: all 0.3s;
+        cursor: pointer;
 
         &:hover {
           background: rgba(var(--text-color-rgb), 0.2);

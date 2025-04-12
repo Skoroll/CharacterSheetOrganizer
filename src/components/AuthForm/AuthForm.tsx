@@ -84,7 +84,6 @@ export default function AuthForm() {
         isAdmin: data.user.isAdmin,
       });
 
-      console.log("✅ Connexion réussie ! Redirection...");
       window.location.reload(); // Recharge la page après connexion
     } catch (error) {
       console.error("Erreur de connexion :", error);

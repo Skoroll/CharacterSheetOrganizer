@@ -19,6 +19,7 @@ export default function Menu() {
   const [characters, setCharacters] = useState<Character[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const currentTheme = localStorage.getItem("selectedTheme");
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
@@ -111,7 +112,15 @@ export default function Menu() {
             onClick={() => navigate("/creation-de-personnage")}
           >
             <i className="fa-solid fa-plus"></i>
-            <p>Créer un personnage</p>
+            <p
+              className={
+                ["ironclad", "steampunk", "sandsOfTime"].includes(currentTheme || "")
+                  ? "small-text"
+                  : ""
+              }
+            >
+              Créer un personnage
+            </p>
           </li>
           {characters.map((character) => (
             <li key={character._id}>

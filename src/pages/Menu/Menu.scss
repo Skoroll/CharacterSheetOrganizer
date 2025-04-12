@@ -13,11 +13,14 @@
         padding: $spacing-small;
         border-radius: $spacing-medium;
         border: 1px solid transparent;
-
         cursor: pointer;
 
         @include media-query($breakpoint-md, "min") {
           flex-grow: 0;
+        }
+
+        .small-text {
+          font-size: 12px;
         }
 
         .character {

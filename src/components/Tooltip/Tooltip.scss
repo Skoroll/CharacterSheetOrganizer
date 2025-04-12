@@ -1,19 +1,30 @@
 .tooltip-wrapper {
     position: relative;
     display: inline-block;
+
+    font-family: 'Times New Roman', Times, serif;
   
     .tooltip-text {
       position: absolute;
+      z-index: 1000;
+      width: 150px;
       background-color: rgba(0, 0, 0, 0.8);
       color: white;
       padding: 5px 8px;
       border-radius: 4px;
       font-size: 12px;
-      white-space: nowrap;
+      white-space: pre-line;
       opacity: 0;
       transition: opacity 0.3s ease;
       pointer-events: none;
-      z-index: 1000;
+      
+      span {
+        padding: 0
+      }
+
+      ul {
+        @include ul-base;
+      }
     }
   
     &:hover .tooltip-text {
@@ -47,5 +58,30 @@
       transform: translateY(-50%);
       margin-left: 6px;
     }
+
+    .tooltip-ancor {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: help;
+      background-color: $background-secondary-color;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      min-height: 20px;
+      line-height: 20px;
+      text-align: center;
+      padding: $spacing-small;
+      font-size: 14px;
+      font-weight: bold;
+      color: $text-color;
+      border: 1px solid;
+      user-select: none;
+    
+      // Optionnel : un peu d'ombre
+      box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+    }
+    
   }
   

@@ -34,7 +34,7 @@
         position: absolute;
         padding: $spacing-small;
         gap: $spacing-small;
-        width: 175px;
+        width: 220px;
         margin-right: 5px;
         border: 1px solid transparent;
         right: 35px;
@@ -161,7 +161,8 @@
 
         span {
           position: absolute;
-          font-size: 14px; // Ajuste si nécessaire
+          font-size: 13px;
+          color: white;          
         }
       }
 
