@@ -15,13 +15,79 @@
         "category": "player"
       },
       
+      {
+        "id": 4,
+        "title": "Comment rejoindre une partie",
+        "subtitle": "",
+        "content": "<p>Pour rejoindre une partie, cliquez sur le bouton <strong>\"Rejoindre une partie\"</strong> dans le menu principal.</p><p>Vous serez invité à <strong>saisir le mot de passe</strong> de la table de jeu. Une fois validé, vous serez redirigé vers la table en question.</p><p>Si vous avez déjà un personnage lié à cette table, vous y serez automatiquement connecté. Sinon, vous devrez <strong>sélectionner ou créer un personnage</strong> pour commencer à jouer.</p>",
+        "category": "player"
+      },
+      {
+        "id": 5,
+        "title": "Créer une table de jeu",
+        "subtitle": "",
+        "content": "<p>En tant que <strong>maître de jeu</strong>, vous pouvez créer une nouvelle table depuis le menu <strong>\"Créer une partie\"</strong>.</p><p>Choisissez un nom, un mot de passe et le système de jeu. Une fois la table créée, vous pourrez la personnaliser : bannière, style, police d’écriture, joueurs autorisés, etc.</p><p>La table vous est attribuée en tant que MJ, et vous pourrez y inviter des joueurs pour lancer votre campagne.</p>",
+        "category": "gm"
+      },
+      {
+        "id": 6,
+        "title": "Gérer les joueurs de la table",
+        "subtitle": "",
+        "content": "<p>Depuis l'interface de la table, cliquez sur l'icône de gestion des joueurs pour voir qui est connecté.</p><p>Vous pouvez <strong>bannir un joueur</strong>, <strong>modifier son personnage</strong>, ou consulter ses informations rapidement.</p><p>Les joueurs bannis peuvent être débannis à tout moment via la même interface.</p>",
+        "category": "gm"
+      },
+      {
+        "id": 7,
+        "title": "Utiliser les outils du MJ",
+        "subtitle": "",
+        "content": "<p>Crit Roller propose une boîte à outils dédiée aux maîtres de jeu. Vous y trouverez :</p><ul><li>📄 Un gestionnaire de PNJs</li><li>🎲 Un lanceur de dés</li><li>🎧 Un lecteur de sons</li><li>🗺️ Un système de documents et d’illustrations à partager</li></ul><p>Ces outils vous permettent de créer une expérience <strong>immersive</strong> pour vos joueurs en un seul clic.</p>",
+        "category": "gm"
+      },
+      {
+        "id": 8,
+        "title": "Prendre des notes pendant la partie",
+        "subtitle": "",
+        "content": "<p>Un panneau de notes est disponible à droite de l’écran.</p><p>Les joueurs peuvent y rédiger des informations sur :</p><ul><li>👤 Les personnages</li><li>🗺️ Les quêtes</li><li>💰 Les objets</li><li>📦 Autres infos</li></ul><p>Le MJ dispose de son propre système de notes, séparé de celui des joueurs.</p>",
+        "category": "player"
+      },
+      {
+        "id": 9,
+        "title": "Afficher un PNJ ou une image aux joueurs",
+        "subtitle": "",
+        "content": "<p>En tant que MJ, vous pouvez envoyer n’importe quel PNJ ou illustration vers l’<strong>écran de diffusion</strong>.</p><p>Cliquez simplement sur l’icône <i class='fa-solid fa-arrow-up-right-from-square'></i> dans la fiche du PNJ ou du fichier pour l’envoyer à tous les joueurs connectés.</p><p>Vous pouvez également <strong>supprimer ce contenu</strong> à tout moment avec le bouton dédié.</p>",
+        "category": "gm"
+      },
+      {
+        "id": 10,
+        "title": "Comment rejoindre une partie existante",
+        "subtitle": "",
+        "content": "<p>Pour rejoindre une partie sur <strong>Crit Roller</strong>, rendez-vous dans le menu <em>\"Rejoindre une partie\"</em> depuis l'accueil ou le menu principal.</p><p>Vous devrez entrer le <strong>nom</strong> de la table et le <strong>mot de passe</strong> associé. Ces informations sont communiquées par le maître du jeu.</p><p>Une fois accepté, vous serez ajouté à la table et vous pourrez y accéder à tout moment depuis votre tableau de bord.</p>",
+        "category": "general"
+      },
 
       {
-        "id": 3,
-        "title": "",
+        "id": 11,
+        "title": "Comment interagir avec le maître du jeu",
         "subtitle": "",
-        "content": "",
+        "content": "<p>Vous pouvez communiquer avec le maître du jeu via le <strong>chat</strong> intégré ou en partageant des documents/images.</p><p>Les boutons <em>Discussion</em> et <em>Jet de dés</em> vous permettent de suivre les actions de la partie en temps réel.</p><p>Pour envoyer un message privé ou poser une question discrètement, utilisez les outils mis à disposition dans l'interface de table.</p>",
+        "category": "player"
+      },
+      
+      {
+        "id": 12,
+        "title": "Gérer l’équipement de votre personnage",
+        "subtitle": "",
+        "content": "<p>Dans la fiche personnage, vous pouvez ajouter ou modifier les objets, armes et pièces d’or que possède votre héros.</p><p>Ces informations peuvent être consultées et mises à jour en temps réel, y compris pendant une partie.</p><p>Le MJ pourra voir ces changements et adapter l’aventure en conséquence !</p>",
+        "category": "player"
+      },
+      
+      {
+        "id": 13,
+        "title": "Gérer les notes du maître de jeu",
+        "subtitle": "",
+        "content": "<p>Un panneau dédié vous permet de stocker vos notes secrètes : <em>personnages, quêtes, objets, etc.</em></p><p>Ces notes ne sont visibles que par vous, et peuvent être modifiées ou sauvegardées à tout moment.</p><p>Utilisez-le pour suivre les événements, préparer des rebondissements ou garder une trace des choix des joueurs.</p>",
         "category": "gm"
       }
+      
       
 ]
