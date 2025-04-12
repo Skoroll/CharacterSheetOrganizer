@@ -1,7 +1,7 @@
  
   .table__notes-pannel {
     background: $background-dark;
-    z-index: 900;
+    z-index: 400;
     @include flex-row;
     position: absolute;
     max-height: 120px;
@@ -79,7 +79,7 @@
 
       .notes-title {
         transform: rotate(-90deg);
-        margin: 20px 0;
+        margin: 65px 0;
       }
 
       .notes__btns {

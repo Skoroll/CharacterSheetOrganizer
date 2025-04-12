@@ -9,8 +9,12 @@ interface TableTopLeaveProps {
   loading?: boolean;
   error?: string | null;
   API_URL?: string;
-  onLeave: (tableId: string) => void;
+  userId: string;
+  onLeave: (tableId: string) => void; // ✅ ici
+  onLeaveSuccess: () => void;
 }
+
+
 
 export default function TableTopLeave({
   tables = [],

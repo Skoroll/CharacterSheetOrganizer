@@ -6,7 +6,6 @@ import NewGame from "./NewGame/NewGame";
 import UnfoldingMenu from "./UnfoldingMenu/UnfoldingMenu";
 import logoCSO from "../../assets/logo_critroller.png";
 import Nav from "./Nav";
-import { tutorialSections } from "../../utils/tutorialSections";
 import "./Header.scss";
 
 export default function Header() {
@@ -65,29 +64,44 @@ export default function Header() {
               if (!isOpen) setIsTutorialMenuOpen(false);
             }}
           >
-            <button>
+            <button onClick= {() => navigate("/tutoriel")}>
               Tutoriel <i className="fa-solid fa-caret-down"></i>
             </button>
 
             {isTutorialMenuOpen && (
-              <UnfoldingMenu
-                content={
-                  <ul className="tutorial-menu">
-                    {tutorialSections.map((section) => (
-                      <li
-                        key={section.anchor}
-                        onClick={() => {
-                          navigate(`/tutoriel/${section.anchor}`);
-                          setIsTutorialMenuOpen(false);
-                        }}
-                      >
-                        {section.label}
-                      </li>
-                    ))}
-                  </ul>
-                }
-              />
-            )}
+  <UnfoldingMenu
+    content={
+      <ul className="tutorial-menu">
+        <li
+          onClick={() => {
+            navigate("/tutoriel#general"); // ✅ correspond à "Le site"
+            setIsTutorialMenuOpen(false);
+          }}
+        >
+          Le site
+        </li>
+        <li
+          onClick={() => {
+            navigate("/tutoriel#player"); // ✅ correspond à "Joueur"
+            setIsTutorialMenuOpen(false);
+          }}
+        >
+          Joueur
+        </li>
+        <li
+          onClick={() => {
+            navigate("/tutoriel#gm"); // ✅ correspond à "Maître de jeu"
+            setIsTutorialMenuOpen(false);
+          }}
+        >
+          Maître de jeu
+        </li>
+      </ul>
+    }
+  />
+)}
+
+
           </div>
 
           <a
@@ -99,6 +113,9 @@ export default function Header() {
           </a>
         </nav>
       </div>
+      {user?.isAdmin === true && (
+        <p>Admin</p>
+      )}
       {/* Bouton pour le menu utilisateur (si connecté) */}
       {user?.isAuthenticated && (
         <button

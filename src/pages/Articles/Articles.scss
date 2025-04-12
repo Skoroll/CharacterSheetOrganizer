@@ -10,6 +10,14 @@
         font-weight: 500;
     }
 
+    &__filters {
+        @include flex-row;
+        gap: $spacing-small;
+        button {
+            @include button;
+        }
+    }
+
     .news__article {
         flex: 1;
         border: 1px solid;

@@ -1,24 +1,19 @@
-import { useNavigate } from "react-router-dom";
 import { useModal } from "../../../Context/ModalContext";
 
 export default function NewGame() {
-  const navigate = useNavigate();
-  const { openLeaveModal } = useModal();
+  const { openLeaveModal, openCreateTableModal } = useModal(); // ✅
 
   const menuOptions = [
     {
       name: "Créer une partie",
-      goTo: "/creer-partie",
-      action: () => navigate("/creer-partie"),
+      action: openCreateTableModal, // ✅
     },
     {
       name: "Rejoindre une partie",
-      goTo: "/rejoindre",
-      action: () => navigate("/rejoindre"),
+      action: () => window.location.href = "/rejoindre", // tu peux naviguer ou ouvrir une autre modale
     },
     {
       name: "Quitter une table",
-      goTo: null,
       action: openLeaveModal,
     },
   ];

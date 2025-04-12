@@ -74,15 +74,22 @@ const NotesPanel = ({ currentTableId, userId, isGameMaster }: NotesPanelProps) =
   // 📌 Sauvegarde des notes en fonction du rôle
   const handleSaveNotes = async () => {
     if (!currentTableId) return;
-
+  
     try {
-      const response = await fetch(`${API_URL}/api/tabletop/tables/${currentTableId}/notes`, {
-
+      const url = isGameMaster
+        ? `${API_URL}/api/tabletop/tables/${currentTableId}/notes`
+        : `${API_URL}/api/tabletop/tables/${currentTableId}/player-notes`;
+  
+      const payload = isGameMaster
+        ? notes
+        : { ...notes, playerId: userId };
+  
+      const response = await fetch(url, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(notes),
+        body: JSON.stringify(payload),
       });
   
       if (!response.ok) {
@@ -102,15 +109,16 @@ useEffect(() => {
   const fetchNotes = async () => {
     try {
       const url = isGameMaster
-        ? `${API_URL}/api/tabletop/tables/${currentTableId}/notes`
-        : `${API_URL}/api/tabletop/tables/${currentTableId}/player-notes?playerId=${userId}`;
+      ? `${API_URL}/api/tabletop/tables/${currentTableId}/notes`
+      : `${API_URL}/api/tabletop/tables/${currentTableId}/player-notes?playerId=${userId}`;
+      
 
       const response = await fetch(url);
       if (!response.ok) throw new Error("Erreur lors du chargement des notes");
 
       const data = await response.json();
 
-      setNotes(data?.gameMasterNotes || { characters: "", quest: "", items: "", other: "" });
+      setNotes(data);
     } catch (error) {
       console.error("Erreur lors du chargement des notes :", error);
     }
@@ -122,9 +130,6 @@ useEffect(() => {
   return (
     <div className={`table__notes-pannel ${isSideOpen ? "open" : ""}`}>
       <div className="table__notes-pannel--inside">
-        <p>
-          <i className="fa-solid fa-pen"></i>
-        </p>
         {!isSideOpen && <p className="notes-title">Notes</p>}
         <div className={`notes--opacity ${isSideOpen ? "visible" : ""}`}>
           <ul className="notes__btns">

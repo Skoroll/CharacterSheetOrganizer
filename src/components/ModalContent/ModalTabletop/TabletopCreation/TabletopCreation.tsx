@@ -3,7 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../../Context/UserContext";
 import "./TabletopCreation.scss";
 
-export default function TabletopCreation() {
+interface TabletopCreationProps {
+  onCreated: () => void;
+}
+
+export default function TabletopCreation({ onCreated }: TabletopCreationProps) {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [game, setGame] = useState("Aria");
@@ -47,6 +51,7 @@ export default function TabletopCreation() {
       const data = await response.json();
 
       if (response.ok) {
+        onCreated();
         navigate(`/table/${data.table.id}`);
       } else {
         alert(`Erreur : ${data.message}`);

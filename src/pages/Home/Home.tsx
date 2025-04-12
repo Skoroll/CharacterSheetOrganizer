@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
 import Landing from "../Landing/Landing";
 import Menu from "../Menu/Menu";
-import Modal from "../../components/Modal/Modal";
 import NewsPanel from "../../components/NewsPanel/NewsPanel";
 import PreviousGame from "../../components/PreviousGame/PreviousGame";
-import TableTopLeave from "../../components/ModalContent/ModalTabletop/TableTopLeave/TableTopLeave";
 import Welcome from "../../components/Welcome/Welcome";
 import { useUser } from "../../Context/UserContext";
-import { useModal } from "../../Context/ModalContext";
 import {Table} from "../../types/Table"
 import { BeatLoader } from "react-spinners";
 import "./Home.scss";
@@ -15,7 +12,6 @@ import "./Home.scss";
 
 export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const { showLeaveModal, closeLeaveModal } = useModal();
   const [tables, setTables] = useState<Table[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -124,25 +120,6 @@ export default function Home() {
               </div>
             </div>
             <NewsPanel />
-            {showLeaveModal && (
-  <Modal title="Quitter une table" onClose={closeLeaveModal}>
-    <TableTopLeave
-      tables={tables}
-      loading={loading}
-      error={error}
-      API_URL={API_URL}
-      onLeave={async (tableId: string) => {
-        await fetch(`${API_URL}/api/tabletop/tables/${tableId}/removePlayer/${user._id}`, {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${user.token}` },
-        });
-
-        setTables((prev) => prev.filter((t) => t._id !== tableId));
-        closeLeaveModal(); // ferme la modale une fois quitté
-      }}
-    />
-  </Modal>
-)}
           </div>
         </>
       ) : (
