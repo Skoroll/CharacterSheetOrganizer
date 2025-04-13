@@ -4,6 +4,14 @@
     @include flex-col;
     padding: $spacing-small;
     gap: $spacing-small;
+    width: max( 75%, 250px);
+    margin: auto;
+    justify-content: center;
+
+    h2 {
+        text-align: center;
+        margin: 0;
+    }
 
     a {
         color: inherit;
@@ -18,25 +26,39 @@
         }
     }
 
-    .news__article {
+    &__filters {
+        @include flex-row;
+        justify-content: center;
+        margin-bottom: $spacing-medium;
+    }
+
+    &__article {
         flex: 1;
-        border: 1px solid;
+
         border-radius: $spacing-small;
         padding: $spacing-small;
-        background: $background-secondary-color;
+        width: max(75%, 250px);
+        margin: auto;
 
         h3,h4 {
             margin: 0;
         }
 
         h3 {
-            border-bottom: 1px solid;
             padding: $spacing-small 0;
         }
         
         h4 {
             padding-left: $spacing-medium;
             font-style: italic;
+        }
+
+        &--text {
+            background: $background-secondary-color;
+            padding: $spacing-small;
+            border: 1px solid;
+            margin: 0;
+            border-radius: $spacing-small 0 $spacing-small 0;
         }
     }
 }

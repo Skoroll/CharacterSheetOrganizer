@@ -6,7 +6,7 @@
   top: 0;
 
   padding: $spacing-small;
-  margin: $spacing-medium 0 auto auto;
+  margin: $spacing-medium 12px auto auto;
 
   @include media-query($breakpoint-sm, "max") {
     margin: auto 0 auto auto;

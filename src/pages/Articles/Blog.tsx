@@ -38,7 +38,7 @@ export default function Blog() {
 
   return (
     <div className="news">
-      <h2>Articles</h2>
+      <h2>Besoin d'aide ?</h2>
 
       <div className="news__filters">
         <button
@@ -74,7 +74,9 @@ export default function Blog() {
         <div className="news__article" key={index}>
           <h3>{article.title}</h3>
           {article.subtitle && <h4>{article.subtitle}</h4>}
-          <p dangerouslySetInnerHTML={{ __html: article.content }}></p>
+          <p 
+            className="news__article--text"
+            dangerouslySetInnerHTML={{ __html: article.content }}></p>
         </div>
       ))}
     </div>
