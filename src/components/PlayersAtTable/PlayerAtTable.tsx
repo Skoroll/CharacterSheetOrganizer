@@ -226,6 +226,7 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
                       <span>{selectedCharacter.pointsOfLife}</span>
                     </p>
                     {selectedCharacter.image && (
+                      <ToolTip text={selectedCharacter.name} position="bottom">
                       <img
                         src={selectedCharacter.image}
                         alt={selectedCharacter.name}
@@ -233,6 +234,7 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
                           e.currentTarget.src = defaultImg;
                         }}
                       />
+                      </ToolTip>
                     )}
                   </div>
                 ) : (
@@ -352,6 +354,7 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
                   <span>{currentCharacter.pointsOfLife}</span>
                 </p>
                 {currentCharacter.image && (
+                  <ToolTip text={currentCharacter.name} position="bottom">
                   <img
                     src={currentCharacter.image}
                     alt={currentCharacter.name}
@@ -359,6 +362,7 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
                       e.currentTarget.src = defaultImg;
                     }}
                   />
+                  </ToolTip>
                 )}
               </div>
             </div>

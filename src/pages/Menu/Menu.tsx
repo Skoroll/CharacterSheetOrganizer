@@ -4,6 +4,7 @@ import { BeatLoader } from "react-spinners";
 import defaultImg from "../../assets/person-placeholder-5.webp";
 import "../../components/ModalContent/Character/CharacterList.scss";
 import "./Menu.scss";
+{/*import borderTest from "../../assets/Border/b6c4d595-6162-4008-888b-615403828be4.png"*/}
 
 interface Character {
   _id: string;
@@ -141,6 +142,7 @@ export default function Menu() {
                 <div className="character__inside">
                   <div className="character__inside--stats"></div>
                   <div className="character__inside--image">
+                    {/*<img style={{position: "absolute", zIndex: "801", width: "105px", height: "95px"}} src={borderTest} className="bordering" alt="" />*/}
                     <img
                       src={
                         character?.image

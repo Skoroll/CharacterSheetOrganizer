@@ -3,8 +3,6 @@ import axios from "axios";
 import "./Account.scss";
 
 export default function ManageAccount() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const API_URL = import.meta.env.VITE_API_URL;
@@ -16,17 +14,17 @@ export default function ManageAccount() {
       const response = await fetch(`${API_URL}/api/user/delete`, {
         method: "DELETE",
         headers: {
-          "Authorization": `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-  
+
       if (!response.ok) {
         throw new Error("Erreur lors de la suppression du compte");
       }
-  
+
       setMessage("Compte supprimé avec succès !");
       setError(null);
-  
+
       // Déconnexion après suppression
       localStorage.removeItem("token");
       window.location.href = "/"; // Redirige l'utilisateur
@@ -39,27 +37,43 @@ export default function ManageAccount() {
 
   function areYouSure() {
     // Affiche un message de confirmation
-    const confirmed = window.confirm("Vous êtes sûr de vouloir supprimer votre compte ?");
+    const confirmed = window.confirm(
+      "Vous êtes sûr de vouloir supprimer votre compte ?"
+    );
     if (confirmed) {
       // Appelle handleDelete() sans argument
-      handleDelete(); 
+      handleDelete();
     }
   }
-  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("email", email);
-    formData.append("password", password);
-    formData.append("oldPassword", oldPassword);
-  
+
+    if (password.length < 6) {
+      setError("Le mot de passe doit contenir au moins 6 caractères.");
+      return;
+    }
+
     try {
-      await axios.put(`${API_URL}/api/users/update`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-  
+      const response = await axios.put(
+        `${API_URL}/api/users/update`,
+        {
+          password,
+          oldPassword,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (response.data?.message) {
+        setMessage(response.data.message);
+      } else {
+        setMessage("Compte mis à jour avec succès !");
+      }
       setMessage("Compte mis à jour avec succès !");
       setError(null);
     } catch (err) {
@@ -67,7 +81,6 @@ export default function ManageAccount() {
       setMessage(null);
     }
   };
-  
 
   return (
     <div className="manage-account">
@@ -75,28 +88,6 @@ export default function ManageAccount() {
       {message && <p className="success">{message}</p>}
 
       <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <div>
-          <label htmlFor="name">Pseudonyme  :</label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-
-        <div>
-          <label htmlFor="email">Email :</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-
         <div>
           <label htmlFor="oldPassword">Ancien mot de passe :</label>
           <input
@@ -119,10 +110,16 @@ export default function ManageAccount() {
           />
         </div>
 
-        <button type="submit" className="validate">Mettre à jour</button>
-        
+        <button
+          type="submit"
+          className="validate"
+          disabled={!oldPassword || !password}
+        >
+          Mettre à jour
+        </button>
+
         {/* Changer l'onClick pour appeler la fonction de confirmation */}
-        <button 
+        <button
           type="button" // Le bouton ne doit pas soumettre le formulaire
           className="dangerous"
           onClick={areYouSure} // Passe la fonction sans les parenthèses
