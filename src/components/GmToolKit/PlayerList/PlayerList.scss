@@ -2,6 +2,11 @@
 
 .table-user {
 
+    &--no-player {
+        padding: $spacing-medium;
+        font-weight: 600
+        
+    }
 
     &__buttons {
         @include flex-row;

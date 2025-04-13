@@ -1,9 +1,13 @@
 import React, { createContext, useContext, useState } from "react";
 
-// ➕ Déclare les modales que tu veux contrôler globalement
+// Déclare les modales que tu veux contrôler globalement
 interface ModalContextProps {
   showLeaveModal: boolean;
   showCreateTableModal: boolean;
+  showJoinTableModal: boolean; // ✅ AJOUT
+  joinTableData: { tableId: string; gameMasterId: string; game: string } | null;
+  openJoinTableModal: (data: { tableId: string; gameMasterId: string; game: string }) => void;
+  closeJoinTableModal: () => void;
   openLeaveModal: () => void;
   closeLeaveModal: () => void;
   openCreateTableModal: () => void;
@@ -20,25 +24,39 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [showCreateTableModal, setShowCreateTableModal] = useState(false);
   const openLeaveModal = () => setShowLeaveModal(true);
   const closeLeaveModal = () => setShowLeaveModal(false);
-  
+  const [showJoinTableModal, setShowJoinTableModal] = useState(false);
+  const [joinTableData, setJoinTableData] = useState<ModalContextProps["joinTableData"]>(null);
   const openCreateTableModal = () => setShowCreateTableModal(true); // ✅ AJOUT
   const closeCreateTableModal = () => setShowCreateTableModal(false); // ✅ AJOUT
+  const openJoinTableModal = (data: { tableId: string; gameMasterId: string; game: string }) => {
+    setJoinTableData(data);
+    setShowJoinTableModal(true);
+  };
   
+  
+  const closeJoinTableModal = () => {
+    setJoinTableData(null);
+    setShowJoinTableModal(false);
+  };
 
   return (
-    <ModalContext.Provider
+<ModalContext.Provider
   value={{
     showLeaveModal,
-    showCreateTableModal, // ✅
+    showCreateTableModal,
+    showJoinTableModal,
+    joinTableData,
     openLeaveModal,
     closeLeaveModal,
-    openCreateTableModal, // ✅
-    closeCreateTableModal // ✅
+    openCreateTableModal,
+    closeCreateTableModal,
+    openJoinTableModal,
+    closeJoinTableModal
   }}
 >
+  {children}
+</ModalContext.Provider>
 
-      {children}
-    </ModalContext.Provider>
   );
 };
 

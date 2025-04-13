@@ -1,16 +1,20 @@
 import { useModal } from "../../../Context/ModalContext";
 
 export default function NewGame() {
-  const { openLeaveModal, openCreateTableModal } = useModal(); // ✅
+  const { openLeaveModal, openCreateTableModal, openJoinTableModal } = useModal(); 
 
   const menuOptions = [
     {
       name: "Créer une partie",
-      action: openCreateTableModal, // ✅
+      action: openCreateTableModal, 
     },
     {
       name: "Rejoindre une partie",
-      action: () => window.location.href = "/rejoindre", // tu peux naviguer ou ouvrir une autre modale
+      action: () => openJoinTableModal({
+        tableId: "tableIdExemple",
+        gameMasterId: "gmIdExemple",
+        game: "Aria"
+      }),
     },
     {
       name: "Quitter une table",

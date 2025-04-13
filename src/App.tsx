@@ -13,7 +13,6 @@ import Legal from "./pages/Legal/Legal.js";
 import NewsPage from "./pages/Articles/News";
 import NotFound from "./pages/NotFound/NotFound.js";
 import PreviousGame from "./components/PreviousGame/PreviousGame.js";
-import TableTopBrowse from "./components/ModalContent/ModalTabletop/TableTopBrowse/TableTopBrowse.js";
 import Tabletop from "./pages/Tabletop/Tabletop";
 import ResetPassword from "./components/ResetPassword/ResetPassword.js";
 import { UserProvider } from "./Context/UserContext";
@@ -58,7 +57,6 @@ function App() {
                   <Route path="*" element={<NotFound />} />
                   <Route path="/news" element={<NewsPage />} />
                   <Route path="/tutoriel" element={<Blog />} />
-                  <Route path="/rejoindre" element={<TableTopBrowse />} />
                   <Route path="/partie-precedentes" element={<PreviousGame />}/>
                 </Routes>
               <GlobalModals />

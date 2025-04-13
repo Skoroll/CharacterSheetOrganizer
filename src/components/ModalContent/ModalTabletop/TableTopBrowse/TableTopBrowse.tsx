@@ -3,9 +3,11 @@ import { BeatLoader } from "react-spinners";
 import Modal from "../../../Modal/Modal";
 import TableSearch from "./TableSearch";
 import TabletopJoin from "../TabletopJoin/TabletopJoin";
+import ToolTip from "../../../Tooltip/Tooltip";
 import { Table } from "../../../../types/Table";
 import "./TableTopBrowse.scss";
-import placeHolderImg from "../../../../assets/dice-solid.svg";
+
+
 
 export default function TableTopBrowse() {
   const [tables, setTables] = useState<Table[]>([]);
@@ -17,7 +19,7 @@ export default function TableTopBrowse() {
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const tablesPerPage = 5; // Nombre de tables par page
+  const tablesPerPage = 3; // Nombre de tables par page
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -80,7 +82,6 @@ export default function TableTopBrowse() {
 
   return (
     <div className="tabletop-browse">
-      <h2>Toutes les tables</h2>
       <TableSearch onSearch={handleSearch} />
 
       {loading && <BeatLoader />}
@@ -97,19 +98,6 @@ export default function TableTopBrowse() {
             {currentTables.map((table) => (
               <li key={table._id}>
                 <button onClick={() => handleJoinTable(table._id)}>
-                  <div className="table-banner">
-                    <img
-                      src={
-                        table.bannerImage?.startsWith("http")
-                          ? table.bannerImage
-                          : `${API_URL}${table.bannerImage}`
-                      }
-                      alt={table.name}
-                      onError={(e) => {
-                        e.currentTarget.src = `${placeHolderImg}`;
-                      }}
-                    />
-                  </div>
                   <div className="table-infos">
                     <p className="table-infos--name">{table.name}</p>
                     <p>
@@ -118,7 +106,7 @@ export default function TableTopBrowse() {
                     </p>
                     <p>
                       <span>Jeu : {table.game}</span> <br />
-                      Maitre de jeu : <span>{table.gameMasterName}</span>
+                      <span>MJ : {table.gameMasterName}</span>
                     </p>
                   </div>
                   <div className="tabletop-browse__btn"></div>

@@ -114,6 +114,10 @@ export default function PlayerList({ players, tableId }: PlayerListProps) {
     };
   }, [socket]);
 
+  if(playerList.length ===0){
+    return(<p className="gm-tool table- user table-user--no-player">Pas encore de joueurs à cette table.</p>)
+  }
+
   return (
     <div className="gm-tool table-user">
       <p>Liste des joueurs</p>
