@@ -3,7 +3,6 @@ import { BeatLoader } from "react-spinners";
 import Modal from "../../../Modal/Modal";
 import TableSearch from "./TableSearch";
 import TabletopJoin from "../TabletopJoin/TabletopJoin";
-import ToolTip from "../../../Tooltip/Tooltip";
 import { Table } from "../../../../types/Table";
 import "./TableTopBrowse.scss";
 
@@ -100,10 +99,10 @@ export default function TableTopBrowse() {
                 <button onClick={() => handleJoinTable(table._id)}>
                   <div className="table-infos">
                     <p className="table-infos--name">{table.name}</p>
-                    <p>
-                      <i className="fa-regular fa-user"></i>{" "}
-                      {table.players?.length || 0}
-                    </p>
+                      <p>
+                          <i className="fa-regular fa-user"></i>{" "}
+                          {table.players?.length || 0}
+                      </p>
                     <p>
                       <span>Jeu : {table.game}</span> <br />
                       <span>MJ : {table.gameMasterName}</span>

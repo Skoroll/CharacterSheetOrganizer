@@ -252,6 +252,7 @@
     justify-content: center;
     gap: $spacing-large;
     background: $background-dark;
+    z-index: 201;
 
     position: sticky;
     padding: $spacing-medium;

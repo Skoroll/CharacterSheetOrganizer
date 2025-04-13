@@ -21,8 +21,13 @@ main {
   position: relative;
   margin-top: 110px;
 
-  @include media-query($breakpoint-sm, "max") {
+  
+  @include media-query($breakpoint-md, "max") {
     margin-top: 185px;
+  }
+  @include media-query($breakpoint-xs, "max") {
+    margin-top: 215px;
+
   }
 }
 

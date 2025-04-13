@@ -74,11 +74,11 @@ export default function Header() {
       <ul className="tutorial-menu">
         <li
           onClick={() => {
-            navigate("/tutoriel#general"); // ✅ correspond à "Le site"
+            navigate("/tutoriel#general"); // ✅ correspond à "L'application"
             setIsTutorialMenuOpen(false);
           }}
         >
-          Le site
+          L'application
         </li>
         <li
           onClick={() => {
