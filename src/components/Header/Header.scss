@@ -8,6 +8,9 @@
   min-height: 80px;
 
   .auth-btn {
+    position: absolute;
+    top: $spacing-small;
+    right: $spacing-small;
     @include button;
     height: 35px;
     margin: auto $spacing-small;

@@ -343,7 +343,7 @@ const ItemListing: React.FC<ItemListingProps> = ({ tableId, game }) => {
                     <h4>{item.name}</h4>
                   </div>
                   <p>
-                    <strong>Prix :</strong> {item.price} 🪙
+                    <strong>Prix :</strong> {item.price}
                   </p>
                   {renderItemDetails(item, cat.type)}
                 </div>

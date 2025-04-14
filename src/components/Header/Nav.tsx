@@ -69,7 +69,7 @@ export default function Nav({ className, toggleNav }: NavProps) {
   ];
 
   const tableOptions: Option[] = [
-    { label: "Créer une table de jeu", component: <TabletopCreation /> },
+    { label: "Créer une table de jeu", component: <TabletopCreation onCreated={() => {}} /> },
     { label: "Rejoindre une table", component: <TableTopBrowse /> },
   ];
 

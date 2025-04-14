@@ -96,10 +96,18 @@
     .npc-card {
       position: relative;
 
+      &:hover {
+        p{
+          opacity: 0;
+        }
+      }
+
       img {
         border-radius: $spacing-small;
         width: 100px;
         height: 100px;
+
+
       }
 
       p {
@@ -112,6 +120,8 @@
         background: rgba(22, 22, 22, 0.349);
         box-sizing: border-box;
         border-radius: 0 0 $spacing-small $spacing-small;
+        opacity: 1;
+        transition: all 0.3s;
       }
     }
   }
