@@ -198,7 +198,7 @@ export default function MediaDisplay({
         <NpcDetailsModal
           npc={selectedNpc}
           onClose={() => setSelectedNpc(null)}
-          isGameMaster={isGameMaster}
+          
         />
       )}
     </div>

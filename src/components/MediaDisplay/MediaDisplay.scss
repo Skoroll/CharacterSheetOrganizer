@@ -93,8 +93,10 @@
     top: 40px;
     position: absolute;
     overflow: auto;
+    
     .npc-card {
       position: relative;
+      cursor: pointer;
 
       &:hover {
         p{
