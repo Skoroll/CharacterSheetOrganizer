@@ -2,9 +2,10 @@
 
 .main-menu {
     @include flex-col;
+    z-index: 850;
     gap: $spacing-medium;
     background: $background-color ;
-    z-index: 800;
+    z-index: 950;
     position: absolute;
     right: 15px;
     top: 55px;

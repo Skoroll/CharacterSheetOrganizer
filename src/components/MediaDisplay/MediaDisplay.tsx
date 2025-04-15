@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+import NpcDetailsModal from "../GmToolKit/Npcs/NpcDetailsModal";
 import { io } from "socket.io-client";
 import "./MediaDisplay.scss";
-
+import { Npc } from "../../types/Npc";
 interface MediaDisplayProps {
   tableId: string;
   API_URL: string;
@@ -19,7 +20,7 @@ export default function MediaDisplay({
   const [font, setFont] = useState("inherit");
   const [color, setColor] = useState("#000000");
   const [isBG, setIsBG] = useState(true);
-
+  const [selectedNpc, setSelectedNpc] = useState<Npc | null>(null);
   const socketRef = useRef(io(API_URL, { autoConnect: false }));
   const containerRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -142,8 +143,12 @@ export default function MediaDisplay({
           />
 
           <div className="zoom-controls">
-            <button onClick={() => setZoom((z) => Math.min(z + 0.1, 5))}>+</button>
-            <button onClick={() => setZoom((z) => Math.max(z - 0.1, 0.1))}>-</button>
+            <button onClick={() => setZoom((z) => Math.min(z + 0.1, 5))}>
+              +
+            </button>
+            <button onClick={() => setZoom((z) => Math.max(z - 0.1, 0.1))}>
+              -
+            </button>
           </div>
         </div>
       ) : displayedText ? (
@@ -160,8 +165,14 @@ export default function MediaDisplay({
       {npcsToDisplay.length > 0 && (
         <div className="npc-display-list">
           {npcsToDisplay.map((npc, index) => (
-            <div key={index} className="npc-card">
-              {npc.image && <img src={npc.image} alt={npc.name} className="npc-img" />}
+            <div
+              key={index}
+              className="npc-card"
+              onClick={() => setSelectedNpc(npc)}
+            >
+              {npc.image && (
+                <img src={npc.image} alt={npc.name} className="npc-img" />
+              )}
               <p>{npc.name}</p>
             </div>
           ))}
@@ -175,11 +186,21 @@ export default function MediaDisplay({
           </button>
         )}
         {npcsToDisplay.length > 0 && isGameMaster && (
-          <button className="remove-npc-btn" onClick={() => setNpcsToDisplay([])}>
+          <button
+            className="remove-npc-btn"
+            onClick={() => setNpcsToDisplay([])}
+          >
             <i className="fa-solid fa-users-slash" />
           </button>
         )}
       </div>
+      {selectedNpc && (
+        <NpcDetailsModal
+          npc={selectedNpc}
+          onClose={() => setSelectedNpc(null)}
+          isGameMaster={isGameMaster}
+        />
+      )}
     </div>
   );
 }

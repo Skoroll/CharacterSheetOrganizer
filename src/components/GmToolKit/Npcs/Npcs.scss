@@ -83,31 +83,61 @@
     }
 }
     .npc {
-        
-        width: 45%;
+        position: relative;
+        @include flex-col;
+        width: 110px;
         padding: $spacing-small;
+        gap: $spacing-small;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.3s;
 
-        p, h2 {
+        &:hover {
+            border: 1px solid;
+            border-radius: $spacing-small;
+        }
+
+        h2 {
+            position: absolute;
+            padding: calc($spacing-small / 2);
+            background: rgba(0, 0, 0, 0.699);
+            width: 102px;
+            @include flex-row;
+            flex-direction: row-reverse;
+            justify-content: left;
+            gap: $spacing-small;
+            margin: 0;
+            font-size: 13px;
+            border-radius: $spacing-small $spacing-small 0 0;
+            
+        }
+        
+        &__image {
+            margin: auto;
+            width: 100%;
+        }
+
+        &__btns {
             @include flex-row;
             justify-content: space-between;
-            align-items: baseline;
-            margin: $spacing-small 0;
-        }
-        
-        &__stats {
-            @include flex-col;
-            gap: $spacing-medium;
         }
 
-        &__stats, &__items {
+        .show-btn {
+            width: 50px;
+        }
+
+
+    }
+}
+
+
+.modal__inside--content {
+    .npc-details {
+        &--first-block {
+            @include flex-row;
+            justify-content: space-between;
             ul {
                 @include ul-base;
-    
-                li {
-                    @include flex-col;
-                    justify-content: space-between;
-                    min-width: 100px
-                }
             }
         }
     }

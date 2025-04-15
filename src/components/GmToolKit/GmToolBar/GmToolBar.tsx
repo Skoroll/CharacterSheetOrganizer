@@ -101,7 +101,7 @@ const GmToolBar: React.FC<GmToolBarProps> = ({
       )}
 
       {/* Affichage des panneaux */}
-      {activePanel === "npcs" && <Npcs tableId={tableId} />}
+      {activePanel === "npcs" && <Npcs tableId={tableId} isGameMaster={isGameMaster}/>}
       {activePanel === "sendDocs" && <SendDocs />}
       {activePanel === "playerList" && <PlayerList players={players} tableId={tableId} isGameMaster={isGameMaster}/>}
       {activePanel === "soundBoard" && <SoundBoard />}

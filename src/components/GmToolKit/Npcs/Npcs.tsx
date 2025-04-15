@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Modal from "../../Modal/Modal";
+import NpcDetailsModal from "./NpcDetailsModal";
 import { BeatLoader } from "react-spinners";
 import { io } from "socket.io-client";
 import "./Npcs.scss";
@@ -20,13 +21,16 @@ interface Npc {
   tableId?: string;
   image?: string | File | null;
   location?: string;
+  isGameMaster?: boolean;
 }
 
 interface NpcsProps {
   tableId: string;
+  isGameMaster?: boolean;
 }
 
-export default function Npcs({ tableId }: NpcsProps) {
+export default function Npcs({ tableId, isGameMaster }: NpcsProps) {
+  const [selectedNpc, setSelectedNpc] = useState<Npc | null>(null);
   const sentNpcIds = useRef<Set<string>>(new Set());
   const API_URL = import.meta.env.VITE_API_URL;
   const socketRef = useRef(io(API_URL, { autoConnect: false }));
@@ -36,15 +40,7 @@ export default function Npcs({ tableId }: NpcsProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
-
-  const categories = [
-    { label: "+ Nouveau PNJ", key: "new" },
-    { label: "Amicaux", key: "friendly" },
-    { label: "Hostiles", key: "hostile" },
-  ];
-
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [npcData, setNpcData] = useState<Npc>({
+  const initialNpcData: Npc = {
     _id: "",
     type: "Friendly",
     image: null,
@@ -59,7 +55,17 @@ export default function Npcs({ tableId }: NpcsProps) {
     specialSkills: [],
     story: "",
     tableId: tableId || "",
-  });
+    location: "",
+  };
+
+  const categories = [
+    { label: "+ Nouveau PNJ", key: "new" },
+    { label: "Amicaux", key: "friendly" },
+    { label: "Hostiles", key: "hostile" },
+  ];
+
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [npcData, setNpcData] = useState<Npc>(initialNpcData);
 
   // Mapping des noms de stats en anglais -> français
   const statLabels: { [key: string]: string } = {
@@ -73,11 +79,12 @@ export default function Npcs({ tableId }: NpcsProps) {
   const validateNpcData = () => {
     if (!npcData.name.trim()) return "Le nom du PNJ est requis.";
     if (npcData.age <= 0) return "L'âge doit être supérieur à 0.";
-    if (npcData.inventory.some(item => !item.item.trim())) return "Chaque objet d'inventaire doit avoir un nom.";
-    if (npcData.specialSkills.some(skill => !skill.name.trim())) return "Chaque compétence spéciale doit avoir un nom.";
+    if (npcData.inventory.some((item) => !item.item.trim()))
+      return "Chaque objet d'inventaire doit avoir un nom.";
+    if (npcData.specialSkills.some((skill) => !skill.name.trim()))
+      return "Chaque compétence spéciale doit avoir un nom.";
     return null;
   };
-  
 
   useEffect(() => {
     if (!socketRef.current.connected) {
@@ -218,7 +225,7 @@ export default function Npcs({ tableId }: NpcsProps) {
       setIsErrorModalOpen(true);
       return;
     }
-  
+
     try {
       const formData = new FormData();
       formData.append("tableId", tableId);
@@ -234,25 +241,26 @@ export default function Npcs({ tableId }: NpcsProps) {
       formData.append("inventory", JSON.stringify(npcData.inventory));
       formData.append("specialSkills", JSON.stringify(npcData.specialSkills));
       formData.append("story", npcData.story);
-  
+
       if (npcData.image instanceof File) {
         formData.append("image", npcData.image);
       }
-  
+
       const response = await fetch(`${API_URL}/api/npcs`, {
         method: "POST",
         body: formData,
       });
-  
+
       if (!response.ok) throw new Error("Erreur lors de la création du PNJ.");
-  
+
+      setNpcData(initialNpcData);
       fetchNpcs();
     } catch (error) {
       setErrorMessage("Une erreur est survenue lors de la création du PNJ.");
       setIsErrorModalOpen(true);
     }
   };
-  
+
   return (
     <div className="npcs gm-tool">
       <div className="npcs__bar">
@@ -420,16 +428,12 @@ export default function Npcs({ tableId }: NpcsProps) {
           ) : filteredNpcs.length > 0 ? (
             <ul className="npcs__scroll">
               {filteredNpcs.map((npc) => (
-                <li key={npc._id} className="npc">
-                  <h2>
-                    {npc.name}
-                    <button
-                      onClick={() => handleDeleteNpc(npc._id)}
-                      className="delete-btn"
-                    >
-                      <i className="fa-solid fa-trash"></i>
-                    </button>
-                  </h2>
+                <li
+                  key={npc._id}
+                  className="npc"
+                  onClick={() => setSelectedNpc(npc)}
+                >
+                  <h2>{npc.name}</h2>
                   {npc.image && typeof npc.image === "string" && (
                     <img
                       src={npc.image}
@@ -440,61 +444,33 @@ export default function Npcs({ tableId }: NpcsProps) {
                       style={{ borderRadius: "6px", objectFit: "cover" }}
                     />
                   )}
-                  <button
-                    className="show-btn"
-                    title="Afficher ce PNJ"
-                    onClick={() => {
-                      if (!sentNpcIds.current.has(npc._id)) {
-                        socketRef.current.emit("sendNpcToDisplay", {
-                          ...npc,
-                          tableId,
-                        });
-                        sentNpcIds.current.add(npc._id);
-                      }
-                    }}
-                  >
-                    <i className="fa-solid fa-arrow-up-right-from-square"></i>
-                  </button>
-
-                  <p>{npc.age} ans</p>
-                  <div className="npc__stats">
-                    <ul>
-                      <li>
-                        Force: <span>{npc.strength}</span>
-                      </li>
-                      <li>
-                        Dexterité: <span>{npc.dexterity}</span>
-                      </li>
-                      <li>
-                        Endurance: <span>{npc.endurance}</span>
-                      </li>
-                      <li>
-                        Intelligence: <span>{npc.intelligence}</span>
-                      </li>
-                      <li>
-                        Charisme: <span>{npc.charisma}</span>
-                      </li>
-                    </ul>
-                    <ul>
-                      {npc.specialSkills.map((skill, index) => (
-                        <li key={index}>
-                          {skill.name} | <span>{skill.score}</span>
-                        </li>
-                      ))}
-                    </ul>
+                  <div className="npc__btns">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteNpc(npc._id);
+                      }}
+                      className="delete-btn"
+                    >
+                      <i className="fa-solid fa-trash"></i>
+                    </button>
+                    <button
+                      className="show-btn"
+                      title="Afficher ce PNJ"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (!sentNpcIds.current.has(npc._id)) {
+                          socketRef.current.emit("sendNpcToDisplay", {
+                            ...npc,
+                            tableId,
+                          });
+                          sentNpcIds.current.add(npc._id);
+                        }
+                      }}
+                    >
+                      <i className="fa-solid fa-arrow-up-right-from-square"></i>
+                    </button>
                   </div>
-                  <div className="npc__items">
-                    <p>Inventaire</p>
-                    <ul>
-                      {npc.inventory.map((item, index) => (
-                        <li key={index}>
-                          {" "}
-                          {item.item} <span>{item.quantity}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <p>{npc.story}</p>
                 </li>
               ))}
             </ul>
@@ -505,11 +481,17 @@ export default function Npcs({ tableId }: NpcsProps) {
         </div>
       )}
       {isErrorModalOpen && errorMessage && (
-  <Modal title="Erreur" onClose={() => setIsErrorModalOpen(false)}>
-    <p>{errorMessage}</p>
-  </Modal>
-)}
-
+        <Modal title="Erreur" onClose={() => setIsErrorModalOpen(false)}>
+          <p>{errorMessage}</p>
+        </Modal>
+      )}
+      {selectedNpc && (
+        <NpcDetailsModal
+          npc={selectedNpc}
+          onClose={() => setSelectedNpc(null)}
+          isGameMaster={isGameMaster}
+        />
+      )}
     </div>
   );
 }
