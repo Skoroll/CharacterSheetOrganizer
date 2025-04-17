@@ -54,8 +54,8 @@ export default function TableComponent() {
   const [isComOpen, setIsComOpen] = useState(false);
   const tableBG = table?.tableBG || "";
   const currentPlayer = table?.players.find(
-    (player) => player.userId === user?._id
-  );  
+    (player) => player.userId === user._id
+  );
   const selectedCharacterId = currentPlayer?.selectedCharacter || null;
   const [activePanel, setActivePanel] = useState<
     | "npcs"
@@ -226,6 +226,8 @@ export default function TableComponent() {
       fetchTable();
     }, [fetchTable]);
 
+    
+
     useEffect(() => {
       socket.on("refreshPlayers", () => {
         fetchTable(); // fonction que tu as déjà pour re-fetch la table
@@ -258,11 +260,11 @@ export default function TableComponent() {
     };
     
     useEffect(() => {
-      if (id && !isGameMaster) {
-        fetchPlayersAndSetCharacterName();
-      }
-    }, [id, isGameMaster]);
-    
+  if (id && !isGameMaster) {
+    fetchPlayersAndSetCharacterName();
+  }
+}, [id, isGameMaster]);
+
 
     useEffect(() => {
       socket.on("refreshTableStyle", () => {
@@ -283,8 +285,6 @@ export default function TableComponent() {
       );
     if (error) return <p>Erreur : {error}</p>;
     if (!table) return <p>Table non trouvée.</p>;
-
-    
 
     return (
       <div className="table">
