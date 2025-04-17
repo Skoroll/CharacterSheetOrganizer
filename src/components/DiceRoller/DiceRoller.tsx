@@ -4,6 +4,7 @@ import "./DiceRoller.scss";
 // Liste des types de dés
 const diceTypes = {
   d2: 2,
+  d3: 3,
   d4: 4,
   d6: 6,
   d8: 8,

@@ -1,19 +1,17 @@
 import { useEffect, useState, useMemo } from "react";
+import { useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
 import { MessageType } from "../../types/Messages";
 import Banner from "../../components/Banner/Banner";
-import Chat from "../../components/Chat/Chat";
-import DiceRoller from "../../components/DiceRoller/DiceRoller";
 import GmToolBar from "../../components/GmToolKit/GmToolBar/GmToolBar";
 import MediaDisplay from "../../components/MediaDisplay/MediaDisplay";
-import { useCallback } from "react";
 import NotesPanel from "../../components/NotesPanel/NotesPannel";
-
 import PlayerAtTable from "../../components/PlayersAtTable/PlayerAtTable";
+import SidePanel from "../../components/SidePannel/SidePannel";
 import SoundPlayer from "../../components/SoundPlayer/SoundPlayer";
-import { useUser } from "../../Context/UserContext"; // Utilisation du context
-import { io } from "socket.io-client"; // Importer io pour utiliser Socket.io
+import { useUser } from "../../Context/UserContext";
+import { io } from "socket.io-client";
 import "./Tabletop.scss";
 
 interface Table {
@@ -44,6 +42,7 @@ interface Player {
 export default function TableComponent() {
   const { id } = useParams();
   const [error, setError] = useState<string | null>(null);
+  
   const [table, setTable] = useState<Table | null>(null);
   const [loading, setLoading] = useState(true);
   const [isGameMaster, setIsGameMaster] = useState(false);
@@ -55,8 +54,8 @@ export default function TableComponent() {
   const [isComOpen, setIsComOpen] = useState(false);
   const tableBG = table?.tableBG || "";
   const currentPlayer = table?.players.find(
-    (player) => player.userId === user._id
-  );
+    (player) => player.userId === user?._id
+  );  
   const selectedCharacterId = currentPlayer?.selectedCharacter || null;
   const [activePanel, setActivePanel] = useState<
     | "npcs"
@@ -237,6 +236,34 @@ export default function TableComponent() {
       };
     }, [socket, fetchTable]);
 
+    const fetchPlayersAndSetCharacterName = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/tabletop/tables/${id}/players`);
+        if (!response.ok) throw new Error("Impossible de récupérer les joueurs");
+    
+        const players = await response.json();
+    
+        const current = players.find((p: any) => p.userId === user._id);
+    
+        const charName =
+          current?.selectedCharacter?.name || "Anonyme";
+    
+        setUser((prevUser) => ({
+          ...prevUser,
+          selectedCharacterName: isGameMaster ? "Maître du jeu" : charName,
+        }));
+      } catch (err) {
+        console.error("❌ Erreur chargement des joueurs :", err);
+      }
+    };
+    
+    useEffect(() => {
+      if (id && !isGameMaster) {
+        fetchPlayersAndSetCharacterName();
+      }
+    }, [id, isGameMaster]);
+    
+
     useEffect(() => {
       socket.on("refreshTableStyle", () => {
         fetchTable(); // recharge les infos de la table (et donc le style)
@@ -256,6 +283,8 @@ export default function TableComponent() {
       );
     if (error) return <p>Erreur : {error}</p>;
     if (!table) return <p>Table non trouvée.</p>;
+
+    
 
     return (
       <div className="table">
@@ -334,33 +363,16 @@ export default function TableComponent() {
           </button>
 
           {isComOpen && (
-            <div className="table-side-pannel">
-              <DiceRoller
-                socket={socket}
-                tableId={table._id}
-                userCharacterName={
-                  isGameMaster
-                    ? "Maître de jeu"
-                    : user.selectedCharacterName ||
-                      "Nom de personnage non défini"
-                }
-                userPseudo={user.userPseudo}
-              />
+            <SidePanel
+  socket={socket}
+  tableId={table._id}
+  userCharacterName={isGameMaster ? "Maître du jeu" : user.selectedCharacterName!}
+  userPseudo={user.userPseudo}
+  isGameMaster={isGameMaster}
+  messages={messages}
+  setMessages={setMessages}
+/>
 
-              <Chat
-                messages={messages}
-                setMessages={setMessages}
-                tableId={table._id}
-                socket={socket}
-                userCharacterName={
-                  isGameMaster
-                    ? "Maître de jeu"
-                    : user.selectedCharacterName ||
-                      "Nom de personnage non défini"
-                }
-                userPseudo={user.userPseudo}
-              />
-            </div>
           )}
         </div>
       </div>

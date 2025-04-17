@@ -89,11 +89,14 @@
 }
 
 .gallery {
+
   ul {
     @include ul-base;
     @include flex-wrap;
-    width: 100%;
+    width: 380px;
     gap: $spacing-small;
+    overflow-y: auto;
+    max-height: 345px;
 
     li {
       @include flex-col;

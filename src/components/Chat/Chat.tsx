@@ -9,7 +9,9 @@ interface ChatProps {
   messages: ChatMessage[];
   setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;  
   socket: any;
+  isGameMaster: boolean;
 }
+
 
 type ChatMessage = MessageType & { animate?: boolean };
 
@@ -19,6 +21,7 @@ const Chat = ({
   tableId,
   messages,
   setMessages,
+  isGameMaster,
   socket,
 }: ChatProps) => {
   const [inputValue, setInputValue] = useState("");
@@ -90,12 +93,13 @@ const Chat = ({
     if (!inputValue.trim()) return;
 
     const newMessage: Omit<MessageType, "_id"> = {
-      // Ne met pas de `_id` temporaire
       message: inputValue,
-      characterName: userCharacterName,
+      characterName: isGameMaster ? "Maître du jeu" : userCharacterName,
       senderName: userPseudo,
       tableId,
     };
+    
+    console.log("Message à envoyer :", newMessage);
 
     try {
       const response = await fetch(`${API_URL}/api/chat/postChat`, {

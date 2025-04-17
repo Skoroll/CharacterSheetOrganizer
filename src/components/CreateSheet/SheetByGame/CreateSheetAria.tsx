@@ -62,6 +62,7 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
   const [background, setBackground] = useState("");
   const [pros, setPros] = useState("");
   const [cons, setCons] = useState("");
+  const totalPoints = strength + dexterity + endurance + intelligence + charisma;
 
   const stats = {
     FOR: strength,
@@ -334,6 +335,7 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
                 onChange={(e) => setCharisma(Number(e.target.value))}
               />
             </label>
+            <p>Point dépensé : {totalPoints}</p>
           </div>
         </div>
 
