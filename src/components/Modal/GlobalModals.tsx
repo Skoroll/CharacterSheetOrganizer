@@ -69,7 +69,7 @@ export default function GlobalModals() {
             API_URL={API_URL}
             userId={user._id!}
             onLeave={(tableId) => {
-              fetch(`${API_URL}/api/tabletop/tables/${tableId}/removePlayer/${user._id}`, {
+              fetch(`${API_URL}/api/tabletop/tables/${tableId}/leave/${user._id}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${user.token}` },
               }).then(() => {

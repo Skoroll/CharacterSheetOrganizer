@@ -36,8 +36,11 @@ const TableStyle: React.FC<TableStyleProps> = ({
   useEffect(() => {
     const fetchTable = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/tabletop/tables/${tableId}`);
-        if (!response.ok) throw new Error("Erreur lors de la récupération de la table");
+        const response = await fetch(
+          `${API_URL}/api/tabletop/tables/${tableId}`
+        );
+        if (!response.ok)
+          throw new Error("Erreur lors de la récupération de la table");
         const data = await response.json();
         setTableName(data.name); // 🟢 Récupération du nom
       } catch (error) {
@@ -62,7 +65,7 @@ const TableStyle: React.FC<TableStyleProps> = ({
     e.preventDefault();
 
     const formData = new FormData();
-    if (bannerImage) formData.append("bannerImage", bannerImage);//Image de la bannière
+    if (bannerImage) formData.append("bannerImage", bannerImage); //Image de la bannière
     formData.append("borderWidth", borderWidth); //Largeur de la bordure
     formData.append("borderColor", borderColor); //Couleur du contour de la bannière
     formData.append("bannerStyle", bannerStyle); //Style de la bannière
@@ -101,107 +104,118 @@ const TableStyle: React.FC<TableStyleProps> = ({
       <h2>Style de la table</h2>
       <h3 className={`table-style--name font-${selectedFont}`}>{tableName}</h3>
       <form onSubmit={handleSubmit}>
-        {/* 📌 Upload de l'image */}
-        <div className="table-style__img-prev">
-          <label>
-            Bannière
-            <input className="input-file" type="file" accept="image/*" onChange={handleImageUpload} />
-          </label>
+        <div className="dividing">
+          <div className="banner-form">
+            {/* 📌 Upload de l'image */}
+            <div className="table-style__img-prev">
+              <label>
+                Bannière
+                <input
+                  className="input-file"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                />
+              </label>
 
-          {/* 📌 Prévisualisation de l'image */}
-          {bannerPreview ? (
-            <div
-              className={`banner-preview ${bannerStyle}`}
-              style={{
-                backgroundImage: `url(${bannerPreview})`,
-                borderWidth: borderWidth,
-                borderColor: borderColor,
-                borderStyle: "solid",
-              }}
-            />
-          ) : (
-            <p className="no-img">
-              <i className="fa-solid fa-image" />
-              <br />
-              Ajouter votre image
-            </p>
-          )}
+              {/* 📌 Prévisualisation de l'image */}
+              {bannerPreview ? (
+                <div
+                  className={`banner-preview ${bannerStyle}`}
+                  style={{
+                    backgroundImage: `url(${bannerPreview})`,
+                    borderWidth: borderWidth,
+                    borderColor: borderColor,
+                    borderStyle: "solid",
+                  }}
+                />
+              ) : (
+                <p className="no-img">
+                  <i className="fa-solid fa-image" />
+                  <br />
+                  Ajouter votre image
+                </p>
+              )}
+            </div>
+            <div className="banner-form--right">
+            {/* 📌 Choix du contour */}
+            <label>
+              Contour de la bannière
+              <select
+                value={borderWidth}
+                onChange={(e) => setBorderWidth(e.target.value)}
+              >
+                <option value="0px">Aucune</option>
+                <option value="1px">Petit (1px)</option>
+                <option value="3px">Moyen (3px)</option>
+                <option value="5px">Grand (5px)</option>
+              </select>
+            </label>
+
+            {/* 📌 Couleur du contour */}
+            <label>
+              Couleur du contour
+              <input
+                type="color"
+                value={borderColor}
+                onChange={(e) => setBorderColor(e.target.value)}
+              />
+            </label>
+
+            {/* 📌 Style de la bannière */}
+            <label>
+              Style de la bannière
+              <select
+                value={bannerStyle}
+                onChange={(e) => setBannerStyle(e.target.value)}
+              >
+                <option value="normal">Normal</option>
+                <option value="rounded">Arrondi</option>
+                <option value="shadow">Ombré</option>
+              </select>
+            </label>
+            </div>
+          </div>
+          <div className="bg-and-font">
+            {/* 📌 Choix du background de la table */}
+            <label>
+              Fond de la table
+              <select
+                value={tableBG}
+                onChange={(e) => setTableBG(e.target.value)}
+              >
+                <option value="">Choisir un fond</option>
+                <option value={desertBg}>Désert</option>
+                <option value={forestBg}>Forêt</option>
+                <option value={woodBg}>Bois</option>
+                <option value={stoneBg}>Pierre</option>
+                <option value={ivyStoneBg}>Pierre avec lierre</option>
+                <option value={scrollBg}>Parchemin</option>
+                <option value={seaBg}>Mer</option>
+                <option value={riverBg}>Rivière</option>
+                <option value={mountainBg}>Montagne</option>
+              </select>
+            </label>
+
+            <label>
+              Police du nom :
+              <select
+                value={selectedFont}
+                onChange={(e) => setSelectedFont(e.target.value)}
+              >
+                <option>-Sélectionnez une police-</option>
+                <option value="uncial">Uncial Antiqua</option>
+                <option value="medieval">MedievalSharp</option>
+                <option value="pirata">Pirata One</option>
+                <option value="cinzel">Cinzel Decorative</option>
+                <option value="imfell">IM Fell English</option>
+                <option value="almendra">Almendra SC</option>
+              </select>
+            </label>
+
+            {/* 📌 Bouton de soumission */}
+          </div>
         </div>
-
-        {/* 📌 Choix du contour */}
-        <label>
-          Contour de la bannière
-          <select
-            value={borderWidth}
-            onChange={(e) => setBorderWidth(e.target.value)}
-          >
-            <option value="0px">Aucune</option>
-            <option value="1px">Petit (1px)</option>
-            <option value="3px">Moyen (3px)</option>
-            <option value="5px">Grand (5px)</option>
-          </select>
-        </label>
-
-        {/* 📌 Couleur du contour */}
-        <label>
-          Couleur du contour
-          <input
-            type="color"
-            value={borderColor}
-            onChange={(e) => setBorderColor(e.target.value)}
-          />
-        </label>
-
-        {/* 📌 Style de la bannière */}
-        <label>
-          Style de la bannière
-          <select
-            value={bannerStyle}
-            onChange={(e) => setBannerStyle(e.target.value)}
-          >
-            <option value="normal">Normal</option>
-            <option value="rounded">Arrondi</option>
-            <option value="shadow">Ombré</option>
-          </select>
-        </label>
-
-        {/* 📌 Choix du background de la table */}
-        <label>
-          Fond de la table
-          <select
-            value={tableBG}
-            onChange={(e) => setTableBG(e.target.value)}
-          >
-            <option value="">Choisir un fond</option>
-            <option value={desertBg}>Désert</option>
-            <option value={forestBg}>Forêt</option>
-            <option value={woodBg}>Bois</option>
-            <option value={stoneBg}>Pierre</option>
-            <option value={ivyStoneBg}>Pierre avec lierre</option>
-            <option value={scrollBg}>Parchemin</option>
-            <option value={seaBg}>Mer</option>
-            <option value={riverBg}>Rivière</option>
-            <option value={mountainBg}>Montagne</option>
-          </select>
-        </label>
-
-        <label>
-          Police du nom :
-          <select
-            value={selectedFont}
-            onChange={(e) => setSelectedFont(e.target.value)}
-          >
-            <option>-Sélectionnez une police-</option>
-            <option value="uncial">Uncial Antiqua</option>
-            <option value="medieval">MedievalSharp</option>
-            <option value="pirata">Pirata One</option>
-            <option value="cinzel">Cinzel Decorative</option>
-            <option value="imfell">IM Fell English</option>
-            <option value="almendra">Almendra SC</option>
-          </select>
-        </label>
-
-        {/* 📌 Bouton de soumission */}
         <button type="submit">Définir</button>
       </form>
     </div>

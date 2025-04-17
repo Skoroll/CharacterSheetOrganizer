@@ -15,10 +15,10 @@ interface TabletopJoinProps {
   game: string;
 }
 
-const TabletopJoin = ({ tableId, onClose, gameMasterId, game }: TabletopJoinProps) => {
+
+const TabletopJoin = ({ tableId, onClose, onJoin, gameMasterId, game }: TabletopJoinProps) => {
   const { user } = useUser();
   const { isAuthenticated, _id: userId, userPseudo: playerName, token } = user;
-
   const [characters, setCharacters] = useState<Character[]>([]);
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -102,11 +102,11 @@ const TabletopJoin = ({ tableId, onClose, gameMasterId, game }: TabletopJoinProp
         setHasEnteredPassword(true);
       } catch (err) {
         setError("Mot de passe incorrect.");
-        return; // 🔹 Stoppe la suite si le mot de passe est faux
+        return; // Stoppe la suite si le mot de passe est faux
       }
     }
 
-    // 🔹 Ajouter le joueur après vérification du mot de passe
+    // Ajouter le joueur après vérification du mot de passe
     try {
       const response = await fetch(
         `${API_URL}/api/tabletop/addPlayer/${tableId}`,
@@ -119,7 +119,7 @@ const TabletopJoin = ({ tableId, onClose, gameMasterId, game }: TabletopJoinProp
           body: JSON.stringify({
             userId, // ✅ Correction ici
             playerName,
-            selectedCharacter: selectedCharacter._id, // ✅ On envoie seulement l'ID du personnage
+            selectedCharacter: selectedCharacter._id, // On envoie seulement l'ID du personnage
             password,
           }),
         }
@@ -128,6 +128,8 @@ const TabletopJoin = ({ tableId, onClose, gameMasterId, game }: TabletopJoinProp
       const responseData = await response.json();
 
       if (response.ok) {
+        if (onJoin) onJoin();
+        onClose();
         navigate(`/table/${tableId}`);
       } else {
         setError(responseData.message || "Erreur lors de l'ajout du joueur");

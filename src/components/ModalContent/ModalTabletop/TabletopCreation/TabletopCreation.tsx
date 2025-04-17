@@ -100,6 +100,7 @@ export default function TabletopCreation({ onCreated }: TabletopCreationProps) {
               onChange={(e) => setGame(e.target.value)}
             >
               <option value="Aria">Aria</option>
+              {/*<option value="VTM">Vampire: The Masquerade</option>*/}
             </select>
           </label>
           <button type="submit">Créer la table</button>

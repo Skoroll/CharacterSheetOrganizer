@@ -1,5 +1,6 @@
 import { useState } from "react";
 import CreateSheetAria from "./SheetByGame/CreateSheetAria";
+import CreateSheetVtm from "./SheetByGame/CreateSheetVtm";
 
 export default function CreateSheet() {
   const [selectedGame, setSelectedGame] = useState("");
@@ -16,14 +17,13 @@ export default function CreateSheet() {
           >
             <option value="">-- Sélectionnez un jeu --</option>
             <option value="Aria">Aria</option>
-            {/* Tu pourras ajouter d'autres options ici */}
+            {/*<option value="VTM">Vampire: The Massquerade</option>*/}
           </select>
         </label>
       </div>
 
       {selectedGame === "Aria" && <CreateSheetAria game="Aria" />}
-
-      {/* Plus tard : selectedGame === "Dragon" && <CreateSheetDragon /> */}
+      {selectedGame === "VTM" && <CreateSheetVtm/>}
     </div>
   );
 }

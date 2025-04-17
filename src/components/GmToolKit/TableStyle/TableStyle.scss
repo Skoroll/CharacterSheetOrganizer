@@ -3,14 +3,33 @@
 .table-style {
     padding: 20px;
     border-radius: 8px;
-    width: 300px;
     margin: auto;
     text-align: center;
 
     form {
-        display: flex;
-        flex-direction: column;
+        @include flex-col;
         gap: 10px;
+    }
+
+    .dividing {
+        @include flex-col;
+        gap: $spacing-small;
+    }
+
+    .banner-form {
+        @include flex-row;
+        gap: $spacing-small;
+
+        &--right {
+            @include flex-col;
+            gap: $spacing-small;
+        }
+    }
+
+    .bg-and-font {
+        margin: $spacing-small 0;
+        @include flex-row;
+        justify-content: space-between;
     }
 
     &__img-prev {

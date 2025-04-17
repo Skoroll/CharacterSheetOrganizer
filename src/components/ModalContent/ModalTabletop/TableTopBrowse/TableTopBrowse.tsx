@@ -4,12 +4,14 @@ import Modal from "../../../Modal/Modal";
 import TableSearch from "./TableSearch";
 import TabletopJoin from "../TabletopJoin/TabletopJoin";
 import { Table } from "../../../../types/Table";
+import { useModal } from "../../../../Context/ModalContext";
 import "./TableTopBrowse.scss";
 
 
 
 export default function TableTopBrowse() {
   const [tables, setTables] = useState<Table[]>([]);
+  const { closeJoinTableModal } = useModal();
   const [filteredTables, setFilteredTables] = useState<Table[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -29,6 +31,7 @@ export default function TableTopBrowse() {
 
   const handleJoinSuccess = () => {
     setIsJoinModalOpen(false);
+    closeJoinTableModal();
   };
 
   useEffect(() => {

@@ -194,7 +194,7 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${API_URL}/api/characters/`, {
+      const response = await fetch(`${API_URL}/api/characters/aria`, {
         method: "POST",
         body: formData,
         headers: {
