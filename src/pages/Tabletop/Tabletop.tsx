@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate  } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
 import { MessageType } from "../../types/Messages";
 import Banner from "../../components/Banner/Banner";
@@ -42,7 +42,7 @@ interface Player {
 export default function TableComponent() {
   const { id } = useParams();
   const [error, setError] = useState<string | null>(null);
-  
+  const navigate = useNavigate();
   const [table, setTable] = useState<Table | null>(null);
   const [loading, setLoading] = useState(true);
   const [isGameMaster, setIsGameMaster] = useState(false);
@@ -72,6 +72,13 @@ export default function TableComponent() {
       window.scrollTo(0, 0);
     }, 1000);
   }, []);
+
+  useEffect(() => {
+    if (!user || !user._id) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+  
 
   const refreshTables = async () => {
     try {
