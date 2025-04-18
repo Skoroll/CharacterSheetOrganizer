@@ -52,6 +52,7 @@ export default function TableComponent() {
   const API_URL = import.meta.env.VITE_API_URL;
   const socket = useMemo(() => io(API_URL), [API_URL]);
   const [isComOpen, setIsComOpen] = useState(false);
+  const [isUserChecked, setIsUserChecked] = useState(false);
   const tableBG = table?.tableBG || "";
   const currentPlayer = table?.players.find(
     (player) => player.userId === user._id
@@ -73,11 +74,19 @@ export default function TableComponent() {
     }, 1000);
   }, []);
 
+
   useEffect(() => {
-    if (!user || !user._id) {
+    // On considère que la vérification est terminée une fois que user est défini (même si vide)
+    if (user !== undefined) {
+      setIsUserChecked(true);
+    }
+  }, [user]);
+  
+  useEffect(() => {
+    if (isUserChecked && (!user || !user._id)) {
       navigate("/");
     }
-  }, [user, navigate]);
+  }, [user, isUserChecked, navigate]);
   
 
   const refreshTables = async () => {
