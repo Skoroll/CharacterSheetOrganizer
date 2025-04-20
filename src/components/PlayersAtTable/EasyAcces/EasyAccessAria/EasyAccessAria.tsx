@@ -42,45 +42,76 @@ const EasyAccessAria = ({
         : { playerId, panel }
     );
   };
-
+  const [isEditingGold, setIsEditingGold] = useState(false);
+  const [editedGold, setEditedGold] = useState(character.gold);  
   const [lastDrawnCard, setLastDrawnCard] = useState<string | null>(null);
   const [deathMagicCount, setDeathMagicCount] = useState(
     character.magic?.deathMagicCount ?? 0
   );
 
-const updateDeathMagic = async (character: Character, change: number) => {
-  const current = deathMagicCount;
-  const max = character.magic?.deathMagicMax ?? 0;
-  const newValue = current + change;
-
-  if (newValue < 0 || newValue > max) return;
-
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/characters/${character._id}/update-death-magic`,
-      {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ deathMagicCount: newValue, tableId }),
+  const updateGold = async () => {
+    if (editedGold < 0) return;
+  
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/characters/${character._id}/update-gold`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ gold: editedGold }),
+        }
+      );
+  
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(
+          `Erreur HTTP ${response.status} : ${errorResponse.message}`
+        );
       }
-    );
+  
+      setIsEditingGold(false);
+      character.gold = editedGold; // met à jour localement sans rechargement
+    } catch (error) {
+      console.error("❌ Erreur mise à jour de l'or :", error);
+    }
+  };
+  
 
-    if (!response.ok) {
-      const errorResponse = await response.json();
-      throw new Error(
-        `Erreur HTTP ${response.status}: ${errorResponse.message}`
+  const updateDeathMagic = async (character: Character, change: number) => {
+    const current = deathMagicCount;
+    const max = character.magic?.deathMagicMax ?? 0;
+    const newValue = current + change;
+
+    if (newValue < 0 || newValue > max) return;
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/characters/${
+          character._id
+        }/update-death-magic`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ deathMagicCount: newValue, tableId }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(
+          `Erreur HTTP ${response.status}: ${errorResponse.message}`
+        );
+      }
+
+      const data = await response.json();
+      setDeathMagicCount(data.magic.deathMagicCount); // ✅ met à jour l’état local
+    } catch (error) {
+      console.error(
+        "❌ Erreur mise à jour des points de magie de mort :",
+        error
       );
     }
-
-    const data = await response.json();
-    setDeathMagicCount(data.magic.deathMagicCount); // ✅ met à jour l’état local
-
-  } catch (error) {
-    console.error("❌ Erreur mise à jour des points de magie de mort :", error);
-  }
-};
-
-  
+  };
 
   const updateHealth = async (character: Character, change: number) => {
     const newHealth = character.pointsOfLife + change;
@@ -222,9 +253,39 @@ const updateDeathMagic = async (character: Character, change: number) => {
         </>
       )}
 
-      {isPanelOpen("coins") && (
-        <span className="coins">{character.gold} pièces</span>
-      )}
+{isPanelOpen("coins") && (
+  <div className="coins gold-inline">
+    {isEditingGold ? (
+      <>
+        <input
+          type="number"
+          value={editedGold}
+          onChange={(e) => setEditedGold(Number(e.target.value))}
+          className="gold-input"
+        />
+        <button onClick={updateGold}>
+          <i className="fa-solid fa-check"></i>
+        </button>
+        <button
+          onClick={() => {
+            setEditedGold(character.gold);
+            setIsEditingGold(false);
+          }}
+        >
+          <i className="fa-solid fa-xmark"></i>
+        </button>
+      </>
+    ) : (
+      <>
+        <span>{character.gold} pièces</span>
+        <button onClick={() => setIsEditingGold(true)}>
+          <i className="fa-solid fa-feather-pointed"></i>
+        </button>
+      </>
+    )}
+  </div>
+)}
+
 
       {isPanelOpen("inventory") &&
         (character.inventory.length > 0 ? (
@@ -284,8 +345,8 @@ const updateDeathMagic = async (character: Character, change: number) => {
               <i className="fa-solid fa-chevron-down"></i>
             </button>
             <span>
-            {deathMagicCount} / {character.magic?.deathMagicMax ?? 0}
-</span>
+              {deathMagicCount} / {character.magic?.deathMagicMax ?? 0}
+            </span>
             <button onClick={() => updateDeathMagic(character, 1)}>
               <i className="fa-solid fa-chevron-up"></i>
             </button>

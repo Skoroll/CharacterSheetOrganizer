@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useCallback } from "react";
-import { useParams, useNavigate  } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
 import { MessageType } from "../../types/Messages";
 import Banner from "../../components/Banner/Banner";
@@ -74,20 +74,18 @@ export default function TableComponent() {
     }, 1000);
   }, []);
 
-
   useEffect(() => {
     // On considère que la vérification est terminée une fois que user est défini (même si vide)
     if (user !== undefined) {
       setIsUserChecked(true);
     }
   }, [user]);
-  
+
   useEffect(() => {
     if (isUserChecked && (!user || !user._id)) {
       navigate("/");
     }
   }, [user, isUserChecked, navigate]);
-  
 
   const refreshTables = async () => {
     try {
@@ -242,8 +240,6 @@ export default function TableComponent() {
       fetchTable();
     }, [fetchTable]);
 
-    
-
     useEffect(() => {
       socket.on("refreshPlayers", () => {
         fetchTable(); // fonction que tu as déjà pour re-fetch la table
@@ -256,16 +252,18 @@ export default function TableComponent() {
 
     const fetchPlayersAndSetCharacterName = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/tabletop/tables/${id}/players`);
-        if (!response.ok) throw new Error("Impossible de récupérer les joueurs");
-    
+        const response = await fetch(
+          `${API_URL}/api/tabletop/tables/${id}/players`
+        );
+        if (!response.ok)
+          throw new Error("Impossible de récupérer les joueurs");
+
         const players = await response.json();
-    
+
         const current = players.find((p: any) => p.userId === user._id);
-    
-        const charName =
-          current?.selectedCharacter?.name || "Anonyme";
-    
+
+        const charName = current?.selectedCharacter?.name || "Anonyme";
+
         setUser((prevUser) => ({
           ...prevUser,
           selectedCharacterName: isGameMaster ? "Maître du jeu" : charName,
@@ -274,13 +272,12 @@ export default function TableComponent() {
         console.error("❌ Erreur chargement des joueurs :", err);
       }
     };
-    
-    useEffect(() => {
-  if (id && !isGameMaster) {
-    fetchPlayersAndSetCharacterName();
-  }
-}, [id, isGameMaster]);
 
+    useEffect(() => {
+      if (id && !isGameMaster) {
+        fetchPlayersAndSetCharacterName();
+      }
+    }, [id, isGameMaster]);
 
     useEffect(() => {
       socket.on("refreshTableStyle", () => {
@@ -369,7 +366,7 @@ export default function TableComponent() {
               API_URL={API_URL}
               gameMaster={table.gameMaster}
               selectedCharacterId={selectedCharacterId}
-              game ={table.game}
+              game={table.game}
             />
           </div>
         </div>
@@ -381,15 +378,16 @@ export default function TableComponent() {
 
           {isComOpen && (
             <SidePanel
-  socket={socket}
-  tableId={table._id}
-  userCharacterName={isGameMaster ? "Maître du jeu" : user.selectedCharacterName!}
-  userPseudo={user.userPseudo}
-  isGameMaster={isGameMaster}
-  messages={messages}
-  setMessages={setMessages}
-/>
-
+              socket={socket}
+              tableId={table._id}
+              userCharacterName={
+                isGameMaster ? "Maître du jeu" : user.selectedCharacterName!
+              }
+              userPseudo={user.userPseudo}
+              isGameMaster={isGameMaster}
+              messages={messages}
+              setMessages={setMessages}
+            />
           )}
         </div>
       </div>

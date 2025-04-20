@@ -36,7 +36,10 @@ const EasyAccessRouter = ({
   toggleButtonRef,
   tableId,
   socket,
-}: Omit<EasyAccessRouterProps, 'updateHealth' | 'drawCard' | 'lastDrawnCard'>) => {
+}: Omit<
+  EasyAccessRouterProps,
+  "updateHealth" | "drawCard" | "lastDrawnCard"
+>) => {
   switch (game) {
     case "Aria":
       return (
@@ -56,6 +59,5 @@ const EasyAccessRouter = ({
       return null;
   }
 };
-
 
 export default EasyAccessRouter;
