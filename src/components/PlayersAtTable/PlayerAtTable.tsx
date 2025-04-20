@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useUser } from "../../Context/UserContext";
-import { Sword } from "phosphor-react";
 import socket from "../../utils/socket";
+import EasyAccessAria from "./EasyAccessAria/EasyAccessAria";
 import EditableSheet from "../EditableSheet/EditableSheet";
 import Modal from "../Modal/Modal";
 import type { Character } from "../../types/Character";
@@ -42,12 +42,12 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
 
 
 
-  const drawCard = async () => {
-    if (!currentCharacter?._id) return;
+  const drawCard = async (character: Character) => {
+    if (!character?._id) return;
 
     try {
       const response = await fetch(
-        `${API_URL}/api/characters/${currentCharacter._id}/drawAriaCard`,
+        `${API_URL}/api/characters/${character._id}/drawAriaCard`,
         { method: "PUT" }
       );
 
@@ -75,7 +75,7 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
         
       
         socket.emit("chatMessage", {
-          content: `${currentCharacter.name} a pioché la carte ${value}${symbol}.`,
+          content: `${character.name} a pioché la carte ${value}${symbol}.`,
           characterName: "Système",
           senderName: "Système",
           tableId,
@@ -83,12 +83,14 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
         });
         
         
+        
                   
 
         // ✅ Mets à jour l'état local du deck
         setPlayers((prevPlayers) =>
           prevPlayers.map((player) => {
-            if (player.selectedCharacter?._id === currentCharacter._id) {
+            if (player.selectedCharacter?._id === character._id)
+              {
               const updatedCharacter = {
                 ...player.selectedCharacter,
                 magic: {
@@ -127,21 +129,7 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
     }
   };
 
-  const getSuitIcon = (card: string) => {
-    const suit = card.slice(-1);
-    switch (suit) {
-      case "H":
-        return <span style={{ color: "red", fontSize: "1.2rem" }}>♥️</span>;
-      case "D":
-        return <span style={{ color: "red", fontSize: "1.2rem" }}>♦️</span>;
-      case "C":
-        return <span style={{ color: "green", fontSize: "1.2rem" }}>♣️</span>;
-      case "S":
-        return <span style={{ color: "black", fontSize: "1.2rem" }}>♠️</span>;
-      default:
-        return null;
-    }
-  };
+
 
   useEffect(() => {
     if (!tableId) return;
@@ -257,16 +245,7 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
     };
   }, [showPersonalMenuOpen]);
 
-  const togglePanel = (
-    playerId: string,
-    panel: "hp" | "coins" | "inventory" | "gear" | "ariaMagic" | "deathMagic"
-  ) => {
-    setOpenPanel((prev) =>
-      prev && prev.playerId === playerId && prev.panel === panel
-        ? null
-        : { playerId, panel }
-    );
-  };
+
 
   const otherPlayers = players.filter(
     (player) => !player.isGameMaster && player.userId !== currentUserId
@@ -347,217 +326,25 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
                   </button>
                 </ToolTip>
                 {showPersonalMenuOpen && (
-                  <div className="player__easy-access" ref={easyAccessRef}>
-                    <div className="player__easy-access--buttons">
-                      <ToolTip text="Santé" position="top">
-                        <button
-                          onClick={() =>
-                            togglePanel(currentPlayer.playerId, "hp")
-                          }
-                        >
-                          {" "}
-                          <i className="fa-regular fa-heart"></i>{" "}
-                        </button>
-                      </ToolTip>
-                      <ToolTip text="Argent" position="top">
-                        <button
-                          onClick={() =>
-                            togglePanel(currentPlayer.playerId, "coins")
-                          }
-                        >
-                          {" "}
-                          <i className="fa-solid fa-coins"></i>{" "}
-                        </button>
-                      </ToolTip>
-                      <ToolTip text="Inventaire" position="top">
-                        <button
-                          onClick={() =>
-                            togglePanel(currentPlayer.playerId, "inventory")
-                          }
-                        >
-                          {" "}
-                          <i className="fa-solid fa-briefcase"></i>{" "}
-                        </button>
-                      </ToolTip>
-                      <ToolTip text="Arme(s)" position="top">
-                        <button
-                          onClick={() =>
-                            togglePanel(currentPlayer.playerId, "gear")
-                          }
-                        >
-                          {" "}
-                          <Sword size={18} />{" "}
-                        </button>
-                      </ToolTip>
-                      {/* Affichage conditionnel des magies */}
-                      {/*Magie d'Aria */}{" "}
-                      {currentCharacter?.magic?.ariaMagic && (
-                        <ToolTip text="Magie d'Aria" position="top">
-                          <button
-                            onClick={() =>
-                              togglePanel(currentPlayer.playerId, "ariaMagic")
-                            }
-                          >
-                            <i className="fa-solid fa-wand-sparkles"></i>
-                          </button>
-                        </ToolTip>
-                      )}
-                      {/*Magie de la mort */}
-                      {currentCharacter?.magic?.deathMagic && (
-                        <ToolTip text="Magie de la Mort" position="top">
-                          <button>
-                            <i className="fa-solid fa-skull-crossbones"></i>
-                          </button>
-                        </ToolTip>
-                      )}
-                    </div>
-                    {openPanel &&
-                      openPanel.playerId === currentPlayer.playerId && (
-                        <div className="player__easy-access--inside">
-                          {openPanel.panel === "ariaMagic" && (
-                            <div className="ariaMagic">
-                              <div className="ariaMagic__help">
-                                <ToolTip text="Manipuler les émotions" position="top">
-                                  <span
-                                    style={{ color: "red", fontSize: "1.2rem" }}
-                                  >
-                                    ♥️
-                                  </span>
-                                </ToolTip>
-                                <ToolTip text="Manipuler la matière" position="top">
-                                  <span
-                                    style={{ color: "red", fontSize: "1.2rem" }}
-                                  >
-                                    ♦️
-                                  </span>
-                                </ToolTip>
+  <div ref={easyAccessRef}>
+<EasyAccessAria
+  character={currentCharacter}
+  updateHealth={updateHealth}
+  openPanel={openPanel}
+  setOpenPanel={setOpenPanel}
+  setShowPersonalMenuOpen={setShowPersonalMenuOpen}
+  easyAccessRef={easyAccessRef}
+  toggleButtonRef={toggleButtonRef}
+  playerId={currentPlayer.playerId}
+  tableId={tableId}
+  socket={socket}
+  drawCard={drawCard} // <- il prend character en param
+  lastDrawnCard={lastDrawnCard}
+/>
 
-                                <ToolTip text="Manipuler les éléments" position="top">
-                                  <span
-                                    style={{
-                                      color: "green",
-                                      fontSize: "1.2rem",
-                                    }}
-                                  >
-                                    ♣️
-                                  </span>
-                                </ToolTip>
 
-                                <ToolTip text="Manipuler la mort" position="top">
-                                  <span
-                                    style={{
-                                      color: "black",
-                                      fontSize: "1.2rem",
-                                    }}
-                                  >
-                                    ♠️
-                                  </span>
-                                </ToolTip>
-                              </div>
-                              <p>
-                                Cartes restantes :{" "}
-                                {currentCharacter?.magic?.ariaMagicCards
-                                  ?.length ?? 0}
-                              </p>
-                              <button className="card-draw" onClick={drawCard}>
-                                Piocher
-                              </button>
-
-                              {lastDrawnCard && (
-                                <p className="drawn-card">
-                                  Carte piochée : {getSuitIcon(lastDrawnCard)}{" "}
-                                  <strong>{lastDrawnCard.slice(0, -1)}</strong>
-                                </p>
-                              )}
-                            </div>
-                          )}
-
-                          {openPanel.panel === "hp" && (
-                            <>
-                              <button
-                                className="health-modifier"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  updateHealth(currentCharacter, -1);
-                                }}
-                              >
-                                {" "}
-                                <i className="fa-solid fa-chevron-down"></i>{" "}
-                              </button>
-                              <span>{currentCharacter.pointsOfLife}</span>
-                              <button
-                                className="health-modifier"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  updateHealth(currentCharacter, 1);
-                                }}
-                              >
-                                {" "}
-                                <i className="fa-solid fa-chevron-up"></i>{" "}
-                              </button>
-                            </>
-                          )}
-                          {openPanel.panel === "coins" && (
-                            <span className="coins">
-                              {currentCharacter.gold} pièces
-                            </span>
-                          )}
-                          {openPanel.panel === "inventory" &&
-                            (currentCharacter.inventory.length > 0 ? (
-                              <table>
-                                <thead>
-                                  <tr>
-                                    <th className="table-left">Objet</th>
-                                    <th>Quantité</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {currentCharacter.inventory
-                                    .filter((item) => item.item.trim() !== "")
-                                    .map((item, index) => (
-                                      <tr key={index}>
-                                        <td className="table-left">
-                                          {item.item}
-                                        </td>
-                                        <td>{item.quantity}</td>
-                                      </tr>
-                                    ))}
-                                </tbody>
-                              </table>
-                            ) : (
-                              <p>Aucun objet dans l'inventaire</p>
-                            ))}
-                          {openPanel.panel === "gear" &&
-                            (currentCharacter.weapons.length > 0 ? (
-                              <table>
-                                <thead>
-                                  <tr>
-                                    <th className="table-left">Arme</th>
-                                    <th>Dégâts</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {currentCharacter.weapons
-                                    .filter(
-                                      (weapon) => weapon.name.trim() !== ""
-                                    )
-                                    .map((weapon, index) => (
-                                      <tr key={index}>
-                                        <td className="table-left">
-                                          {weapon.name}
-                                        </td>
-                                        <td>{weapon.damage}</td>
-                                      </tr>
-                                    ))}
-                                </tbody>
-                              </table>
-                            ) : (
-                              <p>Aucune arme équipée</p>
-                            ))}
-                        </div>
-                      )}
-                  </div>
-                )}
+  </div>
+)}
               </div>
               <div
                 className="player__image"
