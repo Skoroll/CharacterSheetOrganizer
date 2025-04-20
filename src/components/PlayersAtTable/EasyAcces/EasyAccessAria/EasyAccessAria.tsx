@@ -6,28 +6,27 @@ import { Character } from "../../../../types/Character";
 import "./EasyAccessAria.scss";
 
 interface EasyAccessAriaProps {
-    character: Character;
-    playerId: string;
-    socket: any;
-    tableId: string;
+  character: Character;
+  playerId: string;
+  socket: any;
+  tableId: string;
 
-    openPanel: {
+  openPanel: {
+    playerId: string;
+    panel: string;
+  } | null;
+  setOpenPanel: React.Dispatch<
+    React.SetStateAction<{
       playerId: string;
       panel: string;
-    } | null;
-    setOpenPanel: React.Dispatch<
-      React.SetStateAction<{
-        playerId: string;
-        panel: string;
-      } | null>
-    >;
-    setShowPersonalMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    easyAccessRef: React.RefObject<HTMLDivElement>; // ✅ Ajout ici
-    toggleButtonRef: React.RefObject<HTMLButtonElement>; // ✅ Et ici
-  }
-  
+    } | null>
+  >;
+  setShowPersonalMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  easyAccessRef: React.RefObject<HTMLDivElement>; // ✅ Ajout ici
+  toggleButtonRef: React.RefObject<HTMLButtonElement>; // ✅ Et ici
+}
 
-type Panel = "hp" | "coins" | "inventory" | "gear" | "ariaMagic";
+type Panel = "hp" | "coins" | "inventory" | "gear" | "ariaMagic" | "deathMagic";
 
 const EasyAccessAria = ({
   character,
@@ -45,14 +44,53 @@ const EasyAccessAria = ({
   };
 
   const [lastDrawnCard, setLastDrawnCard] = useState<string | null>(null);
+  const [deathMagicCount, setDeathMagicCount] = useState(
+    character.magic?.deathMagicCount ?? 0
+  );
+
+const updateDeathMagic = async (character: Character, change: number) => {
+  const current = deathMagicCount;
+  const max = character.magic?.deathMagicMax ?? 0;
+  const newValue = current + change;
+
+  if (newValue < 0 || newValue > max) return;
+
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/characters/${character._id}/update-death-magic`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ deathMagicCount: newValue, tableId }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      throw new Error(
+        `Erreur HTTP ${response.status}: ${errorResponse.message}`
+      );
+    }
+
+    const data = await response.json();
+    setDeathMagicCount(data.magic.deathMagicCount); // ✅ met à jour l’état local
+
+  } catch (error) {
+    console.error("❌ Erreur mise à jour des points de magie de mort :", error);
+  }
+};
+
+  
 
   const updateHealth = async (character: Character, change: number) => {
     const newHealth = character.pointsOfLife + change;
     if (newHealth < 0) return;
-  
+
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/characters/${character._id}/update-health`,
+        `${import.meta.env.VITE_API_URL}/api/characters/${
+          character._id
+        }/update-health`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -69,35 +107,37 @@ const EasyAccessAria = ({
       console.error("❌ Erreur mise à jour des PV :", error);
     }
   };
-  
+
   const drawCard = async (character: Character) => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/characters/${character._id}/drawAriaCard`,
+        `${import.meta.env.VITE_API_URL}/api/characters/${
+          character._id
+        }/drawAriaCard`,
         { method: "PUT" }
       );
-  
+
       if (!response.ok) {
         const text = await response.text();
         console.error("❌ Erreur lors de la pioche :", response.status, text);
         return;
       }
-  
+
       const data = await response.json();
       if (data.card) {
         setLastDrawnCard(data.card);
-  
+
         const suitMap = {
           H: "♥️",
           D: "♦️",
           C: "♣️",
           S: "♠️",
         };
-  
+
         const value = data.card.slice(0, -1);
         const suit = data.card.slice(-1) as keyof typeof suitMap;
         const symbol = suitMap[suit] ?? "❓";
-  
+
         socket.emit("chatMessage", {
           content: `${character.name} a pioché la carte ${value}${symbol}.`,
           characterName: "Système",
@@ -163,6 +203,11 @@ const EasyAccessAria = ({
             </button>
           </ToolTip>
         )}
+        <ToolTip text="Magie de la mort" position="top">
+          <button onClick={() => togglePanel("deathMagic")}>
+            <i className="fa-solid fa-skull"></i>
+          </button>
+        </ToolTip>
       </div>
 
       {isPanelOpen("hp") && (
@@ -228,6 +273,25 @@ const EasyAccessAria = ({
         ) : (
           <p>Aucune arme équipée</p>
         ))}
+
+      {isPanelOpen("deathMagic") && (
+        <div className="death-magic">
+          <ToolTip text="Magie de mort restante" position="top">
+            <span className="death-magic__label">Magie de la mort</span>
+          </ToolTip>
+          <div className="death-magic__controls">
+            <button onClick={() => updateDeathMagic(character, -1)}>
+              <i className="fa-solid fa-chevron-down"></i>
+            </button>
+            <span>
+            {deathMagicCount} / {character.magic?.deathMagicMax ?? 0}
+</span>
+            <button onClick={() => updateDeathMagic(character, 1)}>
+              <i className="fa-solid fa-chevron-up"></i>
+            </button>
+          </div>
+        </div>
+      )}
 
       {isPanelOpen("ariaMagic") && (
         <div className="ariaMagic">

@@ -78,8 +78,8 @@ const GmToolBar: React.FC<GmToolBarProps> = ({
       <p className="gm-toolbar__heading">Outils du Maître de Jeu</p>
 
       <div className="gm-toolbar--buttons">
-        <button onClick={() => togglePanel("sendDocs")}> <i className="fa-solid fa-file-import"/> <span>Partage de documents</span> </button>
-        <button onClick={() => togglePanel("playerList")}> <i className="fa-solid fa-dice-d20"></i> <span>Liste des joueurs</span> </button>
+        <button onClick={() => togglePanel("sendDocs")}> <i className="fa-solid fa-file-import"/> <span>Documents</span> </button>
+        <button onClick={() => togglePanel("playerList")}> <i className="fa-solid fa-dice-d20"></i> <span>Joueurs</span> </button>
         <button onClick={() => togglePanel("soundBoard")}> <i className="fa-solid fa-music"/><span> Sons </span> </button>
         <button onClick={() => togglePanel("npcs")}> <i className="fa-solid fa-user"/><span> PNJ </span></button>
         <button> <i className="fa-solid fa-hat-wizard"/> <span>Magies </span> </button>
