@@ -26,12 +26,13 @@ export interface Character {
   tableId?: string;
   magic?: {
     ariaMagic: boolean;
+    ariaMagicLevel: number;
+    ariaMagicCards: string[];
+    ariaMagicUsedCards: string[];
     deathMagic: boolean;
     deathMagicCount: number;
     deathMagicMax: number;
-    ariaMagicCards?: string[];
-    ariaMagicUsedCards?: string[];
-  };  
+  } 
 }
 
 export interface BaseSkill {
@@ -54,9 +55,12 @@ export type EditableCharacter = Omit<Character, "image"> & {
   tableId?: string;
   magic?: {
     ariaMagic: boolean;
+    ariaMagicLevel: number;
+    ariaMagicCards: string[];
+    ariaMagicUsedCards: string[];
     deathMagic: boolean;
     deathMagicCount: number;
     deathMagicMax: number;
-  };
+  }
 };
 

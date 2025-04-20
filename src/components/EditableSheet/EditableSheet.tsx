@@ -69,6 +69,25 @@ export default function EditableSheet({ id }: EditableSheetProps) {
     { name: "Voler", link1: "intelligence", link2: "charisma" },
   ];
 
+  const normalizeMagic = (
+    magic: Partial<Character["magic"]> = {}
+  ): Character["magic"] => ({
+    ariaMagic: magic.ariaMagic ?? false,
+    ariaMagicLevel: magic.ariaMagicLevel ?? 1,
+    ariaMagicCards: magic.ariaMagicCards ?? [],
+    ariaMagicUsedCards: magic.ariaMagicUsedCards ?? [],
+    deathMagic: magic.deathMagic ?? false,
+    deathMagicCount: magic.deathMagicCount ?? 0,
+    deathMagicMax: magic.deathMagicMax ?? 10,
+  });
+
+  const mergeMagic = (
+    prevMagic: Partial<Character["magic"]>,
+    patch: Partial<Character["magic"]>
+  ) => {
+    return normalizeMagic({ ...prevMagic, ...patch });
+  };
+
   useEffect(() => {
     if (character) {
       setEditedCharacter({
@@ -77,12 +96,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
         weapons: character.weapons || [],
         skills: character.skills || [],
         tableId: character.tableId,
-        magic: {
-          ariaMagic: character.magic?.ariaMagic ?? false,
-          deathMagic: character.magic?.deathMagic ?? false,
-          deathMagicCount: character.magic?.deathMagicCount ?? 0,
-          deathMagicMax: character.magic?.deathMagicMax ?? 10,
-        },
+        magic: normalizeMagic(character.magic),
       });
     }
   }, [character]);
@@ -177,7 +191,9 @@ export default function EditableSheet({ id }: EditableSheetProps) {
 
   const handleSaveChanges = async () => {
     if (!editedCharacter) return;
+
     const { magic } = editedCharacter;
+
     if (magic?.deathMagic && magic.deathMagicCount > magic.deathMagicMax) {
       setErrorMessages([
         "Les points de magie de la mort ne peuvent pas dépasser le maximum défini.",
@@ -185,7 +201,17 @@ export default function EditableSheet({ id }: EditableSheetProps) {
       setErrorModalOpen(true);
       return;
     }
+
     const hasImageFile = editedCharacter.image instanceof File;
+
+    // 👇 toujours défini à l'avance
+    const updatedMagic = {
+      ...editedCharacter.magic,
+      ariaMagicLevel:
+        editedCharacter.magic?.ariaMagicLevel !== undefined
+          ? editedCharacter.magic.ariaMagicLevel
+          : 1,
+    };
 
     if (hasImageFile) {
       const formData = new FormData();
@@ -193,14 +219,15 @@ export default function EditableSheet({ id }: EditableSheetProps) {
       for (const [key, value] of Object.entries(editedCharacter)) {
         if (key === "image" && value instanceof File) {
           formData.append("image", value);
-        } else {
+        } else if (key !== "magic") {
           formData.append(
             key,
             typeof value === "object" ? JSON.stringify(value) : String(value)
           );
-          formData.set("magic", JSON.stringify(editedCharacter.magic));
         }
       }
+
+      formData.set("magic", JSON.stringify(updatedMagic));
 
       const mergedBaseSkills = baseSkills.map((defaultSkill) => {
         const existing = editedCharacter.baseSkills?.find(
@@ -227,7 +254,6 @@ export default function EditableSheet({ id }: EditableSheetProps) {
         setError("Impossible de modifier ce personnage.");
       }
     } else {
-      // ✅ Sinon, on continue avec JSON classique
       const mergedBaseSkills = baseSkills.map((defaultSkill) => {
         const existing = editedCharacter.baseSkills?.find(
           (skill) => skill.name === defaultSkill.name
@@ -246,7 +272,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
           body: JSON.stringify({
             ...editedCharacter,
             baseSkills: mergedBaseSkills,
-            magic: editedCharacter.magic,
+            magic: updatedMagic, // 👈 important ici aussi
           }),
         });
 
@@ -970,13 +996,10 @@ export default function EditableSheet({ id }: EditableSheetProps) {
                         prev
                           ? {
                               ...prev,
-                              magic: {
+                              magic: mergeMagic(prev.magic, {
                                 ariaMagic: e.target.checked,
-                                deathMagic: prev.magic?.deathMagic ?? false,
-                                deathMagicCount:
-                                  prev.magic?.deathMagicCount ?? 0,
-                                deathMagicMax: prev.magic?.deathMagicMax ?? 10,
-                              },
+                              })
+                              
                             }
                           : prev
                       )
@@ -988,6 +1011,75 @@ export default function EditableSheet({ id }: EditableSheetProps) {
                   "Non"
                 )}
               </p>
+              {editedCharacter?.magic?.ariaMagic && (
+                <div className="magic__aria-details">
+                  <p>
+                    <strong>Niveau de magie :</strong>{" "}
+                    {character.magic?.ariaMagicLevel ?? "?"}
+                  </p>
+
+                  <p>
+                    <strong>Cartes restantes :</strong>{" "}
+                    {editedCharacter.magic.ariaMagicCards?.length ?? 0}
+                  </p>
+                  <p>
+                    <strong>Cartes jouées :</strong>{" "}
+                    {editedCharacter.magic.ariaMagicUsedCards?.length ?? 0}
+                  </p>
+                </div>
+              )}
+              {editedCharacter?.magic?.ariaMagic && isEditing && (
+                <>
+                  <label>
+                    Niveau de magie :
+                    <select
+                      value={editedCharacter.magic.ariaMagicLevel ?? 1}
+                      onChange={(e) =>
+                        setEditedCharacter((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                magic: mergeMagic(prev.magic, {
+                                  ariaMagicLevel: parseInt(e.target.value, 10),
+                                }),
+                              }
+                            : prev
+                        )
+                      }
+                    >
+                      <option value={1}>Niveau 1</option>
+                      <option value={2}>Niveau 2</option>
+                      <option value={3}>Niveau 3</option>
+                    </select>
+                  </label>
+
+                  <button
+                    className="reset-btn"
+                    type="button"
+                    onClick={() =>
+                      setEditedCharacter((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              magic: {
+                                ariaMagic: prev.magic?.ariaMagic ?? false,
+                                ariaMagicLevel: prev.magic?.ariaMagicLevel ?? 1,
+                                ariaMagicCards: [],
+                                ariaMagicUsedCards: [],
+                                deathMagic: prev.magic?.deathMagic ?? false,
+                                deathMagicCount:
+                                  prev.magic?.deathMagicCount ?? 0,
+                                deathMagicMax: prev.magic?.deathMagicMax ?? 10,
+                              },
+                            }
+                          : prev
+                      )
+                    }
+                  >
+                    Réinitialiser le deck
+                  </button>
+                </>
+              )}
 
               <p>
                 <strong>Magie de la mort :</strong>{" "}
@@ -1000,13 +1092,10 @@ export default function EditableSheet({ id }: EditableSheetProps) {
                         prev
                           ? {
                               ...prev,
-                              magic: {
+                              magic: mergeMagic(prev.magic, {
                                 deathMagic: e.target.checked,
-                                ariaMagic: prev.magic?.ariaMagic ?? false,
-                                deathMagicCount:
-                                  prev.magic?.deathMagicCount ?? 0,
-                                deathMagicMax: prev.magic?.deathMagicMax ?? 10,
-                              },
+                              })
+                              
                             }
                           : prev
                       )
@@ -1032,14 +1121,10 @@ export default function EditableSheet({ id }: EditableSheetProps) {
                             prev
                               ? {
                                   ...prev,
-                                  magic: {
-                                    deathMagicCount:
-                                      parseInt(e.target.value, 10) || 0,
-                                    ariaMagic: prev.magic?.ariaMagic ?? false,
-                                    deathMagic: prev.magic?.deathMagic ?? false,
-                                    deathMagicMax:
-                                      prev.magic?.deathMagicMax ?? 10,
-                                  },
+                                  magic: mergeMagic(prev.magic, {
+                                    deathMagicCount: parseInt(e.target.value, 10) || 0,
+                                  })
+                                  
                                 }
                               : prev
                           )
@@ -1060,14 +1145,10 @@ export default function EditableSheet({ id }: EditableSheetProps) {
                             prev
                               ? {
                                   ...prev,
-                                  magic: {
-                                    deathMagicMax:
-                                      parseInt(e.target.value, 10) || 0,
-                                    ariaMagic: prev.magic?.ariaMagic ?? false,
-                                    deathMagic: prev.magic?.deathMagic ?? false,
-                                    deathMagicCount:
-                                      prev.magic?.deathMagicCount ?? 0,
-                                  },
+                                  magic: mergeMagic(prev.magic, {
+                                    deathMagicMax: parseInt(e.target.value, 10) || 0,
+                                  })
+                                  
                                 }
                               : prev
                           )

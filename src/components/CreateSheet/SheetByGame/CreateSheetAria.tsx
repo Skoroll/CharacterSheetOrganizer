@@ -37,6 +37,7 @@ interface Magic {
   deathMagic: boolean;
   deathMagicCount: number;
   deathMagicMax: number;
+  ariaMagicLevel?: number;
 }
 
 
@@ -564,6 +565,24 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
             />
             Magie d'Aria
           </label>
+          {magic.ariaMagic && (
+  <label>
+    Niveau de magie d'Aria
+    <select
+      value={magic.ariaMagicLevel ?? 1}
+      onChange={(e) =>
+        setMagic((prev) => ({
+          ...prev,
+          ariaMagicLevel: Number(e.target.value),
+        }))
+      }
+    >
+      <option value={1}>Niveau 1</option>
+      <option value={2}>Niveau 2</option>
+      <option value={3}>Niveau 3</option>
+    </select>
+  </label>
+)}
 
           <label>
             <input
