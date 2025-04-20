@@ -369,6 +369,7 @@ export default function TableComponent() {
               API_URL={API_URL}
               gameMaster={table.gameMaster}
               selectedCharacterId={selectedCharacterId}
+              game ={table.game}
             />
           </div>
         </div>

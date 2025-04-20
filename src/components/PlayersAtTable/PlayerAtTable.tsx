@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useUser } from "../../Context/UserContext";
 import socket from "../../utils/socket";
-import EasyAccessAria from "./EasyAccessAria/EasyAccessAria";
+import EasyAccessRouter from "./EasyAcces/renderEasyAccess";
 import EditableSheet from "../EditableSheet/EditableSheet";
 import Modal from "../Modal/Modal";
 import type { Character } from "../../types/Character";
@@ -22,9 +22,14 @@ interface PlayerAtTableProps {
   API_URL: string;
   gameMaster: string;
   selectedCharacterId: string | null;
+  game: string;
 }
 
-const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
+const PlayerAtTable: React.FC<PlayerAtTableProps> = ({
+  tableId,
+  API_URL,
+  game,
+}) => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [showPersonalMenuOpen, setShowPersonalMenuOpen] = useState(false);
@@ -32,104 +37,12 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
   const toggleButtonRef = useRef<HTMLButtonElement | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalCharacter, setModalCharacter] = useState<Character | null>(null);
-  const [lastDrawnCard, setLastDrawnCard] = useState<string | null>(null);
   const [openPanel, setOpenPanel] = useState<{
     playerId: string;
     panel: string;
   } | null>(null);
   const { user } = useUser();
   const currentUserId = user?._id || null;
-
-
-
-  const drawCard = async (character: Character) => {
-    if (!character?._id) return;
-
-    try {
-      const response = await fetch(
-        `${API_URL}/api/characters/${character._id}/drawAriaCard`,
-        { method: "PUT" }
-      );
-
-      if (!response.ok) {
-        const text = await response.text();
-        console.error("❌ Erreur lors de la pioche :", response.status, text);
-        return;
-      }
-
-      const data = await response.json();
-
-      if (data.card) {
-        setLastDrawnCard(data.card);
-      
-        const suitMap = {
-          H: "♥️",
-          D: "♦️",
-          C: "♣️",
-          S: "♠️",
-        };
-        
-        const value = data.card.slice(0, -1);
-        const suit = data.card.slice(-1) as keyof typeof suitMap;
-        const symbol = suitMap[suit] ?? "❓";
-        
-      
-        socket.emit("chatMessage", {
-          content: `${character.name} a pioché la carte ${value}${symbol}.`,
-          characterName: "Système",
-          senderName: "Système",
-          tableId,
-          isSystem: true,
-        });
-        
-        
-        
-                  
-
-        // ✅ Mets à jour l'état local du deck
-        setPlayers((prevPlayers) =>
-          prevPlayers.map((player) => {
-            if (player.selectedCharacter?._id === character._id)
-              {
-              const updatedCharacter = {
-                ...player.selectedCharacter,
-                magic: {
-                  ...(player.selectedCharacter.magic ?? {
-                    ariaMagic: false,
-                    deathMagic: false,
-                    deathMagicCount: 0,
-                    deathMagicMax: 0,
-                    ariaMagicCards: [],
-                    ariaMagicUsedCards: [],
-                  }),
-                  ariaMagicCards:
-                    player.selectedCharacter.magic?.ariaMagicCards?.filter(
-                      (c) => c !== data.card
-                    ) ?? [],
-                  ariaMagicUsedCards: [
-                    ...(player.selectedCharacter.magic?.ariaMagicUsedCards ?? []),
-                    data.card,
-                  ],
-                },
-              };
-        
-              return {
-                ...player,
-                selectedCharacter: updatedCharacter,
-              };
-            }
-        
-            return player;
-          }) as Player[]
-        );
-        
-      }
-    } catch (err) {
-      console.error("❌ Erreur réseau lors de la pioche :", err);
-    }
-  };
-
-
 
   useEffect(() => {
     if (!tableId) return;
@@ -189,33 +102,6 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
     fetchPlayers();
   }, [tableId]);
 
-  const updateHealth = async (character: Character, change: number) => {
-    if (!character) return;
-
-    const newHealth = character.pointsOfLife + change;
-    if (newHealth < 0) return;
-
-    try {
-      const response = await fetch(
-        `${API_URL}/api/characters/${character._id}/update-health`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ pointsOfLife: newHealth, tableId }),
-        }
-      );
-
-      if (!response.ok) {
-        const errorResponse = await response.json();
-        throw new Error(
-          `Erreur HTTP ${response.status}: ${errorResponse.message}`
-        );
-      }
-    } catch (error) {
-      console.error("❌ Erreur mise à jour des PV :", error);
-    }
-  };
-
   const handlePlayerClick = (character: Character | null) => {
     if (character) {
       setModalCharacter(character);
@@ -244,8 +130,6 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showPersonalMenuOpen]);
-
-
 
   const otherPlayers = players.filter(
     (player) => !player.isGameMaster && player.userId !== currentUserId
@@ -278,17 +162,16 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
                       <span>{selectedCharacter.pointsOfLife}</span>
                     </p>
                     {typeof selectedCharacter.image === "string" && (
-  <ToolTip text={selectedCharacter.name} position="bottom">
-    <img
-      src={selectedCharacter.image}
-      alt={selectedCharacter.name}
-      onError={(e) => {
-        e.currentTarget.src = defaultImg;
-      }}
-    />
-  </ToolTip>
-)}
-
+                      <ToolTip text={selectedCharacter.name} position="bottom">
+                        <img
+                          src={selectedCharacter.image}
+                          alt={selectedCharacter.name}
+                          onError={(e) => {
+                            e.currentTarget.src = defaultImg;
+                          }}
+                        />
+                      </ToolTip>
+                    )}
                   </div>
                 ) : (
                   <p></p>
@@ -325,26 +208,22 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
                     ></i>
                   </button>
                 </ToolTip>
-                {showPersonalMenuOpen && (
-  <div ref={easyAccessRef}>
-<EasyAccessAria
-  character={currentCharacter}
-  updateHealth={updateHealth}
-  openPanel={openPanel}
-  setOpenPanel={setOpenPanel}
-  setShowPersonalMenuOpen={setShowPersonalMenuOpen}
-  easyAccessRef={easyAccessRef}
-  toggleButtonRef={toggleButtonRef}
-  playerId={currentPlayer.playerId}
-  tableId={tableId}
-  socket={socket}
-  drawCard={drawCard} // <- il prend character en param
-  lastDrawnCard={lastDrawnCard}
-/>
-
-
-  </div>
-)}
+                {showPersonalMenuOpen && currentPlayer && currentCharacter && (
+                  <div ref={easyAccessRef}>
+                    <EasyAccessRouter
+                      game={game}
+                      character={currentCharacter}
+                      playerId={currentPlayer.playerId}
+                      openPanel={openPanel}
+                      setOpenPanel={setOpenPanel}
+                      setShowPersonalMenuOpen={setShowPersonalMenuOpen}
+                      easyAccessRef={easyAccessRef}
+                      toggleButtonRef={toggleButtonRef}
+                      tableId={tableId}
+                      socket={socket}
+                    />
+                  </div>
+                )}
               </div>
               <div
                 className="player__image"
@@ -355,7 +234,7 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({ tableId, API_URL }) => {
                   <i className="fa-solid fa-heart"></i>
                   <span>{currentCharacter.pointsOfLife}</span>
                 </p>
-                {typeof currentCharacter.image ==="string" && (
+                {typeof currentCharacter.image === "string" && (
                   <ToolTip text={currentCharacter.name} position="bottom">
                     <img
                       src={currentCharacter.image}

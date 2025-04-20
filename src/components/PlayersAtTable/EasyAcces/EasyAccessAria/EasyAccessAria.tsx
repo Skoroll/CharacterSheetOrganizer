@@ -1,6 +1,8 @@
+import { useState } from "react";
+import socket from "../../../../utils/socket";
 import { Sword } from "phosphor-react";
-import ToolTip from "../../Tooltip/Tooltip";
-import { Character } from "../../../types/Character";
+import ToolTip from "../../../Tooltip/Tooltip";
+import { Character } from "../../../../types/Character";
 import "./EasyAccessAria.scss";
 
 interface EasyAccessAriaProps {
@@ -19,9 +21,6 @@ interface EasyAccessAriaProps {
         panel: string;
       } | null>
     >;
-    drawCard: (character: Character) => void;
-    lastDrawnCard: string | null;
-    updateHealth: (character: Character, change: number) => void;
     setShowPersonalMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
     easyAccessRef: React.RefObject<HTMLDivElement>; // ✅ Ajout ici
     toggleButtonRef: React.RefObject<HTMLButtonElement>; // ✅ Et ici
@@ -35,9 +34,7 @@ const EasyAccessAria = ({
   playerId,
   openPanel,
   setOpenPanel,
-  drawCard,
-  lastDrawnCard,
-  updateHealth,
+  tableId,
 }: EasyAccessAriaProps) => {
   const togglePanel = (panel: Panel) => {
     setOpenPanel((prev) =>
@@ -45,6 +42,73 @@ const EasyAccessAria = ({
         ? null
         : { playerId, panel }
     );
+  };
+
+  const [lastDrawnCard, setLastDrawnCard] = useState<string | null>(null);
+
+  const updateHealth = async (character: Character, change: number) => {
+    const newHealth = character.pointsOfLife + change;
+    if (newHealth < 0) return;
+  
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/characters/${character._id}/update-health`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pointsOfLife: newHealth, tableId }),
+        }
+      );
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(
+          `Erreur HTTP ${response.status}: ${errorResponse.message}`
+        );
+      }
+    } catch (error) {
+      console.error("❌ Erreur mise à jour des PV :", error);
+    }
+  };
+  
+  const drawCard = async (character: Character) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/characters/${character._id}/drawAriaCard`,
+        { method: "PUT" }
+      );
+  
+      if (!response.ok) {
+        const text = await response.text();
+        console.error("❌ Erreur lors de la pioche :", response.status, text);
+        return;
+      }
+  
+      const data = await response.json();
+      if (data.card) {
+        setLastDrawnCard(data.card);
+  
+        const suitMap = {
+          H: "♥️",
+          D: "♦️",
+          C: "♣️",
+          S: "♠️",
+        };
+  
+        const value = data.card.slice(0, -1);
+        const suit = data.card.slice(-1) as keyof typeof suitMap;
+        const symbol = suitMap[suit] ?? "❓";
+  
+        socket.emit("chatMessage", {
+          content: `${character.name} a pioché la carte ${value}${symbol}.`,
+          characterName: "Système",
+          senderName: "Système",
+          tableId,
+          isSystem: true,
+        });
+      }
+    } catch (err) {
+      console.error("❌ Erreur réseau lors de la pioche :", err);
+    }
   };
 
   const getSuitIcon = (card: string) => {
