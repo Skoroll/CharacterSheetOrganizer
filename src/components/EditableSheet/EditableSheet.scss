@@ -324,6 +324,14 @@
   p {
     text-align: left;
   }
+
+  .magic__death--points {
+    @include flex-col;
+
+    label {
+      @include flex-col;
+    }
+  }
 }
 
 .character-mobile {

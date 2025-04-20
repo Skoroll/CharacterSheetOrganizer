@@ -1,6 +1,7 @@
 
 .sound-player {
     @include flex-row;
+    display: none;
     gap: $spacing-small;
     padding: $spacing-small;
     margin: auto auto 0 0;

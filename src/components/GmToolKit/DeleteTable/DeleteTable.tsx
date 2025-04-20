@@ -16,9 +16,7 @@ const DeleteTable: React.FC<DeleteTableProps> = ({ tableId, API_URL, onTableDele
 const navigate = useNavigate();
   // ✅ Fonction pour supprimer la table
   const handleDelete = async () => {
-    const confirmDelete = window.confirm("Êtes-vous sûr de vouloir supprimer cette table ?");
-    if (!confirmDelete) return;
-  
+ 
     setIsDeleting(true);
     setError(null);
   

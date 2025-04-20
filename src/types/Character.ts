@@ -23,9 +23,16 @@ export interface Character {
   pros: string;
   cons: string;
   baseSkills: BaseSkill[];
-  tableId?: string; // ✅ ajoute cette ligne
+  tableId?: string;
+  magic?: {
+    ariaMagic: boolean;
+    deathMagic: boolean;
+    deathMagicCount: number;
+    deathMagicMax: number;
+    ariaMagicCards?: string[];
+    ariaMagicUsedCards?: string[];
+  };  
 }
-
 
 export interface BaseSkill {
   name: string;
@@ -45,5 +52,11 @@ export type EditableCharacter = Omit<Character, "image"> & {
   image?: string | File;
   baseSkills: BaseSkill[];
   tableId?: string;
+  magic?: {
+    ariaMagic: boolean;
+    deathMagic: boolean;
+    deathMagicCount: number;
+    deathMagicMax: number;
+  };
 };
 

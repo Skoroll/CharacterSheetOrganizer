@@ -32,6 +32,14 @@ interface InventoryItem {
   quantity: string;
 }
 
+interface Magic {
+  ariaMagic: boolean;
+  deathMagic: boolean;
+  deathMagicCount: number;
+  deathMagicMax: number;
+}
+
+
 export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const navigate = useNavigate();
@@ -62,8 +70,14 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
   const [background, setBackground] = useState("");
   const [pros, setPros] = useState("");
   const [cons, setCons] = useState("");
-  const totalPoints = strength + dexterity + endurance + intelligence + charisma;
-
+  const totalPoints =
+    strength + dexterity + endurance + intelligence + charisma;
+    const [magic, setMagic] = useState<Magic>({
+      ariaMagic: false,
+      deathMagic: false,
+      deathMagicCount: 0,
+      deathMagicMax: 10,
+    });
   const stats = {
     FOR: strength,
     DEX: dexterity,
@@ -154,7 +168,7 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
     if (endurance === 0) errors.push("L'endurance est obligatoire.");
     if (intelligence === 0) errors.push("L'intelligence est obligatoire.");
     if (charisma === 0) errors.push("Le charisme est obligatoire.");
-    if (pointsOfLife === 0) errors.push("Les points de vie sont obligatoires.");    
+    if (pointsOfLife === 0) errors.push("Les points de vie sont obligatoires.");
     if (!background) errors.push("L'histoire du personnage est obligatoire.");
     if (!pros) errors.push("Les qualités sont obligatoires.");
     if (!cons) errors.push("Les défauts sont obligatoires.");
@@ -192,6 +206,7 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
     formData.append("weapons", JSON.stringify(weapons));
     formData.append("skills", JSON.stringify(updatedSkills));
     formData.append("inventory", JSON.stringify(inventory));
+    formData.append("magic", JSON.stringify(magic));    
 
     try {
       const token = localStorage.getItem("token");
@@ -252,6 +267,8 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
               </div>
             </label>
           </div>
+
+          {/* Bloque principal, image, nom, origine ... */}
           <div className="sheet_top--main-stats">
             <h3>Personnage</h3>
             <label>
@@ -288,13 +305,15 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
             </label>
           </div>
 
+          {/* Statistiques Force, Dext ... */}
           <div className="character-stats">
-            <h3>Caractéristiques
-            <ToolTip text={statsTooltip} position="left">
-            <span className="tooltip-ancor">?</span>
-            </ToolTip>
+            <h3>
+              Caractéristiques
+              <ToolTip text={statsTooltip} position="left">
+                <span className="tooltip-ancor">?</span>
+              </ToolTip>
             </h3>
-              
+
             <label>
               Force
               <input
@@ -339,11 +358,13 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
           </div>
         </div>
 
+        {/* Armes */}
         <div className="character__equipment">
-          <h3>Armes
-          <ToolTip text={weaponsTooltip} position="left">
-          <span className="tooltip-ancor">?</span>
-          </ToolTip>
+          <h3>
+            Armes
+            <ToolTip text={weaponsTooltip} position="left">
+              <span className="tooltip-ancor">?</span>
+            </ToolTip>
           </h3>
           {weapons.map((weapon, index) => (
             <div key={index} className="character__equipment--weapon">
@@ -372,12 +393,15 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
             </div>
           ))}
         </div>
+
+        {/* Santé */}
         <div className="character-points">
-          <h3>Physique
-          <ToolTip text={healthTooltip} position="left">
-            <span className="tooltip-ancor">?</span>
+          <h3>
+            Physique
+            <ToolTip text={healthTooltip} position="left">
+              <span className="tooltip-ancor">?</span>
             </ToolTip>
-            </h3>
+          </h3>
           <label>
             Points de vie
             <input
@@ -409,12 +433,14 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
       </div>
 
       <div className="sheet__bottom">
+        {/* Compétences de base */}
         <div className="sheet__bottom--fixed">
-          <h3>Compétences           
+          <h3>
+            Compétences
             <ToolTip text={baseSkillsTooltip} position="right">
-            <span className="tooltip-ancor">?</span>
+              <span className="tooltip-ancor">?</span>
             </ToolTip>
-            </h3>
+          </h3>
           <table>
             <thead>
               <tr>
@@ -463,12 +489,14 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
           </table>
         </div>
 
+        {/* Compétence spéciales */}
         <form className="sheet__bottom--skills">
-          <h3>Vos compétences spéciales
-          <ToolTip text={sepcialSkillsTooltip} position="left">
-            <span className="tooltip-ancor">?</span>
+          <h3>
+            Vos compétences spéciales
+            <ToolTip text={sepcialSkillsTooltip} position="left">
+              <span className="tooltip-ancor">?</span>
             </ToolTip>
-            </h3>
+          </h3>
           {skills.map((skill, index) => (
             <div key={index}>
               <div className="what-skil">
@@ -522,9 +550,72 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
           <button type="button" onClick={handleAddSkill}>
             Ajouter une compétence spéciale
           </button>
+          {/*Magies */}
+          <label>
+            <input
+              type="checkbox"
+              checked={magic.ariaMagic}
+              onChange={(e) =>
+                setMagic((prev) => ({
+                  ...prev,
+                  ariaMagic: e.target.checked,
+                }))
+              }
+            />
+            Magie d'Aria
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              checked={magic.deathMagic}
+              onChange={(e) =>
+                setMagic((prev) => ({
+                  ...prev,
+                  deathMagic: e.target.checked,
+                }))
+              }
+            />
+            Magie de la Mort
+          </label>
+
+          {magic.deathMagic && (
+            <label>
+              Points de magie de la mort
+              <div className="death-magic-points">
+                <input
+                  type="number"
+                  min={0}
+                  value={magic.deathMagicCount ?? 0}
+                  onChange={(e) =>
+                    setMagic((prev) => ({
+                      ...prev,
+                      deathMagicCount: Number(e.target.value),
+                    }))
+                  }
+                  placeholder="Actuels"
+                />
+                /
+                <input
+                  type="number"
+                  min={1}
+                  value={magic.deathMagicMax ?? 10}
+                  onChange={(e) =>
+                    setMagic((prev) => ({
+                      ...prev,
+                      deathMagicMax: Number(e.target.value),
+                    }))
+                  }
+                  placeholder="Maximum"
+                />
+              </div>
+            </label>
+          )}
         </form>
       </div>
+
       <div className="sheet__last-section">
+        {/* Inventaire */}
         <div className="sheet__bottom--inventory">
           <h3>Inventaire de base</h3>
           <label className="gold">
@@ -565,6 +656,7 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
           </button>
         </div>
         <div className="sheet__background">
+          {/* Background */}
           <div className="sheet__background--pros-and-cons">
             <label>
               Vos qualités :
@@ -591,7 +683,7 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
         </div>
       </div>
       <div className="btn-container">
-      <button onClick={() => setIsResetModalOpen(true)}>Recommencer</button>
+        <button onClick={() => setIsResetModalOpen(true)}>Recommencer</button>
         <button onClick={handleSubmit}>Créer le personnage</button>
       </div>
       {errorModalOpen && (
@@ -607,25 +699,21 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
         </Modal>
       )}
       {isResetModalOpen && (
-  <Modal title="" onClose={() => setIsResetModalOpen(false)}>
-    <p>Vous perdrez toute la progression sur le personnage.</p>
-    <div className="modal__buttons">
-      <button
-        className="modal__cancel-btn"
-        onClick={() => setIsResetModalOpen(false)}
-      >
-        Annuler
-      </button>
-      <button
-        className="modal__confirm-btn"
-        onClick={refreshPage}
-      >
-        Confirmer
-      </button>
-    </div>
-  </Modal>
-)}
-
+        <Modal title="" onClose={() => setIsResetModalOpen(false)}>
+          <p>Vous perdrez toute la progression sur le personnage.</p>
+          <div className="modal__buttons">
+            <button
+              className="modal__cancel-btn"
+              onClick={() => setIsResetModalOpen(false)}
+            >
+              Annuler
+            </button>
+            <button className="modal__confirm-btn" onClick={refreshPage}>
+              Confirmer
+            </button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }

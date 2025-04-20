@@ -65,7 +65,8 @@
 
   .modal-actions, .modal__buttons {
     @include flex-row;
-    justify-content: space-between;
+    justify-content: right;
+    gap: $spacing-medium;
     margin-top: $spacing-medium;
 
 

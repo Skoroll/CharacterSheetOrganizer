@@ -98,6 +98,32 @@
           min-height: 40px;
           white-space: pre-line;
 
+          .ariaMagic {
+            @include flex-col;
+            gap: $spacing-small;
+
+            &__help {
+              @include flex-row;
+              gap: $spacing-small;
+
+
+
+              span {
+                cursor: help;
+              }
+            }
+            
+            .card-draw {
+              @include button;
+              width: 100px;
+              border-radius: $spacing-small;
+              height: 50px;
+
+              &:hover {
+                border: none;
+              }
+            }
+          }
 
           table {
             width: 100%;

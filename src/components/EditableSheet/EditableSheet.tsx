@@ -25,13 +25,17 @@ export default function EditableSheet({ id }: EditableSheetProps) {
   const [skillBonuses, setSkillBonuses] = useState<{ [key: string]: number }>(
     {}
   );
+
   const [character, setCharacter] = useState<Character | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isSkillOpen, setIsSkillOpen] = useState(true);
+  const [isMagicOpen, setIsMagicOpen] = useState(false);
   const [isInventoryOpen, setIsInventoryOpen] = useState(false);
   const [isStoryOpen, setIsStoryOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [errorModalOpen, setErrorModalOpen] = useState(false);
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const isOwner = character && character.userId === currentUserId;
@@ -72,7 +76,13 @@ export default function EditableSheet({ id }: EditableSheetProps) {
         inventory: character.inventory || [],
         weapons: character.weapons || [],
         skills: character.skills || [],
-        tableId: character.tableId, // <-- AJOUTE ça !
+        tableId: character.tableId,
+        magic: {
+          ariaMagic: character.magic?.ariaMagic ?? false,
+          deathMagic: character.magic?.deathMagic ?? false,
+          deathMagicCount: character.magic?.deathMagicCount ?? 0,
+          deathMagicMax: character.magic?.deathMagicMax ?? 10,
+        },
       });
     }
   }, [character]);
@@ -86,7 +96,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
         throw new Error("Erreur lors de la récupération du personnage");
       }
       const data = await response.json();
-  
+
       const mergedBaseSkills = baseSkills.map((baseSkill) => {
         const existing = data.baseSkills?.find(
           (skill: BaseSkill) => skill.name === baseSkill.name
@@ -95,26 +105,23 @@ export default function EditableSheet({ id }: EditableSheetProps) {
           ? { ...baseSkill, bonusMalus: existing.bonusMalus }
           : baseSkill;
       });
-  
+
       setCharacter({
         ...data,
         baseSkills: mergedBaseSkills,
       });
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Une erreur inconnue est survenue."
+        err instanceof Error ? err.message : "Une erreur inconnue est survenue."
       );
     } finally {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     fetchCharacter();
   }, [id]);
-  
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -170,7 +177,14 @@ export default function EditableSheet({ id }: EditableSheetProps) {
 
   const handleSaveChanges = async () => {
     if (!editedCharacter) return;
-
+    const { magic } = editedCharacter;
+    if (magic?.deathMagic && magic.deathMagicCount > magic.deathMagicMax) {
+      setErrorMessages([
+        "Les points de magie de la mort ne peuvent pas dépasser le maximum défini.",
+      ]);
+      setErrorModalOpen(true);
+      return;
+    }
     const hasImageFile = editedCharacter.image instanceof File;
 
     if (hasImageFile) {
@@ -184,6 +198,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
             key,
             typeof value === "object" ? JSON.stringify(value) : String(value)
           );
+          formData.set("magic", JSON.stringify(editedCharacter.magic));
         }
       }
 
@@ -207,7 +222,6 @@ export default function EditableSheet({ id }: EditableSheetProps) {
         setCharacter(editedCharacter);
         setIsEditing(false);
         await fetchCharacter();
-                
       } catch (error) {
         console.error("❌ Upload échoué :", error);
         setError("Impossible de modifier ce personnage.");
@@ -232,12 +246,13 @@ export default function EditableSheet({ id }: EditableSheetProps) {
           body: JSON.stringify({
             ...editedCharacter,
             baseSkills: mergedBaseSkills,
+            magic: editedCharacter.magic,
           }),
         });
 
         if (!response.ok) throw new Error("Erreur lors de la mise à jour");
         setCharacter(editedCharacter);
-        setIsEditing(false);        
+        setIsEditing(false);
       } catch (error) {
         console.error("❌ JSON update échoué :", error);
         setError("Impossible de modifier ce personnage.");
@@ -251,21 +266,31 @@ export default function EditableSheet({ id }: EditableSheetProps) {
   };
 
   function toggleSkills() {
+    setIsSkillOpen(true);
     setIsInventoryOpen(false);
     setIsStoryOpen(false);
-    setIsSkillOpen((prev) => !prev);
+    setIsMagicOpen(false);
+  }
+
+  function toggleMagic() {
+    setIsMagicOpen(true);
+    setIsSkillOpen(false);
+    setIsInventoryOpen(false);
+    setIsStoryOpen(false);
   }
 
   function toggleInventory() {
+    setIsInventoryOpen(true);
     setIsSkillOpen(false);
+    setIsMagicOpen(false);
     setIsStoryOpen(false);
-    setIsInventoryOpen((prev) => !prev);
   }
 
   function toggleStory() {
-    setIsInventoryOpen(false);
+    setIsStoryOpen(true);
     setIsSkillOpen(false);
-    setIsStoryOpen((prev) => !prev);
+    setIsInventoryOpen(false);
+    setIsMagicOpen(false);
   }
 
   if (loading)
@@ -366,6 +391,9 @@ export default function EditableSheet({ id }: EditableSheetProps) {
         </button>
         <button onClick={toggleStory}>
           <i className="fa-solid fa-feather" />
+        </button>
+        <button onClick={toggleMagic}>
+          <i className="fa-solid fa-wand-sparkles" />
         </button>
       </div>
 
@@ -592,86 +620,108 @@ export default function EditableSheet({ id }: EditableSheetProps) {
               </div>
 
               {/* Compétences  spéciales*/}
-              {(isEditing || (editedCharacter?.skills?.length ?? 0) > 0) && (
-  <div className="character-details__skills--special">
-    <table>
-      <caption>Compétences spéciales</caption>
-      <thead>
-        <tr>
-          <th className="table-left">Nom</th>
-          <th className="table-center">Lien</th>
-          <th className="table-center">Score</th>
-        </tr>
-      </thead>
-      <tbody>
-        {(editedCharacter?.skills ?? [])
-          .filter((skill) =>
-            isEditing ? true : skill.specialSkill.trim() !== ""
-          )
-          .map((skill, index) => (
-            <tr key={index}>
-              {isEditing ? (
-                <>
-                  <td className="table-left">
-                    <input
-                      type="text"
-                      value={skill.specialSkill}
-                      onChange={(e) =>
-                        handleArrayChange(index, "specialSkill", e.target.value, "skills")
-                      }
-                    />
-                  </td>
-                  <td className="table-center">
-                    <input
-                      className="table-size--small"
-                      type="text"
-                      value={skill.link1}
-                      onChange={(e) =>
-                        handleArrayChange(index, "link1", e.target.value, "skills")
-                      }
-                    />
-                    /
-                    <input
-                      className="table-size--small"
-                      type="text"
-                      value={skill.link2}
-                      onChange={(e) =>
-                        handleArrayChange(index, "link2", e.target.value, "skills")
-                      }
-                    />
-                  </td>
-                  <td>
-                    <input
-                      className="table-size--small"
-                      type="text"
-                      value={skill.score}
-                      onChange={(e) =>
-                        handleArrayChange(index, "score", e.target.value, "skills")
-                      }
-                    />
-                  </td>
-                </>
-              ) : (
-                <>
-                  <td className="table-left">{skill.specialSkill}</td>
-                  <td className="table-center">{`${skill.link1} / ${skill.link2}`}</td>
-                  <td className="table-center">{skill.score}</td>
-                </>
+              {(!isEditing || (editedCharacter?.skills?.length ?? 0) > 0) && (
+                <div className="character-details__skills--special">
+                  <table>
+                    <caption>Compétences spéciales</caption>
+                    <thead>
+                      <tr>
+                        <th className="table-left">Nom</th>
+                        <th className="table-center">Lien</th>
+                        <th className="table-center">Score</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(editedCharacter?.skills ?? [])
+                        .filter((skill) =>
+                          isEditing ? true : skill.specialSkill.trim() !== ""
+                        )
+                        .map((skill, index) => (
+                          <tr key={index}>
+                            {isEditing ? (
+                              <>
+                                <td className="table-left">
+                                  <input
+                                    type="text"
+                                    value={skill.specialSkill}
+                                    onChange={(e) =>
+                                      handleArrayChange(
+                                        index,
+                                        "specialSkill",
+                                        e.target.value,
+                                        "skills"
+                                      )
+                                    }
+                                  />
+                                </td>
+                                <td className="table-center">
+                                  <input
+                                    className="table-size--small"
+                                    type="text"
+                                    value={skill.link1}
+                                    onChange={(e) =>
+                                      handleArrayChange(
+                                        index,
+                                        "link1",
+                                        e.target.value,
+                                        "skills"
+                                      )
+                                    }
+                                  />
+                                  /
+                                  <input
+                                    className="table-size--small"
+                                    type="text"
+                                    value={skill.link2}
+                                    onChange={(e) =>
+                                      handleArrayChange(
+                                        index,
+                                        "link2",
+                                        e.target.value,
+                                        "skills"
+                                      )
+                                    }
+                                  />
+                                </td>
+                                <td>
+                                  <input
+                                    className="table-size--small"
+                                    type="text"
+                                    value={skill.score}
+                                    onChange={(e) =>
+                                      handleArrayChange(
+                                        index,
+                                        "score",
+                                        e.target.value,
+                                        "skills"
+                                      )
+                                    }
+                                  />
+                                </td>
+                              </>
+                            ) : (
+                              <>
+                                <td className="table-left">
+                                  {skill.specialSkill}
+                                </td>
+                                <td className="table-center">{`${skill.link1} / ${skill.link2}`}</td>
+                                <td className="table-center">{skill.score}</td>
+                              </>
+                            )}
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                  {isEditing && (
+                    <button type="button" onClick={handleAddSkill}>
+                      Ajouter une compétence spéciale
+                    </button>
+                  )}
+                </div>
               )}
-            </tr>
-          ))}
-      </tbody>
-    </table>
-    {isEditing && (
-      <button type="button" onClick={handleAddSkill}>
-        Ajouter une compétence spéciale
-      </button>
-    )}
-  </div>
-)}
-
             </div>
           )}
+
           {isStoryOpen && (
             <div className="character-details__infos--back-story">
               <div className="pros-cons">
@@ -717,6 +767,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
               </div>
             </div>
           )}
+
           {/* Inventaire + pièces */}
           {isInventoryOpen && (
             <div className="character-details__infos--inventory">
@@ -903,6 +954,131 @@ export default function EditableSheet({ id }: EditableSheetProps) {
               )}
             </div>
           )}
+
+          {isMagicOpen && (
+            <div className="character-details__infos--magic">
+              <h3>Magie</h3>
+
+              <p>
+                <strong>Magie d'Aria :</strong>{" "}
+                {isEditing ? (
+                  <input
+                    type="checkbox"
+                    checked={editedCharacter?.magic?.ariaMagic ?? false}
+                    onChange={(e) =>
+                      setEditedCharacter((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              magic: {
+                                ariaMagic: e.target.checked,
+                                deathMagic: prev.magic?.deathMagic ?? false,
+                                deathMagicCount:
+                                  prev.magic?.deathMagicCount ?? 0,
+                                deathMagicMax: prev.magic?.deathMagicMax ?? 10,
+                              },
+                            }
+                          : prev
+                      )
+                    }
+                  />
+                ) : editedCharacter?.magic?.ariaMagic ? (
+                  "Oui"
+                ) : (
+                  "Non"
+                )}
+              </p>
+
+              <p>
+                <strong>Magie de la mort :</strong>{" "}
+                {isEditing ? (
+                  <input
+                    type="checkbox"
+                    checked={editedCharacter?.magic?.deathMagic ?? false}
+                    onChange={(e) =>
+                      setEditedCharacter((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              magic: {
+                                deathMagic: e.target.checked,
+                                ariaMagic: prev.magic?.ariaMagic ?? false,
+                                deathMagicCount:
+                                  prev.magic?.deathMagicCount ?? 0,
+                                deathMagicMax: prev.magic?.deathMagicMax ?? 10,
+                              },
+                            }
+                          : prev
+                      )
+                    }
+                  />
+                ) : editedCharacter?.magic?.deathMagic ? (
+                  "Oui"
+                ) : (
+                  "Non"
+                )}
+              </p>
+
+              {editedCharacter?.magic?.deathMagic && (
+                <div className="magic__death--points">
+                  <label>
+                    Points de magie de la mort :&nbsp;
+                    {isEditing ? (
+                      <input
+                        type="number"
+                        value={editedCharacter.magic.deathMagicCount}
+                        onChange={(e) =>
+                          setEditedCharacter((prev) =>
+                            prev
+                              ? {
+                                  ...prev,
+                                  magic: {
+                                    deathMagicCount:
+                                      parseInt(e.target.value, 10) || 0,
+                                    ariaMagic: prev.magic?.ariaMagic ?? false,
+                                    deathMagic: prev.magic?.deathMagic ?? false,
+                                    deathMagicMax:
+                                      prev.magic?.deathMagicMax ?? 10,
+                                  },
+                                }
+                              : prev
+                          )
+                        }
+                      />
+                    ) : (
+                      `${editedCharacter.magic.deathMagicCount} / ${editedCharacter.magic.deathMagicMax}`
+                    )}
+                  </label>
+                  {isEditing && (
+                    <label>
+                      Maximum :
+                      <input
+                        type="number"
+                        value={editedCharacter.magic.deathMagicMax}
+                        onChange={(e) =>
+                          setEditedCharacter((prev) =>
+                            prev
+                              ? {
+                                  ...prev,
+                                  magic: {
+                                    deathMagicMax:
+                                      parseInt(e.target.value, 10) || 0,
+                                    ariaMagic: prev.magic?.ariaMagic ?? false,
+                                    deathMagic: prev.magic?.deathMagic ?? false,
+                                    deathMagicCount:
+                                      prev.magic?.deathMagicCount ?? 0,
+                                  },
+                                }
+                              : prev
+                          )
+                        }
+                      />
+                    </label>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -957,6 +1133,18 @@ export default function EditableSheet({ id }: EditableSheetProps) {
             </button>
           )}
         </div>
+      )}
+      {errorModalOpen && (
+        <Modal
+          title="Erreur de validation"
+          onClose={() => setErrorModalOpen(false)}
+        >
+          <ul className="error-list">
+            {errorMessages.map((msg, i) => (
+              <li key={i}>{msg}</li>
+            ))}
+          </ul>
+        </Modal>
       )}
     </div>
   );

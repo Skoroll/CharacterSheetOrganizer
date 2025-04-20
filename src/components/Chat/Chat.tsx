@@ -87,6 +87,23 @@ const Chat = ({
     setInputValue(e.target.value);
   };
 
+  useEffect(() => {
+    const handleNewMessage = (msg: MessageType) => {
+      console.log("📨 Nouveau message reçu :", msg);
+      setMessages((prev) => [...prev, { ...msg, animate: true }]);
+    };
+  
+    if (!socket.hasListeners || !socket.hasListeners("newMessage")) {
+      socket.on("newMessage", handleNewMessage);
+    }
+  
+    return () => {
+      socket.off("newMessage", handleNewMessage);
+    };
+  }, []);
+  
+  
+
   // ✅ Envoi d'un message et affichage immédiat sans duplication
   const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -161,6 +178,7 @@ const Chat = ({
     ? "chat__messages--diceRoll"
     : "";
 
+    
 
   return (
     <p
@@ -169,11 +187,13 @@ const Chat = ({
         ${msg.senderName === "Système" ? "chat__messages--system" : ""} 
         ${animationClass}`}
     >
-      <span className="chat__messages--player">
-        {msg.characterName || "Nom du personnage non défini"}
-      </span>
-      <br />
-      <span>{msg.message}</span>
+<span className="chat__messages--player">
+  {msg.characterName || msg.senderName || "Nom du personnage non défini"}
+</span>
+<br />
+<span>{msg.message || msg.content || "[Message vide]"}</span>
+
+
     </p>
   );
 })}
