@@ -107,20 +107,20 @@ const GmToolBar: React.FC<GmToolBarProps> = ({
           {" "}
           <i className="fa-solid fa-dice-d20"></i> <span>Joueurs</span>{" "}
         </button>
-        <button onClick={() => togglePanel("soundBoard")}>
+        {/*<button onClick={() => togglePanel("soundBoard")}>
           {" "}
           <i className="fa-solid fa-music" />
           <span> Sons </span>{" "}
-        </button>
+        </button>*/}
         <button onClick={() => togglePanel("npcs")}>
           {" "}
           <i className="fa-solid fa-user" />
           <span> PNJ </span>
         </button>
-        <button>
+        {/*<button>
           {" "}
-          <i className="fa-solid fa-hat-wizard" /> <span>Magies </span>{" "}
-        </button>
+           <i className="fa-solid fa-hat-wizard" /> <span>Magies </span>{" "}
+        </button>*/}
         <button onClick={() => togglePanel("itemListing")}>
           {" "}
           <i className="fa-solid fa-suitcase" /> <span>Objets</span>{" "}

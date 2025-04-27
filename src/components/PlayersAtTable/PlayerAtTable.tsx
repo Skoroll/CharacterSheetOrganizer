@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useUser } from "../../Context/UserContext";
 import socket from "../../utils/socket";
 import EasyAccessRouter from "./EasyAcces/renderEasyAccess";
-import EditableSheet from "../EditableSheet/EditableSheet";
+import EditableSheet from "../EditableSheet/EditableSheetAria/EditableSheetAria";
 import Modal from "../Modal/Modal";
 import type { Character } from "../../types/Character";
 import ToolTip from "../Tooltip/Tooltip";

@@ -1,0 +1,33 @@
+.player-hp, .coins {
+    @include flex-row;
+    justify-content: space-evenly;
+    align-items: baseline;
+}
+
+
+.ariaMagic {
+    @include flex-col;
+    gap: $spacing-small;
+
+    &__help {
+        @include flex-row;
+        gap: $spacing-small;
+    }
+
+    .card-draw {
+        width: 75px !important;
+        border-radius: $spacing-small !important;
+    }
+}
+
+
+.death-magic {
+    @include flex-col;
+    gap: $spacing-small;
+    
+    &__controls {
+        @include flex-row;
+        align-items: baseline;
+        justify-content: space-evenly;
+    }
+}

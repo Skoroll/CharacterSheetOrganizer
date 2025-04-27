@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { Character, EditableCharacter } from "../../types/Character";
+import { Character, EditableCharacter } from "../../../types/Character";
 import { BeatLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../../Context/UserContext";
-import Modal from "../../components/Modal/Modal";
-import defaultImg from "../../assets/person-placeholder-5.webp";
-import "./EditableSheet.scss";
+import { useUser } from "../../../Context/UserContext";
+import Modal from "../../../components/Modal/Modal";
+import defaultImg from "../../../assets/person-placeholder-5.webp";
+import "./EditableSheetAria.scss";
 
 interface BaseSkill {
   name: string;
@@ -87,6 +87,23 @@ export default function EditableSheet({ id }: EditableSheetProps) {
   ) => {
     return normalizeMagic({ ...prevMagic, ...patch });
   };
+
+  const handleResetDeck = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/characters/${id}/reshuffleAriaDeck`);
+      if (!response.ok) throw new Error("Erreur lors de la réinitialisation du deck");
+      const data = await response.json();
+  
+      if (data.character) {
+        setEditedCharacter((prev) => (prev ? { ...prev, magic: data.character.magic } : prev));
+      } else if (data.magic) {
+        setEditedCharacter((prev) => (prev ? { ...prev, magic: data.magic } : prev));
+      }
+    } catch (err) {
+      console.error("Erreur reset deck :", err);
+    }
+  };
+  
 
   useEffect(() => {
     if (character) {
@@ -998,8 +1015,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
                               ...prev,
                               magic: mergeMagic(prev.magic, {
                                 ariaMagic: e.target.checked,
-                              })
-                              
+                              }),
                             }
                           : prev
                       )
@@ -1056,25 +1072,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
                   <button
                     className="reset-btn"
                     type="button"
-                    onClick={() =>
-                      setEditedCharacter((prev) =>
-                        prev
-                          ? {
-                              ...prev,
-                              magic: {
-                                ariaMagic: prev.magic?.ariaMagic ?? false,
-                                ariaMagicLevel: prev.magic?.ariaMagicLevel ?? 1,
-                                ariaMagicCards: [],
-                                ariaMagicUsedCards: [],
-                                deathMagic: prev.magic?.deathMagic ?? false,
-                                deathMagicCount:
-                                  prev.magic?.deathMagicCount ?? 0,
-                                deathMagicMax: prev.magic?.deathMagicMax ?? 10,
-                              },
-                            }
-                          : prev
-                      )
-                    }
+                    onClick={handleResetDeck}
                   >
                     Réinitialiser le deck
                   </button>
@@ -1094,8 +1092,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
                               ...prev,
                               magic: mergeMagic(prev.magic, {
                                 deathMagic: e.target.checked,
-                              })
-                              
+                              }),
                             }
                           : prev
                       )
@@ -1122,9 +1119,9 @@ export default function EditableSheet({ id }: EditableSheetProps) {
                               ? {
                                   ...prev,
                                   magic: mergeMagic(prev.magic, {
-                                    deathMagicCount: parseInt(e.target.value, 10) || 0,
-                                  })
-                                  
+                                    deathMagicCount:
+                                      parseInt(e.target.value, 10) || 0,
+                                  }),
                                 }
                               : prev
                           )
@@ -1146,9 +1143,9 @@ export default function EditableSheet({ id }: EditableSheetProps) {
                               ? {
                                   ...prev,
                                   magic: mergeMagic(prev.magic, {
-                                    deathMagicMax: parseInt(e.target.value, 10) || 0,
-                                  })
-                                  
+                                    deathMagicMax:
+                                      parseInt(e.target.value, 10) || 0,
+                                  }),
                                 }
                               : prev
                           )

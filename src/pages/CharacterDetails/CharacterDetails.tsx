@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
-import EditableSheet from "../../components/EditableSheet/EditableSheet";
+import EditableSheet from "../../components/EditableSheet/EditableSheetAria/EditableSheetAria";
 
 export default function CharacterPage() {
       useEffect(() => {

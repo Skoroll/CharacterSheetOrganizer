@@ -43,7 +43,7 @@ const EasyAccessAria = ({
     );
   };
   const [isEditingGold, setIsEditingGold] = useState(false);
-  const [editedGold, setEditedGold] = useState(character.gold);  
+  const [editedGold, setEditedGold] = useState(character.gold);
   const [lastDrawnCard, setLastDrawnCard] = useState<string | null>(null);
   const [deathMagicCount, setDeathMagicCount] = useState(
     character.magic?.deathMagicCount ?? 0
@@ -51,31 +51,32 @@ const EasyAccessAria = ({
 
   const updateGold = async () => {
     if (editedGold < 0) return;
-  
+
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/characters/${character._id}/update-gold`,
+        `${import.meta.env.VITE_API_URL}/api/characters/${
+          character._id
+        }/update-gold`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ gold: editedGold }),
         }
       );
-  
+
       if (!response.ok) {
         const errorResponse = await response.json();
         throw new Error(
           `Erreur HTTP ${response.status} : ${errorResponse.message}`
         );
       }
-  
+
       setIsEditingGold(false);
       character.gold = editedGold; // met à jour localement sans rechargement
     } catch (error) {
       console.error("❌ Erreur mise à jour de l'or :", error);
     }
   };
-  
 
   const updateDeathMagic = async (character: Character, change: number) => {
     const current = deathMagicCount;
@@ -163,6 +164,10 @@ const EasyAccessAria = ({
           D: "♦️",
           C: "♣️",
           S: "♠️",
+          "♥": "♥️",
+          "♦": "♦️",
+          "♣": "♣️",
+          "♠": "♠️",
         };
 
         const value = data.card.slice(0, -1);
@@ -242,7 +247,7 @@ const EasyAccessAria = ({
       </div>
 
       {isPanelOpen("hp") && (
-        <>
+        <div className="player__easy--wrapper player-hp">
           <button onClick={() => updateHealth(character, -1)}>
             <i className="fa-solid fa-chevron-down"></i>
           </button>
@@ -250,42 +255,41 @@ const EasyAccessAria = ({
           <button onClick={() => updateHealth(character, 1)}>
             <i className="fa-solid fa-chevron-up"></i>
           </button>
-        </>
+        </div>
       )}
 
-{isPanelOpen("coins") && (
-  <div className="coins gold-inline">
-    {isEditingGold ? (
-      <>
-        <input
-          type="number"
-          value={editedGold}
-          onChange={(e) => setEditedGold(Number(e.target.value))}
-          className="gold-input"
-        />
-        <button onClick={updateGold}>
-          <i className="fa-solid fa-check"></i>
-        </button>
-        <button
-          onClick={() => {
-            setEditedGold(character.gold);
-            setIsEditingGold(false);
-          }}
-        >
-          <i className="fa-solid fa-xmark"></i>
-        </button>
-      </>
-    ) : (
-      <>
-        <span>{character.gold} pièces</span>
-        <button onClick={() => setIsEditingGold(true)}>
-          <i className="fa-solid fa-feather-pointed"></i>
-        </button>
-      </>
-    )}
-  </div>
-)}
-
+      {isPanelOpen("coins") && (
+        <div className="coins ">
+          {isEditingGold ? (
+            <>
+              <input
+                type="number"
+                value={editedGold}
+                onChange={(e) => setEditedGold(Number(e.target.value))}
+                className="gold-input"
+              />
+              <button onClick={updateGold}>
+                <i className="fa-solid fa-check"></i>
+              </button>
+              <button
+                onClick={() => {
+                  setEditedGold(character.gold);
+                  setIsEditingGold(false);
+                }}
+              >
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </>
+          ) : (
+            <>
+              <span>{character.gold} pièces</span>
+              <button onClick={() => setIsEditingGold(true)}>
+                <i className="fa-solid fa-feather-pointed"></i>
+              </button>
+            </>
+          )}
+        </div>
+      )}
 
       {isPanelOpen("inventory") &&
         (character.inventory.length > 0 ? (
@@ -313,6 +317,7 @@ const EasyAccessAria = ({
 
       {isPanelOpen("gear") &&
         (character.weapons.length > 0 ? (
+          <div className="gear">
           <table>
             <thead>
               <tr>
@@ -331,9 +336,13 @@ const EasyAccessAria = ({
                 ))}
             </tbody>
           </table>
+        </div>
         ) : (
           <p>Aucune arme équipée</p>
-        ))}
+        )
+        )
+        }
+
 
       {isPanelOpen("deathMagic") && (
         <div className="death-magic">
@@ -356,51 +365,49 @@ const EasyAccessAria = ({
 
       {isPanelOpen("ariaMagic") && (
         <div className="ariaMagic">
-          <div className="ariaMagic">
-            <div className="ariaMagic__help">
-              <ToolTip text="Manipuler les émotions" position="top">
-                <span style={{ color: "red", fontSize: "1.2rem" }}>♥️</span>
-              </ToolTip>
-              <ToolTip text="Manipuler la matière" position="top">
-                <span style={{ color: "red", fontSize: "1.2rem" }}>♦️</span>
-              </ToolTip>
+          <div className="ariaMagic__help">
+            <ToolTip text="Manipuler les émotions" position="top">
+              <span style={{ color: "red", fontSize: "1.2rem" }}>♥️</span>
+            </ToolTip>
+            <ToolTip text="Manipuler la matière" position="top">
+              <span style={{ color: "red", fontSize: "1.2rem" }}>♦️</span>
+            </ToolTip>
 
-              <ToolTip text="Manipuler les éléments" position="top">
-                <span
-                  style={{
-                    color: "green",
-                    fontSize: "1.2rem",
-                  }}
-                >
-                  ♣️
-                </span>
-              </ToolTip>
+            <ToolTip text="Manipuler les éléments" position="top">
+              <span
+                style={{
+                  color: "green",
+                  fontSize: "1.2rem",
+                }}
+              >
+                ♣️
+              </span>
+            </ToolTip>
 
-              <ToolTip text="Manipuler la mort" position="top">
-                <span
-                  style={{
-                    color: "black",
-                    fontSize: "1.2rem",
-                  }}
-                >
-                  ♠️
-                </span>
-              </ToolTip>
-            </div>
-            <p>
-              Cartes restantes : {character?.magic?.ariaMagicCards?.length ?? 0}
-            </p>
-            <button className="card-draw" onClick={() => drawCard(character)}>
-              Piocher
-            </button>
-
-            {lastDrawnCard && (
-              <p className="drawn-card">
-                Carte piochée : {getSuitIcon(lastDrawnCard)}{" "}
-                <strong>{lastDrawnCard.slice(0, -1)}</strong>
-              </p>
-            )}
+            <ToolTip text="Manipuler la mort" position="top">
+              <span
+                style={{
+                  color: "black",
+                  fontSize: "1.2rem",
+                }}
+              >
+                ♠️
+              </span>
+            </ToolTip>
           </div>
+          <p>
+            Cartes restantes : {character?.magic?.ariaMagicCards?.length ?? 0}
+          </p>
+          <button className="card-draw" onClick={() => drawCard(character)}>
+            Piocher
+          </button>
+
+          {lastDrawnCard && (
+            <p className="drawn-card">
+              Carte piochée : {getSuitIcon(lastDrawnCard)}{" "}
+              <strong>{lastDrawnCard.slice(0, -1)}</strong>
+            </p>
+          )}
         </div>
       )}
     </div>
