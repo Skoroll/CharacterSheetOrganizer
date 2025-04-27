@@ -7,8 +7,20 @@
   
   &--kofi {
     margin: $spacing-small;
-    box-shadow: 0px 0px 21px -10px #D0D0D0;
+    box-shadow: 6px 6px 15px -8px #D0D0D0;
     border-radius: $spacing-small;
+    max-width: 500%;
+    width: 50%;
+    margin: $spacing-medium auto;
+    padding: $spacing-small;
+    border: 1px  solid;
+    transition: all 0.3s;
+
+    &:hover {
+      background: $background-secondary-color;
+      box-shadow: none
+    }
+
     .kofi-link {
       @include flex-col;
       p {

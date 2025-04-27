@@ -19,13 +19,12 @@ interface EditableSheetProps {
   tableId?: string;
 }
 
-export default function EditableSheet({ id }: EditableSheetProps) {
+export default function EditableSheetAria({ id }: EditableSheetProps) {
   const { user } = useUser();
   const currentUserId = user?._id || null;
   const [skillBonuses, setSkillBonuses] = useState<{ [key: string]: number }>(
     {}
   );
-
   const [character, setCharacter] = useState<Character | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,6 +41,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
   const [editedCharacter, setEditedCharacter] =
     useState<EditableCharacter | null>(null);
 
+  //Liste des compétences de base
   const baseSkills = [
     { name: "Artisanat", link1: "dexterity", link2: "intelligence" },
     { name: "Combat rapproché", link1: "strength", link2: "dexterity" },
@@ -81,6 +81,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
     deathMagicMax: magic.deathMagicMax ?? 10,
   });
 
+  //Regroupe tous les types de magie
   const mergeMagic = (
     prevMagic: Partial<Character["magic"]>,
     patch: Partial<Character["magic"]>
@@ -88,6 +89,8 @@ export default function EditableSheet({ id }: EditableSheetProps) {
     return normalizeMagic({ ...prevMagic, ...patch });
   };
 
+
+  //Remise à 0 du deck de carte pour la magie d'Aria
   const handleResetDeck = async () => {
     try {
       const response = await fetch(`${API_URL}/api/characters/${id}/reshuffleAriaDeck`);
@@ -120,6 +123,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
 
   const API_URL = import.meta.env.VITE_API_URL;
 
+  //Récupère le personnage via ID, peu importe son jeu
   const fetchCharacter = async () => {
     try {
       const response = await fetch(`${API_URL}/api/characters/${id}`);
@@ -154,6 +158,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
     fetchCharacter();
   }, [id]);
 
+  //Gère les changements dans les inputs
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -168,6 +173,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
       });
     }
   };
+
 
   const handleArrayChange = (
     index: number,
@@ -206,6 +212,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
     }
   };
 
+  //Sauvegarde les modifications sur une feuille de personnage
   const handleSaveChanges = async () => {
     if (!editedCharacter) return;
 
@@ -258,7 +265,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
       formData.set("baseSkills", JSON.stringify(mergedBaseSkills));
 
       try {
-        const response = await fetch(`${API_URL}/api/characters/${id}`, {
+        const response = await fetch(`${API_URL}/api/characters/aria/${id}`, {
           method: "PUT",
           body: formData,
         });
@@ -281,7 +288,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
       });
 
       try {
-        const response = await fetch(`${API_URL}/api/characters/${id}`, {
+        const response = await fetch(`${API_URL}/api/characters/aria/${id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -405,6 +412,7 @@ export default function EditableSheet({ id }: EditableSheetProps) {
     }
   };
 
+  //Gère la suppression du personnage
   const handleDelete = async () => {
     try {
       const response = await fetch(`${API_URL}/api/characters/${id}`, {

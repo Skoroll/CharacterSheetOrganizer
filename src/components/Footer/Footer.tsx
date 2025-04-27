@@ -10,7 +10,7 @@ const Footer = () => {
           <a
             className="kofi-link"
             target="_blank"
-            href="https://ko-fi.com/manage/index?method=externallogin#"
+            href="https://ko-fi.com/skoroltv"
           >
             <img src={kofiLogo} alt="Logo Ko-fi" loading="lazy"/>
             <p>

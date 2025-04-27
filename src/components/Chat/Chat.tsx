@@ -89,7 +89,7 @@ const Chat = ({
 
   useEffect(() => {
     const handleNewMessage = (msg: MessageType) => {
-      console.log("📨 Nouveau message reçu :", msg);
+
       setMessages((prev) => [...prev, { ...msg, animate: true }]);
     };
   
@@ -116,8 +116,6 @@ const Chat = ({
       tableId,
     };
     
-    console.log("Message à envoyer :", newMessage);
-
     try {
       const response = await fetch(`${API_URL}/api/chat/postChat`, {
         method: "POST",
