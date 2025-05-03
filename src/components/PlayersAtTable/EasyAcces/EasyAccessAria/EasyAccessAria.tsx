@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import socket from "../../../../utils/socket";
 import { Sword } from "phosphor-react";
 import ToolTip from "../../../Tooltip/Tooltip";
@@ -22,8 +22,8 @@ interface EasyAccessAriaProps {
     } | null>
   >;
   setShowPersonalMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  easyAccessRef: React.RefObject<HTMLDivElement>; // ✅ Ajout ici
-  toggleButtonRef: React.RefObject<HTMLButtonElement>; // ✅ Et ici
+  easyAccessRef: React.RefObject<HTMLDivElement>;
+  toggleButtonRef: React.RefObject<HTMLButtonElement>; 
 }
 
 type Panel = "hp" | "coins" | "inventory" | "gear" | "ariaMagic" | "deathMagic";
@@ -45,9 +45,48 @@ const EasyAccessAria = ({
   const [isEditingGold, setIsEditingGold] = useState(false);
   const [editedGold, setEditedGold] = useState(character.gold);
   const [lastDrawnCard, setLastDrawnCard] = useState<string | null>(null);
-  const [deathMagicCount, setDeathMagicCount] = useState(
-    character.magic?.deathMagicCount ?? 0
-  );
+  const [localDeathMagicCount, setLocalDeathMagicCount] = useState(character.magic?.deathMagicCount ?? 0);
+
+  const handleChangeDeathMagic = async (change: number) => {
+    const current = localDeathMagicCount;
+    const max = character.magic?.deathMagicMax ?? 0;
+    const newCount = current + change;
+  
+    if (newCount < 0 || newCount > max) return;
+  
+    // Optimistic update
+    setLocalDeathMagicCount(newCount);
+  
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/characters/${character._id}/update-death-magic`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ deathMagicCount: newCount, tableId }),
+        }
+      );
+  
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(`Erreur HTTP ${response.status}: ${errorResponse.message}`);
+      }
+  
+      const data = await response.json();
+  
+      if (character.magic) {
+        character.magic.deathMagicCount = data.magic.deathMagicCount;
+      }
+  
+      setLocalDeathMagicCount(data.magic.deathMagicCount);
+      
+    } catch (error) {
+      console.error("❌ Erreur mise à jour des points de magie de mort :", error);
+      // Si erreur, on peut revenir à la valeur précédente si besoin
+      setLocalDeathMagicCount(current);
+    }
+  };
+  
 
   const updateGold = async () => {
     if (editedGold < 0) return;
@@ -75,42 +114,6 @@ const EasyAccessAria = ({
       character.gold = editedGold; // met à jour localement sans rechargement
     } catch (error) {
       console.error("❌ Erreur mise à jour de l'or :", error);
-    }
-  };
-
-  const updateDeathMagic = async (character: Character, change: number) => {
-    const current = deathMagicCount;
-    const max = character.magic?.deathMagicMax ?? 0;
-    const newValue = current + change;
-
-    if (newValue < 0 || newValue > max) return;
-
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/characters/${
-          character._id
-        }/update-death-magic`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ deathMagicCount: newValue, tableId }),
-        }
-      );
-
-      if (!response.ok) {
-        const errorResponse = await response.json();
-        throw new Error(
-          `Erreur HTTP ${response.status}: ${errorResponse.message}`
-        );
-      }
-
-      const data = await response.json();
-      setDeathMagicCount(data.magic.deathMagicCount); // ✅ met à jour l’état local
-    } catch (error) {
-      console.error(
-        "❌ Erreur mise à jour des points de magie de mort :",
-        error
-      );
     }
   };
 
@@ -202,6 +205,10 @@ const EasyAccessAria = ({
         return null;
     }
   };
+
+  useEffect(() => {
+    setLocalDeathMagicCount(character.magic?.deathMagicCount ?? 0);
+  }, [character.magic?.deathMagicCount]);
 
   const isPanelOpen = (panel: string) => openPanel?.panel === panel;
 
@@ -318,31 +325,28 @@ const EasyAccessAria = ({
       {isPanelOpen("gear") &&
         (character.weapons.length > 0 ? (
           <div className="gear">
-          <table>
-            <thead>
-              <tr>
-                <th className="table-left">Arme</th>
-                <th>Dégâts</th>
-              </tr>
-            </thead>
-            <tbody>
-              {character.weapons
-                .filter((weapon) => weapon.name.trim() !== "")
-                .map((weapon, index) => (
-                  <tr key={index}>
-                    <td className="table-left">{weapon.name}</td>
-                    <td>{weapon.damage}</td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </div>
+            <table>
+              <thead>
+                <tr>
+                  <th className="table-left">Arme</th>
+                  <th>Dégâts</th>
+                </tr>
+              </thead>
+              <tbody>
+                {character.weapons
+                  .filter((weapon) => weapon.name.trim() !== "")
+                  .map((weapon, index) => (
+                    <tr key={index}>
+                      <td className="table-left">{weapon.name}</td>
+                      <td>{weapon.damage}</td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
           <p>Aucune arme équipée</p>
-        )
-        )
-        }
-
+        ))}
 
       {isPanelOpen("deathMagic") && (
         <div className="death-magic">
@@ -350,13 +354,15 @@ const EasyAccessAria = ({
             <span className="death-magic__label">Magie de la mort</span>
           </ToolTip>
           <div className="death-magic__controls">
-            <button onClick={() => updateDeathMagic(character, -1)}>
+            <button onClick={() => handleChangeDeathMagic(-1)}>
               <i className="fa-solid fa-chevron-down"></i>
             </button>
             <span>
-              {deathMagicCount} / {character.magic?.deathMagicMax ?? 0}
-            </span>
-            <button onClick={() => updateDeathMagic(character, 1)}>
+  {localDeathMagicCount} / {character.magic?.deathMagicMax ?? 0}
+</span>
+
+
+            <button onClick={() => handleChangeDeathMagic(1)}>
               <i className="fa-solid fa-chevron-up"></i>
             </button>
           </div>
