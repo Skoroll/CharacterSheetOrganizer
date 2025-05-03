@@ -1,0 +1,27 @@
+@keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .go-premium {
+    @include flex-col;
+    @include button;
+    border: 1px solid;
+  
+    i {
+      transition: transform 0.3s ease; // pour fluidifier si besoin
+    }
+  
+    &:hover {
+      background: $background-secondary-color;
+  
+      i {
+        animation: spin 1s linear infinite;
+      }
+    }
+  }
+  

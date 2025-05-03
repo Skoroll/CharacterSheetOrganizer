@@ -87,15 +87,14 @@
     gap: $spacing-small;
 
     li {
-      @include flex-col;
+      @include flex-row;
       align-items: center;
       text-align: left;
       gap: $spacing-medium;
       cursor: pointer;
       padding: $spacing-small;
       transition: all 0.3s;
-      width: 200px;
-      height: 270px;
+      width: 350px;
       border: 1px solid;
       align-items: center;
       border-radius: calc($spacing-small * 2);
@@ -107,7 +106,7 @@
       }
 
       img {
-        width: 100%;
+        width: 200px;
         min-height: 125px;
         object-fit: cover;
         display: block;

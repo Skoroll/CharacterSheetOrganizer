@@ -12,6 +12,7 @@ import Home from "./pages/Home/Home";
 import Legal from "./pages/Legal/Legal.js";
 import NewsPage from "./pages/Articles/News";
 import NotFound from "./pages/NotFound/NotFound.js";
+import Premium from "./pages/Premium/Premium.js";
 import PreviousGame from "./components/PreviousGame/PreviousGame.js";
 import Tabletop from "./pages/Tabletop/Tabletop";
 import ResetPassword from "./components/ResetPassword/ResetPassword.js";
@@ -58,6 +59,7 @@ function App() {
                   <Route path="/news" element={<NewsPage />} />
                   <Route path="/tutoriel" element={<Blog />} />
                   <Route path="/partie-precedentes" element={<PreviousGame />}/>
+                  <Route path="/premium" element={<Premium/>}/>
                 </Routes>
               <GlobalModals />
               </main>

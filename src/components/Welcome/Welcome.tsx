@@ -1,4 +1,5 @@
 import { useUser } from "../../Context/UserContext";
+/*import GoPremiumBtn from "../GoPremiumBtn/GoPremiumBtn";*/
 import "./Welcome.scss";
 
 const Welcome = () => {
@@ -28,6 +29,7 @@ const Welcome = () => {
   return (
     <div className="welcome">
       <h1>Bienvenue, {user.userPseudo} !</h1>
+      {/*<GoPremiumBtn/>*/}
     </div>
   );
 };
