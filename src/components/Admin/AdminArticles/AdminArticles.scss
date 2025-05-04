@@ -1,0 +1,38 @@
+.admin-articles {
+    @include flex-col;
+
+    &__creation {
+        @include flex-col;
+        gap: $spacing-small;
+
+        input, textarea {
+            padding: $spacing-small;
+        }
+
+        &--stack {
+            @include flex-row;
+            gap: $spacing-small;
+
+        }
+
+        textarea {
+            width: 100% !important;
+            height: 300px !important;
+            box-sizing: border-box;
+            resize: none;
+        }
+
+
+        button {
+            @include button;
+            width: 100%;
+        }
+    }
+
+
+    ul {
+        @include ul-base;
+        overflow-y: auto;
+        padding: $spacing-small;
+    }
+}

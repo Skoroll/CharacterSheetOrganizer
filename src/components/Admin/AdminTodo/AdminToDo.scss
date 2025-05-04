@@ -46,8 +46,8 @@
                 margin-bottom: $spacing-small;
 
                 &--title {
-                    font-size: large;
-                    font-weight: 800;
+                  font-size: large;
+                  font-weight: 800;
                 }
 
                 &--options {
@@ -70,6 +70,28 @@
           }
         }
       }
+    }
+  }
+}
+
+.modal__inside--content {
+  .todo-edit {
+    @include flex-col;
+    gap: $spacing-small;
+
+    input, textarea {
+        padding: $spacing-small;
+    }
+
+    textarea {
+        height: 85px;
+        resize: none;
+    }
+
+    &--btns {
+      @include flex-row;
+      gap: $spacing-small;
+      justify-content: right;
     }
   }
 }

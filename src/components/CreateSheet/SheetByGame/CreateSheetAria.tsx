@@ -40,7 +40,6 @@ interface Magic {
   ariaMagicLevel?: number;
 }
 
-
 export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const navigate = useNavigate();
@@ -73,12 +72,12 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
   const [cons, setCons] = useState("");
   const totalPoints =
     strength + dexterity + endurance + intelligence + charisma;
-    const [magic, setMagic] = useState<Magic>({
-      ariaMagic: false,
-      deathMagic: false,
-      deathMagicCount: 0,
-      deathMagicMax: 10,
-    });
+  const [magic, setMagic] = useState<Magic>({
+    ariaMagic: false,
+    deathMagic: false,
+    deathMagicCount: 0,
+    deathMagicMax: 10,
+  });
   const stats = {
     FOR: strength,
     DEX: dexterity,
@@ -207,7 +206,7 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
     formData.append("weapons", JSON.stringify(weapons));
     formData.append("skills", JSON.stringify(updatedSkills));
     formData.append("inventory", JSON.stringify(inventory));
-    formData.append("magic", JSON.stringify(magic));    
+    formData.append("magic", JSON.stringify(magic));
 
     try {
       const token = localStorage.getItem("token");
@@ -552,84 +551,90 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
             Ajouter une compétence spéciale
           </button>
           {/*Magies */}
-          <label>
-            <input
-              type="checkbox"
-              checked={magic.ariaMagic}
-              onChange={(e) =>
-                setMagic((prev) => ({
-                  ...prev,
-                  ariaMagic: e.target.checked,
-                }))
-              }
-            />
-            Magie d'Aria
-          </label>
-          {magic.ariaMagic && (
-  <label>
-    Niveau de magie d'Aria
-    <select
-      value={magic.ariaMagicLevel ?? 1}
-      onChange={(e) =>
-        setMagic((prev) => ({
-          ...prev,
-          ariaMagicLevel: Number(e.target.value),
-        }))
-      }
-    >
-      <option value={1}>Niveau 1</option>
-      <option value={2}>Niveau 2</option>
-      <option value={3}>Niveau 3</option>
-    </select>
-  </label>
-)}
-
-          <label>
-            <input
-              type="checkbox"
-              checked={magic.deathMagic}
-              onChange={(e) =>
-                setMagic((prev) => ({
-                  ...prev,
-                  deathMagic: e.target.checked,
-                }))
-              }
-            />
-            Magie de la Mort
-          </label>
-
-          {magic.deathMagic && (
-            <label>
-              Points de magie de la mort
-              <div className="death-magic-points">
+          <div className="magic-types">
+            <h3> Types de magie :</h3>
+            <div className="magic-types--details">
+              <label>
                 <input
-                  type="number"
-                  min={0}
-                  value={magic.deathMagicCount ?? 0}
+                  type="checkbox"
+                  checked={magic.ariaMagic}
                   onChange={(e) =>
                     setMagic((prev) => ({
                       ...prev,
-                      deathMagicCount: Number(e.target.value),
+                      ariaMagic: e.target.checked,
                     }))
                   }
-                  placeholder="Actuels"
                 />
-                /
+                <span>Magie d'Aria</span>
+              </label>
+              {magic.ariaMagic && (
+                <label>
+                  Niveau de magie d'Aria
+                  <select
+                    value={magic.ariaMagicLevel ?? 1}
+                    onChange={(e) =>
+                      setMagic((prev) => ({
+                        ...prev,
+                        ariaMagicLevel: Number(e.target.value),
+                      }))
+                    }
+                  >
+                    <option value={1}>Niveau 1</option>
+                    <option value={2}>Niveau 2</option>
+                    <option value={3}>Niveau 3</option>
+                  </select>
+                </label>
+              )}
+            </div>
+            <div className="magic-types--details">
+              <label>
                 <input
-                  type="number"
-                  min={1}
-                  value={magic.deathMagicMax ?? 10}
+                  type="checkbox"
+                  checked={magic.deathMagic}
                   onChange={(e) =>
                     setMagic((prev) => ({
                       ...prev,
-                      deathMagicMax: Number(e.target.value),
+                      deathMagic: e.target.checked,
                     }))
                   }
-                  placeholder="Maximum"
                 />
-              </div>
-            </label>
-          )}
+                <span>Magie de la Mort</span>
+              </label>
+
+              {magic.deathMagic && (
+                <label>
+                  Points de magie de la mort
+                  <div className="death-magic-points">
+                    <input
+                      type="number"
+                      min={0}
+                      value={magic.deathMagicCount ?? 0}
+                      onChange={(e) =>
+                        setMagic((prev) => ({
+                          ...prev,
+                          deathMagicCount: Number(e.target.value),
+                        }))
+                      }
+                      placeholder="Actuels"
+                    />
+                    /
+                    <input
+                      type="number"
+                      min={1}
+                      value={magic.deathMagicMax ?? 10}
+                      onChange={(e) =>
+                        setMagic((prev) => ({
+                          ...prev,
+                          deathMagicMax: Number(e.target.value),
+                        }))
+                      }
+                      placeholder="Maximum"
+                    />
+                  </div>
+                </label>
+              )}
+            </div>
+          </div>
         </form>
       </div>
 
