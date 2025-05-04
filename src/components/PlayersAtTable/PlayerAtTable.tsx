@@ -73,6 +73,21 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({
     };
   }, [tableId]);
 
+  useEffect(() => {
+    if (!tableId) return;
+  
+    const handleRefreshPlayers = () => {
+      console.log("[SOCKET] refreshPlayers reçu → rafraîchir les joueurs");
+      fetchPlayers();
+    };
+  
+    socket.on("refreshPlayers", handleRefreshPlayers);
+  
+    return () => {
+      socket.off("refreshPlayers", handleRefreshPlayers);
+    };
+  }, [tableId]); 
+
   const fetchPlayers = async () => {
     if (!tableId) return;
 
@@ -134,6 +149,8 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({
   const otherPlayers = players.filter(
     (player) => !player.isGameMaster && player.userId !== currentUserId
   );
+
+  
 
   const currentPlayer = players.find(
     (player) => !player.isGameMaster && player.userId === currentUserId

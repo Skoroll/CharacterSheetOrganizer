@@ -1,4 +1,3 @@
-// components/Admin/AdminLogs/AdminLogs.tsx
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
 
@@ -8,26 +7,23 @@ export default function AdminLogs() {
   const [logs, setLogs] = useState<string[]>([]);
 
   useEffect(() => {
-    // Récupérer l'historique au chargement
-    fetch(import.meta.env.VITE_API_URL + "/api/admin/logs", {
-      headers: {
-        "x-admin": "true", // exemple sécurité (à améliorer selon ton auth)
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setLogs(data.logs);
-      });
+    // Demander l'historique dès que le socket est prêt
+    socket.emit("requestLogsHistory");
 
-    // Ecouter les logs en live
+    socket.on("logsHistory", (historyLogs: string[]) => {
+      setLogs(historyLogs);
+    });
+
     socket.on("log", (log: string) => {
-      setLogs((prev) => [...prev.slice(-499), log]); // Limiter à 500
+      setLogs((prevLogs) => [...prevLogs.slice(-499), log]);
     });
 
     return () => {
+      socket.off("logsHistory");
       socket.off("log");
     };
-  }, []);
+}, []);
+
 
   return (
     <div className="admin-logs">
