@@ -1,4 +1,5 @@
 import AdminArticles from "../../components/Admin/AdminArticles/AdminArticles"
+import AdminLogs from "../../components/Admin/AdminLogs/AdminLogs"
 import AdminTodo from "../../components/Admin/AdminTodo/AdminToDo"
 import Collapse from "../../components/Collapse/Collapse"
 import { CollapseGroup } from "../../Context/CollapseGroup"
@@ -18,6 +19,8 @@ export default function Admin () {
                     id="2"
                 />
             </CollapseGroup>
+
+            <AdminLogs/>
 
 
         </div>
