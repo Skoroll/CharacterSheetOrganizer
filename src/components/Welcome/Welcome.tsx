@@ -19,9 +19,8 @@ const Welcome = () => {
           <li>🧾 Gérer vos fiches, votre inventaire, vos compétences et vos équipements,</li>
           <li>📜 Plonger dans des récits personnalisés et suivre l'évolution de vos héros, </li>
           <li>🔔 Et bientôt… notifications, profils publics, système d'amis, soundboards et bien plus encore !</li>
-
-
         </ul>
+
       </div>
     );
   }
@@ -29,6 +28,7 @@ const Welcome = () => {
   return (
     <div className="welcome">
       <h1>Bienvenue, {user.userPseudo} !</h1>
+      {user.isAdmin && <p className="admin-badge">Administrateur</p>}
       {/*<GoPremiumBtn/>*/}
     </div>
   );

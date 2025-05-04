@@ -2,9 +2,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ThemeProvider } from "styled-components";
 import useStyleStore from "./utils/useStyleStore";
+import Admin from "./pages/Admin/Admin.js";
+import AdminRoute from "./components/Admin/AdminRoute/AdminRoute.js";
+import Blog from "./pages/Articles/Blog";
 import CharacterDetails from "./pages/CharacterDetails/CharacterDetails";
 import CreateSheet from "./components/CreateSheet/CreateSheet";
-import Blog from "./pages/Articles/Blog";
 import Footer from "./components/Footer/Footer";
 import GlobalModals from "./components/Modal/GlobalModals.js";
 import Header from "./components/Header/Header";
@@ -60,6 +62,7 @@ function App() {
                   <Route path="/tutoriel" element={<Blog />} />
                   <Route path="/partie-precedentes" element={<PreviousGame />}/>
                   <Route path="/premium" element={<Premium/>}/>
+                  <Route path="/admin" element={<AdminRoute> <Admin/> </AdminRoute>}/>
                 </Routes>
               <GlobalModals />
               </main>

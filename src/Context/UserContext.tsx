@@ -43,7 +43,7 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         userPseudo: parsedUser.userPseudo || parsedUser.name,
         isAuthenticated: true,
         token,
-        isAdmin: parsedUser.isAdmin || false,
+        isAdmin: parsedUser.isAdmin === true,
         selectedCharacterName: parsedUser.selectedCharacterName || "",
       });
     }

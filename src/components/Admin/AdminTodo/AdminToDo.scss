@@ -1,0 +1,75 @@
+.admin {
+  .admin-todo {
+    @include flex-col;
+    gap: $spacing-small;
+
+    input,
+    textarea {
+      padding: $spacing-small;
+    }
+
+    &__form {
+      @include flex-col;
+      gap: $spacing-small;
+
+      textarea {
+        height: 100px;
+        resize: none;
+      }
+
+      button {
+        @include button;
+        width: 150px;
+        margin: auto $spacing-small auto auto;
+      }
+
+      &--onSide {
+        @include flex-row;
+        gap: $spacing-small;
+      }
+    }
+
+    .collapse {
+      &__content {
+        ul {
+          @include ul-base;
+
+          li {
+            .todo-list {
+              &__header {
+                @include flex-row;
+                padding: $spacing-small;
+                flex-direction: row-reverse;
+                justify-content: space-between;
+                align-items: baseline;
+                border-bottom: 1px solid;
+                margin-bottom: $spacing-small;
+
+                &--title {
+                    font-size: large;
+                    font-weight: 800;
+                }
+
+                &--options {
+                  @include flex-row;
+                  gap: $spacing-small;
+
+                  button {
+                    @include button;
+                  }
+                }
+              }
+
+              &__desc {
+                display: flex;
+                margin: $spacing-small;
+                margin-left: $spacing-large;
+                width: 100%;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

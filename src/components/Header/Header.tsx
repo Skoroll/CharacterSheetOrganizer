@@ -116,9 +116,16 @@ export default function Header() {
           >
             <button>Obtenir Aria</button>
           </a>
+
+          {user.isAdmin && (
+            <button
+              onClick={() => navigate("/admin")}           
+            >
+              Administrateur
+            </button>
+          )}
         </nav>
       </div>
-      {user?.isAdmin === true && <p>Admin</p>}
       {/* Bouton pour le menu utilisateur (si connecté) */}
       {user?.isAuthenticated && (
         <button
