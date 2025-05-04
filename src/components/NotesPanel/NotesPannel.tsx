@@ -51,7 +51,8 @@ const NotesPanel = ({ currentTableId, userId, isGameMaster }: NotesPanelProps) =
   const [activeNote, setActiveNote] = useState<string | null>("characters");
   const [isSideOpen, setIsSideOpen] = useState(false);
   const API_URL = import.meta.env.VITE_API_URL;
-
+  const [loading, setLoading] = useState(true);
+  
   const [notes, setNotes] = useState({
     characters: "",
     quest: "",
@@ -91,6 +92,7 @@ const NotesPanel = ({ currentTableId, userId, isGameMaster }: NotesPanelProps) =
         },
         body: JSON.stringify(payload),
       });
+      
   
       if (!response.ok) {
         throw new Error("Erreur lors de l'enregistrement des notes");
@@ -108,24 +110,52 @@ const NotesPanel = ({ currentTableId, userId, isGameMaster }: NotesPanelProps) =
 useEffect(() => {
   const fetchNotes = async () => {
     try {
+      if (!currentTableId) return;
+      if (!isGameMaster && !userId) return;
+  
       const url = isGameMaster
-      ? `${API_URL}/api/tabletop/tables/${currentTableId}/notes`
-      : `${API_URL}/api/tabletop/tables/${currentTableId}/player-notes?playerId=${userId}`;
-      
-
+        ? `${API_URL}/api/tabletop/tables/${currentTableId}/notes`
+        : `${API_URL}/api/tabletop/tables/${currentTableId}/player-notes?playerId=${userId}`;
+  
       const response = await fetch(url);
+  
+      // ✅ Si 404 → notes vides
+      if (response.status === 404) {
+        setNotes({
+          characters: "",
+          quest: "",
+          other: "",
+          items: ""
+        });
+        return;
+      }
+  
+      // Autres erreurs
       if (!response.ok) throw new Error("Erreur lors du chargement des notes");
-
+  
       const data = await response.json();
-
       setNotes(data);
+  
     } catch (error) {
       console.error("Erreur lors du chargement des notes :", error);
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
     }
   };
+  
 
   fetchNotes();
-}, [currentTableId, userId, isGameMaster]); // 📌 Recharge les notes si la table ou l'utilisateur change  
+}, [currentTableId, userId, isGameMaster]);
+
+if (loading) {
+  return (
+    <div className="table__notes-pannel loading">
+      <p></p>
+    </div>
+  );
+}
 
   return (
     <div className={`table__notes-pannel ${isSideOpen ? "open" : ""}`}>

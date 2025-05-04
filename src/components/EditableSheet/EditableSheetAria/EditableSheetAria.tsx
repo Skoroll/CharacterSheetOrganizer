@@ -21,6 +21,7 @@ interface EditableSheetProps {
 
 export default function EditableSheetAria({ id }: EditableSheetProps) {
   const { user } = useUser();
+  const [isSaving, setIsSaving] = useState(false);
   const currentUserId = user?._id || null;
   const [skillBonuses, setSkillBonuses] = useState<{ [key: string]: number }>(
     {}
@@ -89,24 +90,29 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
     return normalizeMagic({ ...prevMagic, ...patch });
   };
 
-
   //Remise à 0 du deck de carte pour la magie d'Aria
   const handleResetDeck = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/characters/${id}/reshuffleAriaDeck`);
-      if (!response.ok) throw new Error("Erreur lors de la réinitialisation du deck");
+      const response = await fetch(
+        `${API_URL}/api/characters/${id}/reshuffleAriaDeck`
+      );
+      if (!response.ok)
+        throw new Error("Erreur lors de la réinitialisation du deck");
       const data = await response.json();
-  
+
       if (data.character) {
-        setEditedCharacter((prev) => (prev ? { ...prev, magic: data.character.magic } : prev));
+        setEditedCharacter((prev) =>
+          prev ? { ...prev, magic: data.character.magic } : prev
+        );
       } else if (data.magic) {
-        setEditedCharacter((prev) => (prev ? { ...prev, magic: data.magic } : prev));
+        setEditedCharacter((prev) =>
+          prev ? { ...prev, magic: data.magic } : prev
+        );
       }
     } catch (err) {
       console.error("Erreur reset deck :", err);
     }
   };
-  
 
   useEffect(() => {
     if (character) {
@@ -174,7 +180,6 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
     }
   };
 
-
   const handleArrayChange = (
     index: number,
     key: string,
@@ -215,20 +220,24 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
   //Sauvegarde les modifications sur une feuille de personnage
   const handleSaveChanges = async () => {
     if (!editedCharacter) return;
-
+  
+    // ✅ Empêche de cliquer plusieurs fois
+    if (isSaving) return;
+    setIsSaving(true);
+  
     const { magic } = editedCharacter;
-
+  
     if (magic?.deathMagic && magic.deathMagicCount > magic.deathMagicMax) {
       setErrorMessages([
         "Les points de magie de la mort ne peuvent pas dépasser le maximum défini.",
       ]);
       setErrorModalOpen(true);
+      setIsSaving(false); // ✅ on déverrouille le bouton même en cas d'erreur
       return;
     }
-
+  
     const hasImageFile = editedCharacter.image instanceof File;
-
-    // 👇 toujours défini à l'avance
+  
     const updatedMagic = {
       ...editedCharacter.magic,
       ariaMagicLevel:
@@ -236,59 +245,42 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
           ? editedCharacter.magic.ariaMagicLevel
           : 1,
     };
-
-    if (hasImageFile) {
-      const formData = new FormData();
-
-      for (const [key, value] of Object.entries(editedCharacter)) {
-        if (key === "image" && value instanceof File) {
-          formData.append("image", value);
-        } else if (key !== "magic") {
-          formData.append(
-            key,
-            typeof value === "object" ? JSON.stringify(value) : String(value)
-          );
+  
+    const mergedBaseSkills = baseSkills.map((defaultSkill) => {
+      const existing = editedCharacter.baseSkills?.find(
+        (skill) => skill.name === defaultSkill.name
+      );
+      return existing
+        ? { ...defaultSkill, bonusMalus: existing.bonusMalus }
+        : defaultSkill;
+    });
+  
+    try {
+      let response;
+  
+      if (hasImageFile) {
+        const formData = new FormData();
+  
+        for (const [key, value] of Object.entries(editedCharacter)) {
+          if (key === "image" && value instanceof File) {
+            formData.append("image", value);
+          } else if (key !== "magic" && value !== undefined && value !== null) {
+            formData.append(
+              key,
+              typeof value === "object" ? JSON.stringify(value) : String(value)
+            );
+          }
         }
-      }
-
-      formData.set("magic", JSON.stringify(updatedMagic));
-
-      const mergedBaseSkills = baseSkills.map((defaultSkill) => {
-        const existing = editedCharacter.baseSkills?.find(
-          (skill) => skill.name === defaultSkill.name
-        );
-        return existing
-          ? { ...defaultSkill, bonusMalus: existing.bonusMalus }
-          : defaultSkill;
-      });
-
-      formData.set("baseSkills", JSON.stringify(mergedBaseSkills));
-
-      try {
-        const response = await fetch(`${API_URL}/api/characters/aria/${id}`, {
+  
+        formData.set("magic", JSON.stringify(updatedMagic));
+        formData.set("baseSkills", JSON.stringify(mergedBaseSkills));
+  
+        response = await fetch(`${API_URL}/api/characters/aria/${id}`, {
           method: "PUT",
           body: formData,
         });
-        if (!response.ok) throw new Error("Erreur lors de la mise à jour");
-        setCharacter(editedCharacter);
-        setIsEditing(false);
-        await fetchCharacter();
-      } catch (error) {
-        console.error("❌ Upload échoué :", error);
-        setError("Impossible de modifier ce personnage.");
-      }
-    } else {
-      const mergedBaseSkills = baseSkills.map((defaultSkill) => {
-        const existing = editedCharacter.baseSkills?.find(
-          (skill) => skill.name === defaultSkill.name
-        );
-        return existing
-          ? { ...defaultSkill, bonusMalus: existing.bonusMalus }
-          : defaultSkill;
-      });
-
-      try {
-        const response = await fetch(`${API_URL}/api/characters/aria/${id}`, {
+      } else {
+        response = await fetch(`${API_URL}/api/characters/aria/${id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -296,17 +288,35 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
           body: JSON.stringify({
             ...editedCharacter,
             baseSkills: mergedBaseSkills,
-            magic: updatedMagic, // 👈 important ici aussi
+            magic: updatedMagic,
           }),
         });
-
-        if (!response.ok) throw new Error("Erreur lors de la mise à jour");
-        setCharacter(editedCharacter);
-        setIsEditing(false);
-      } catch (error) {
-        console.error("❌ JSON update échoué :", error);
-        setError("Impossible de modifier ce personnage.");
       }
+  
+      if (!response.ok) throw new Error("Erreur lors de la mise à jour");
+  
+      const updatedCharacter = await response.json();
+  
+      // ✅ Mise à jour locale
+      setCharacter(updatedCharacter);
+      setIsEditing(false);
+  
+      // ✅ Evite de garder un File après l'upload
+      setEditedCharacter({
+        ...updatedCharacter,
+        image:
+          typeof updatedCharacter.image === "string"
+            ? updatedCharacter.image
+            : editedCharacter.image instanceof File
+            ? updatedCharacter.image
+            : "",
+      });
+    } catch (error) {
+      console.error("❌ Erreur sauvegarde personnage :", error);
+      setError("Impossible de modifier ce personnage.");
+    } finally {
+      // ✅ Toujours déverrouiller le bouton à la fin
+      setIsSaving(false);
     }
   };
 
@@ -1209,8 +1219,16 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
               <button className="cancel-btn" onClick={handleCancelEdit}>
                 <i className="fa-solid fa-x"></i>
               </button>
-              <button className="save-btn" onClick={handleSaveChanges}>
-                <i className="fa-solid fa-check"></i>
+              <button
+                className="save-btn"
+                onClick={handleSaveChanges}
+                disabled={isSaving}
+              >
+                {isSaving ? (
+                  <BeatLoader size={8} color="#fff" />
+                ) : (
+                  <i className="fa-solid fa-check"></i>
+                )}
               </button>
             </>
           ) : (

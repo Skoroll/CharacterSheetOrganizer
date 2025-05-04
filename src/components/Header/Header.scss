@@ -5,7 +5,7 @@
   backdrop-filter: blur(5px);
   z-index: 999;
   width: 100%;
-  min-height: 80px;
+  min-height: 85px;
 
   .auth-btn {
     position: absolute;
@@ -16,7 +16,7 @@
     margin: auto $spacing-small;
   }
 
-  img {
+  /*img {
     position: absolute;
     left: 0;
     text-align: left;
@@ -32,11 +32,66 @@
     &:hover {
       transform: scale(95%);
     }
+  }*/
+
+  .logo {
+    display: flex;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    text-decoration: none;
+    height: 100%;
+
+    &:visited {
+      color: inherit
+    }
+    p {
+      position: relative;
+      @include flex-col;
+      margin: auto;
+      background: rgb(29,39,54);
+      padding: $spacing-small $spacing-medium;
+      border-radius: $spacing-small;
+      transition: all 2s;
+      height: 45px;
+
+      &:hover {
+        background: none;
+      }
+
+      .bold {
+        font-weight: 800;
+        color: rgba(229,184,153,255);
+      }
+
+      .logo--main,
+      .logo--subtitle {
+        font-family: "MedievalSharp";
+
+      }
+
+      .logo--main {
+        font-size: 35px;
+        color: rgb(232,220,195);
+        font-weight: 600;
+      }
+
+      .logo--subtitle {
+        position: absolute;
+        width: 100%;
+        left: 0;
+        bottom: 3px;
+        text-align: center;
+        color: white;
+        padding: 3px 0;
+      }
+    }
   }
 
   &__content {
     position: relative;
     @include flex-row;
+    margin: auto;
 
     .main-nav {
       all: unset;
@@ -76,7 +131,7 @@
 
     i {
       width: 30px;
-      height: 30px
+      height: 30px;
     }
   }
 }
@@ -85,23 +140,23 @@
   .header {
     @include flex-col;
 
-    img {
+    img, .logo {
       position: relative;
       margin: auto;
     }
 
     .menu-toggle {
-        position: absolute;
+      position: absolute;
     }
 
     .main-menu {
-        top: 40px;
+      top: 40px;
     }
 
     .main-nav {
-        @include flex-wrap;
-        justify-content: space-evenly;
-        padding: $spacing-medium;
+      @include flex-wrap;
+      justify-content: space-evenly;
+      padding: $spacing-medium;
     }
 
     .auth-btn {
