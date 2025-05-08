@@ -88,6 +88,8 @@ export default function PreviousGame({
                   }
                 }}
               >
+                 <p className={`table__recap--name font-${table?.selectedFont || ""}`}>{table.name}</p>
+                 <div className="divide">
                 {table.bannerImage ? (
                   <img
                   style={{
@@ -113,7 +115,6 @@ export default function PreviousGame({
                 )}
                 <div className="table__recap">
                   <p>
-                  <span className={`table__recap--name font-${table?.selectedFont || ""}`}>{table.name}</span>
                     <span>MJ : {table.gameMasterName}</span>
 
                     <span>
@@ -122,6 +123,7 @@ export default function PreviousGame({
                     <span>Jeu : {table.game}</span>
                   </p>
                 </div>
+                  </div>
               </li>
             ))}
           </ul>

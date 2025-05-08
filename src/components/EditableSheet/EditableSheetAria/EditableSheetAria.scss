@@ -88,8 +88,11 @@
     }    
 
     &--image {
+      @include flex-col;
       position: relative;
       border-radius: 7px;
+      width: 285px;
+      height: 285px;
 
       .fa-pen-to-square {
         position: absolute;
@@ -132,7 +135,7 @@
       margin: 5px 0;
       font-size: 15px;
       justify-content: center;
-      background: rgba(0, 0, 0, 0.699);
+      background: $background-secondary-color;
       border-radius: 0 0 8px 8px;
       padding: 5px 0 !important;
     }
@@ -186,16 +189,13 @@
     @include flex-col;
 
 
-    img {
-      width: 285px;
-      height: 285px;
+    .character-portrait {
+      width: 90%;
+      height: 90%;
       margin: auto;
       object-fit: cover;
       border-radius: 8px 8px 0 0;
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-      border-bottom-left-radius: 50% 20%;
-      border-bottom-right-radius: 50% 20%;
+
     }
 
     &--stats,

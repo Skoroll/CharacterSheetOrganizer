@@ -3,6 +3,8 @@ import { Character, EditableCharacter } from "../../../types/Character";
 import { BeatLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../Context/UserContext";
+//import CharacterFrame from "../../Premium/CharacterFrame/CharacterFrame";
+import ChooseBannerFrame from "../../Premium/ChooseBannerFrame/ChooseBannerFrame";
 import Modal from "../../../components/Modal/Modal";
 import defaultImg from "../../../assets/person-placeholder-5.webp";
 import "./EditableSheetAria.scss";
@@ -442,6 +444,7 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
   };
   return (
     <div className="character-details">
+      <ChooseBannerFrame/>
       {/*Barres contenant les boutons*/}
       <div className="character-details--button-list">
         <button onClick={toggleSkills}>
@@ -462,11 +465,13 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
         <div className="character-details__content">
           <div className="character-details__identity">
             <div className="character-details__identity--image">
+             {/*} <CharacterFrame/>*/}
               <img
+                className="character-portrait"
                 src={
                   editedCharacter?.image
                     ? typeof editedCharacter.image === "string"
-                      ? editedCharacter.image // 🔥 URL Cloudinary déjà complète
+                      ? editedCharacter.image
                       : URL.createObjectURL(editedCharacter.image)
                     : defaultImg
                 }
