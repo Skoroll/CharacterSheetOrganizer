@@ -1,0 +1,12 @@
+.admin {
+
+    &__split {
+        @include flex-row;
+        justify-content: space-evenly;
+    }
+
+
+    .admin-todo,  .admin-articles {
+        width: 45%;
+    }
+}

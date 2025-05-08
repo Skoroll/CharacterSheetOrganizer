@@ -2,16 +2,16 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-// ✅ Créer une instance Axios avec l'URL de base
+// Créer une instance Axios avec l'URL de base
 export const api = axios.create({
   baseURL: API_URL,
   headers: { "Content-Type": "application/json" },
 });
 
-// ✅ Fonction pour récupérer le token du `localStorage`
+// Fonction pour récupérer le token du `localStorage`
 export const getToken = () => localStorage.getItem("token");
 
-// ✅ Ajouter un intercepteur pour inclure le token dans chaque requête
+// Ajouter un intercepteur pour inclure le token dans chaque requête
 api.interceptors.request.use(
   (config) => {
     const token = getToken();
@@ -23,7 +23,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ✅ Intercepteur de réponse pour rafraîchir le token automatiquement
+// Intercepteur de réponse pour rafraîchir le token automatiquement
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -71,7 +71,7 @@ api.interceptors.response.use(
   }
 );
 
-// ✅ Fonction pour rafraîchir le token
+// Fonction pour rafraîchir le token
 export const refreshAccessToken = async () => {
   try {
     const refreshToken = localStorage.getItem("refreshToken");
@@ -93,7 +93,7 @@ export const refreshAccessToken = async () => {
   }
 };
 
-// ✅ Fonction pour connecter un utilisateur
+// Fonction pour connecter un utilisateur
 export const loginUser = async (name: string, password: string) => {
   try {
     const response = await axios.post(`${API_URL}/api/users/login`, {
@@ -110,7 +110,6 @@ export const loginUser = async (name: string, password: string) => {
       id: response.data.user.id, // 🔥 Stocke l'ID utilisateur correctement
       name: response.data.user.name,
       selectedCharacterName: response.data.user.selectedCharacterName || "",
-      isAdmin: response.data.user.isAdmin,
     }));
 
     return response.data;

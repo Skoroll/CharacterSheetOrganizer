@@ -201,12 +201,28 @@
           margin: auto auto 0 auto;
           object-fit: cover;
           transition: all 0.3s;
+
+          //Arrondis irréguliers
+          //border-radius: 10% 10% 20% 20%
+          
+
+          //Arrondis réguliers
+          //border-radius: 10%
+        
+
+          //Emblème
+          /*
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
+          border-bottom-left-radius: 50% 20%;
+          border-bottom-right-radius: 50% 20%;
+          */
+
+          //Fanion
+          //clip-path: polygon(0% 0%, 100% 0%, 100% 70%, 50% 100%, 0% 70%);
         }
         &:hover {
-          border-radius: 50%;
-
           img {
-            border-radius: 50%;
             transform: scale(110%);
           }
 

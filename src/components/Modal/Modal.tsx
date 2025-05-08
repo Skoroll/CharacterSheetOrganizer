@@ -11,10 +11,20 @@ interface ModalProps {
 export default function Modal({ title, children, onClose }: ModalProps): JSX.Element {
   useEffect(() => {
     document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
     return () => {
       document.body.style.overflow = "auto";
+      document.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [onClose]);
 
   const modalContent = (
     <div className="modal-overlay" onMouseDown={onClose}>

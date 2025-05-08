@@ -74,14 +74,12 @@ export default function AuthForm() {
         JSON.stringify({
           id: data.user.id,
           name: data.user.name,
-          isAdmin: data.user.isAdmin,
         })
       );
 
       setUser({
         userPseudo: data.user.name,
         isAuthenticated: true,
-        isAdmin: data.user.isAdmin,
       });
 
       window.location.reload(); // Recharge la page après connexion

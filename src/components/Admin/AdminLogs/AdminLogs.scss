@@ -1,0 +1,14 @@
+.admin-logs {
+
+    border-bottom: 1px solid;
+    padding: $spacing-medium;
+    
+    &__container {
+        @include flex-col;
+        gap: $spacing-small;
+        height: 300px;
+        background: $background-secondary-color;
+        padding: $spacing-small;
+        overflow-y: auto;
+    }
+}

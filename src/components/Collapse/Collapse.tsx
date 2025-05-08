@@ -1,4 +1,3 @@
-// Collapse.tsx
 import { useState, useRef, useEffect } from "react";
 import { useCollapseGroup } from "../../Context/CollapseGroup";
 import "./Collapse.scss";

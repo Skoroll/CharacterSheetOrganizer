@@ -1,7 +1,6 @@
 import React, { useState, useEffect, createContext, useContext } from "react";
-import { loginUser } from "../utils/authService";
+import { loginUser, api } from "../utils/authService"; // <-- Assure toi que api est bien importé
 
-// ✅ Interface utilisateur
 interface User {
   _id?: string;
   userPseudo: string;
@@ -9,9 +8,9 @@ interface User {
   token?: string;
   selectedCharacterName?: string;
   isAdmin?: boolean;
+  isPremium?: boolean;
 }
 
-// ✅ Interface du contexte
 interface UserContextProps {
   user: User;
   setUser: React.Dispatch<React.SetStateAction<User>>;
@@ -19,7 +18,6 @@ interface UserContextProps {
   logout: () => void;
 }
 
-// ✅ Création du contexte
 const UserContext = createContext<UserContextProps | null>(null);
 
 const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -29,27 +27,36 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     token: undefined,
     selectedCharacterName: "",
     isAdmin: false,
+    isPremium: false,
   });
 
-  // ✅ Vérifier si un utilisateur est déjà connecté
+  // ✅ A la montée du provider → Vérifie le token et récupère les infos sécurisées
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const token = localStorage.getItem("token");
+    const fetchUser = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
 
-    if (storedUser && token) {
-      const parsedUser = JSON.parse(storedUser);
-      setUser({
-        _id: parsedUser.id || parsedUser._id,
-        userPseudo: parsedUser.userPseudo || parsedUser.name,
-        isAuthenticated: true,
-        token,
-        isAdmin: parsedUser.isAdmin === true,
-        selectedCharacterName: parsedUser.selectedCharacterName || "",
-      });
-    }
+      try {
+        const res = await api.get("/api/users/me");
+        const userData = res.data.user;
+
+        setUser({
+          _id: userData._id,
+          userPseudo: userData.name,
+          isAuthenticated: true,
+          token,
+          isAdmin: userData.isAdmin,
+          isPremium: userData.isPremium,
+          selectedCharacterName: userData.selectedCharacterName || "",
+        });
+      } catch {
+        localStorage.removeItem("token");
+      }
+    };
+
+    fetchUser();
   }, []);
 
-  // ✅ Fonction de connexion
   const login = async (name: string, password: string): Promise<boolean> => {
     const data = await loginUser(name, password);
 
@@ -60,11 +67,11 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         isAuthenticated: true,
         token: data.accessToken,
         isAdmin: data.user.isAdmin,
+        isPremium: data.user.isPremium,
         selectedCharacterName: data.user.selectedCharacterName || "",
       });
 
       localStorage.setItem("token", data.accessToken);
-      localStorage.setItem("user", JSON.stringify(data.user));
 
       return true;
     }
@@ -72,22 +79,19 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     return false;
   };
 
-  // ✅ Fonction de déconnexion améliorée (sans `useNavigate()`)
-  const logout = () => {  
-    // ✅ Supprimer les tokens AVANT la mise à jour de l'état
+  const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("refreshToken");
-    localStorage.removeItem("user");
-  
+
     setUser({
       userPseudo: "",
       isAuthenticated: false,
       token: undefined,
       selectedCharacterName: "",
       isAdmin: false,
+      isPremium: false,
     });
   };
-  
 
   return (
     <UserContext.Provider value={{ user, setUser, login, logout }}>
@@ -96,7 +100,6 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   );
 };
 
-// ✅ Hook personnalisé pour utiliser le contexte
 const useUser = (): UserContextProps => {
   const context = useContext(UserContext);
   if (!context) {

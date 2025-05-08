@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Collapse from "../../Collapse/Collapse";
 import Modal from "../../Modal/Modal";
+import { CollapseGroup } from "../../../Context/CollapseGroup";
 import "./AdminToDo.scss";
 
 interface Todo {
@@ -169,73 +170,77 @@ export default function AdminTodo() {
       </div>
       <h2>À faire</h2>
       {Object.entries(groupedTodosNotDone).map(([category, todos]) => (
-        <Collapse
-          key={category}
-          id={`category-${slugify(category)}`}
-          title={category}
-          content={
-            <ul>
-              {todos.map((todo) => (
-                <li key={todo._id}>
-                  <div className="todo-list__header">
-                    <div className="todo-list__header--options">
-                      <button onClick={() => handleValidateTodo(todo, true)}>
-                        <i className="fa-solid fa-check"></i>
-                      </button>
-                      <button onClick={() => setEditTodo(todo)}>
-                        <i className="fa-solid fa-pen"></i>
-                      </button>
-                      <button onClick={() => setDeleteTodo(todo)}>
-                        <i className="fa-solid fa-trash"></i>
-                      </button>
+        <CollapseGroup>
+          <Collapse
+            key={category}
+            id={`category-${slugify(category)}`}
+            title={category}
+            content={
+              <ul>
+                {todos.map((todo) => (
+                  <li key={todo._id}>
+                    <div className="todo-list__header">
+                      <div className="todo-list__header--options">
+                        <button onClick={() => handleValidateTodo(todo, true)}>
+                          <i className="fa-solid fa-check"></i>
+                        </button>
+                        <button onClick={() => setEditTodo(todo)}>
+                          <i className="fa-solid fa-pen"></i>
+                        </button>
+                        <button onClick={() => setDeleteTodo(todo)}>
+                          <i className="fa-solid fa-trash"></i>
+                        </button>
+                      </div>
+                      <span className="todo-list__header--title">
+                        {todo.title}
+                      </span>
                     </div>
-                    <span className="todo-list__header--title">
-                      {todo.title}
-                    </span>
-                  </div>
-                  <span className="todo-list__desc">{todo.description}</span>
-                </li>
-              ))}
-            </ul>
-          }
-        />
+                    <span className="todo-list__desc">{todo.description}</span>
+                  </li>
+                ))}
+              </ul>
+            }
+          />
+        </CollapseGroup>
       ))}
 
       <h2>Fait</h2>
       {Object.entries(groupedTodosDone).map(([category, todos]) => (
-        <Collapse
-          key={category}
-          id={`done-category-${slugify(category)}`}
-          title={category}
-          content={
-            <ul>
-              {todos.map((todo) => (
-                <li key={todo._id}>
-                  <div className="todo-list__header">
-                    <div className="todo-list__header--options">
-                      <button onClick={() => handleValidateTodo(todo, false)}>
-                        <i className="fa-solid fa-rotate-left"></i>
-                      </button>
-                      <button onClick={() => setEditTodo(todo)}>
-                        <i className="fa-solid fa-pen"></i>
-                      </button>
-                      <button onClick={() => setDeleteTodo(todo)}>
-                        <i className="fa-solid fa-trash"></i>
-                      </button>
+        <CollapseGroup>
+          <Collapse
+            key={category}
+            id={`done-category-${slugify(category)}`}
+            title={category}
+            content={
+              <ul>
+                {todos.map((todo) => (
+                  <li key={todo._id}>
+                    <div className="todo-list__header">
+                      <div className="todo-list__header--options">
+                        <button onClick={() => handleValidateTodo(todo, false)}>
+                          <i className="fa-solid fa-rotate-left"></i>
+                        </button>
+                        <button onClick={() => setEditTodo(todo)}>
+                          <i className="fa-solid fa-pen"></i>
+                        </button>
+                        <button onClick={() => setDeleteTodo(todo)}>
+                          <i className="fa-solid fa-trash"></i>
+                        </button>
+                      </div>
+                      <span className="todo-list__header--date-done">
+                        {new Date(todo.dateDone).toLocaleDateString()}
+                      </span>
+                      <span className="todo-list__header--title">
+                        {todo.title}
+                      </span>
                     </div>
-                    <span className="todo-list__header--date-done">
-                      {new Date(todo.dateDone).toLocaleDateString()}
-                    </span>
-                    <span className="todo-list__header--title">
-                      {todo.title}
-                    </span>
-                  </div>
-                  <span className="todo-list__desc">{todo.description}</span>
-                </li>
-              ))}
-            </ul>
-          }
-        />
+                    <span className="todo-list__desc">{todo.description}</span>
+                  </li>
+                ))}
+              </ul>
+            }
+          />
+        </CollapseGroup>
       ))}
 
       {selectedTodo && (

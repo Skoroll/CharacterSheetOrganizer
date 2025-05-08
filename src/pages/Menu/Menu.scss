@@ -10,7 +10,7 @@
 
       li {
         border: 1px transparent;
-        padding: $spacing-small;
+
         border-radius: $spacing-medium;
         border: 1px solid transparent;
         cursor: pointer;
@@ -44,13 +44,13 @@
               align-items: center;
               justify-content: center;
               margin-bottom: 0;
-              width: 80px;
-              height: 80px;
+              width: 95px;
+              height: 95px;
               transition: all 0.3s;
 
               &:hover {
-                width: 150px;
-                height: 150px;
+                width: 142.5px;
+                height: 142.5px;
               }
 
               img {
@@ -82,6 +82,7 @@
 .character-list__create-new {
   @include flex-col;
   border: 1px solid !important;
+  padding: $spacing-small;
   transition: all 0.3s;
   width: 80px;
   height: 80px;
@@ -98,7 +99,7 @@
   }
 
   &:hover {
-    padding: 0;
+
 
     .fa-plus {
       font-size: 40px;

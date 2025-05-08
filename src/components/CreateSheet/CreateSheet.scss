@@ -1,3 +1,8 @@
+.create-sheet-container__options {
+  @include flex-row;
+  gap: $spacing-medium;
+}
+
 .sheet {
   @include flex-col;
   position: relative;

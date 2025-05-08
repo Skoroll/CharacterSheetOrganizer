@@ -1,5 +1,5 @@
 import { useUser } from "../../Context/UserContext";
-/*import GoPremiumBtn from "../GoPremiumBtn/GoPremiumBtn";*/
+/*import GoPremiumBtn from "../Premium/GoPremiumBtn/GoPremiumBtn";*/
 import "./Welcome.scss";
 
 const Welcome = () => {

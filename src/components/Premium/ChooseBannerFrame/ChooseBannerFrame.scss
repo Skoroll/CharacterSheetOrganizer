@@ -1,0 +1,15 @@
+.choose-frame {
+    @include flex-row;
+    gap: $spacing-small;
+    
+    label {
+        @include flex-col;
+    }
+
+    .frame-preview {
+        img {
+            height: 95px;
+            width: 95px;
+        }
+    }
+}

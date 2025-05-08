@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
+import "./AdminLogs.scss"
 
 const socket = io(import.meta.env.VITE_API_URL);
 
