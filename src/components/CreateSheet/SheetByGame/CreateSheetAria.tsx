@@ -10,6 +10,7 @@ import statsTooltip from "../../../assets/Help/Aria/FR/stats.json";
 import weaponsTooltip from "../../../assets/Help/Aria/FR/weapons.json";
 import placeholderImage from "../../../assets/placeholder-image.webp";
 import ariaLogo from "../../../assets/Aria_logo_large.webp";
+import { BeatLoader } from "react-spinners";
 
 interface CreateSheetAriaProps {
   game: string;
@@ -41,6 +42,7 @@ interface Magic {
 }
 
 export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const navigate = useNavigate();
   const [errorModalOpen, setErrorModalOpen] = useState(false);
@@ -157,8 +159,12 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const errors: string[] = [];
+    if (isSubmitting) return;
 
+    setIsSubmitting(true);
+
+    const errors: string[] = [];
+    
     if (!className) errors.push("La classe est obligatoire.");
     if (!name) errors.push("Le nom est obligatoire.");
     if (age === 0) errors.push("L'âge est obligatoire.");
@@ -173,11 +179,6 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
     if (!pros) errors.push("Les qualités sont obligatoires.");
     if (!cons) errors.push("Les défauts sont obligatoires.");
 
-    if (errors.length > 0) {
-      setErrorMessages(errors);
-      setErrorModalOpen(true);
-      return;
-    }
 
     const updatedSkills = skills.map((skill) => ({
       ...skill,
@@ -208,6 +209,13 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
     formData.append("inventory", JSON.stringify(inventory));
     formData.append("magic", JSON.stringify(magic));
 
+    if (errors.length > 0) {
+      setErrorMessages(errors);
+      setErrorModalOpen(true);
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`${API_URL}/api/characters/aria`, {
@@ -226,6 +234,8 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
     } catch (error) {
       console.error("Erreur :", error);
       alert("Une erreur est survenue.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -708,7 +718,13 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
       </div>
       <div className="btn-container">
         <button onClick={() => setIsResetModalOpen(true)}>Recommencer</button>
-        <button onClick={handleSubmit}>Créer le personnage</button>
+        <button onClick={handleSubmit} disabled={isSubmitting}>
+          {isSubmitting ? (
+            <BeatLoader size={8} color="#fff" />
+          ) : (
+            "Créer le personnage"
+          )}
+        </button>
       </div>
       {errorModalOpen && (
         <Modal
