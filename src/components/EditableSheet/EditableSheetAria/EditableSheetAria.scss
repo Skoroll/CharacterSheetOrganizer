@@ -91,8 +91,9 @@
       @include flex-col;
       position: relative;
       border-radius: 7px;
-      width: 285px;
-      height: 285px;
+      width: 100%;
+      height: 330px;
+      margin-bottom: $spacing-small;
 
       .fa-pen-to-square {
         position: absolute;

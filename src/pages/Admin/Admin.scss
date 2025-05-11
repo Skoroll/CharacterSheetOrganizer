@@ -1,5 +1,7 @@
 .admin {
 
+    font-family:'Times New Roman', Times, serif;
+
     &__split {
         @include flex-row;
         justify-content: space-evenly;

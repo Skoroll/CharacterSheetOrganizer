@@ -113,14 +113,12 @@ export default function AdminArticles() {
       <h2>Articles existants</h2>
       <ul>
         {articles.map((article) => (
-          <li key={article._id}>
-            <strong>
+          <li className="article-edit" key={article._id}>
+            <div className="article-header">
+            <p className="article-edit--title">
               [{article.category}] {article.title}
-            </strong>{" "}
-            - {article.subtitle}
-            <br />
-            <small>{article.content}</small>
-            <br />
+            </p>{" "}
+            <div className="article-edit--btns">
             <button
               onClick={() => {
                 setForm({
@@ -137,6 +135,13 @@ export default function AdminArticles() {
             <button onClick={() => handleDelete(article._id)}>
               <i className="fa-solid fa-trash" />
             </button>
+            </div>
+            </div>
+            <p className="article-edit--subtitle">{article.subtitle}</p>
+            <br />
+            <p className="article-edit--content">{article.content}</p>
+            <br />
+
           </li>
         ))}
       </ul>

@@ -3,7 +3,9 @@
     gap: $spacing-small;
     
     label {
-        @include flex-col;
+        @include flex-row;
+        z-index: 300;
+        margin-bottom: $spacing-large;
     }
 
     .frame-preview {
@@ -12,4 +14,14 @@
             width: 95px;
         }
     }
+}
+
+
+
+.frame-overlay {
+    position: absolute;
+    width: 326px;
+    height: 315px;
+    top: -27px;
+    left: -15px;
 }

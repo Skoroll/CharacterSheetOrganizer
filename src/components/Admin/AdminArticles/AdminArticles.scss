@@ -35,5 +35,36 @@
         @include ul-base;
         overflow-y: auto;
         padding: $spacing-small;
+
+        .article-edit {
+            @include flex-col;
+            gap: $spacing-small;
+
+            &--btns {
+                @include flex-row;
+                gap: $spacing-small;
+                
+                button {
+                    @include button;
+                }
+            }
+
+            .article-header {
+                @include flex-row;
+                justify-content: space-between;
+            }
+
+            p {
+                margin: 0;
+            }
+                &--title {
+                    font-weight: 800;
+                    font-size: large;
+                    margin: $spacing-small auto;
+                }
+            }
+
+
+        
     }
 }

@@ -6,8 +6,8 @@ import ChooseBannerFrame from "../Premium/ChooseBannerFrame/ChooseBannerFrame";
 
 export default function CreateSheet() {
   const [selectedGame, setSelectedGame] = useState("");
+  const [selectedFrame, setSelectedFrame] = useState<string>(""); 
 
-  // Imaginons que tu récupères ça de ton contexte utilisateur ou ailleurs :
   const { user } = useUser(); 
 
   return (
@@ -23,13 +23,17 @@ export default function CreateSheet() {
             >
               <option value="">-- Sélectionnez un jeu --</option>
               <option value="Aria">Aria</option>
-              {/*<option value="VTM">Vampire: The Massquerade</option>*/}
+              {/* <option value="VTM">Vampire: The Masquerade</option> */}
             </select>
           </label>
         </div>
 
-        {user?.isPremium === true && <ChooseBannerFrame />}
-
+        {user?.isPremium === true && (
+          <ChooseBannerFrame
+            selectedFrame={selectedFrame}
+            setSelectedFrame={setSelectedFrame}
+          />
+        )}
       </div>
 
       {selectedGame === "Aria" && <CreateSheetAria game="Aria" />}
@@ -37,4 +41,3 @@ export default function CreateSheet() {
     </div>
   );
 }
-

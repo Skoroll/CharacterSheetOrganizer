@@ -23,6 +23,7 @@ interface EditableSheetProps {
 
 export default function EditableSheetAria({ id }: EditableSheetProps) {
   const { user } = useUser();
+  const [selectedFrame, setSelectedFrame] = useState<string>("");
   const [isSaving, setIsSaving] = useState(false);
   const currentUserId = user?._id || null;
   const [skillBonuses, setSkillBonuses] = useState<{ [key: string]: number }>(
@@ -222,13 +223,13 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
   //Sauvegarde les modifications sur une feuille de personnage
   const handleSaveChanges = async () => {
     if (!editedCharacter) return;
-  
+
     // ✅ Empêche de cliquer plusieurs fois
     if (isSaving) return;
     setIsSaving(true);
-  
+
     const { magic } = editedCharacter;
-  
+
     if (magic?.deathMagic && magic.deathMagicCount > magic.deathMagicMax) {
       setErrorMessages([
         "Les points de magie de la mort ne peuvent pas dépasser le maximum défini.",
@@ -237,9 +238,9 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
       setIsSaving(false); // ✅ on déverrouille le bouton même en cas d'erreur
       return;
     }
-  
+
     const hasImageFile = editedCharacter.image instanceof File;
-  
+
     const updatedMagic = {
       ...editedCharacter.magic,
       ariaMagicLevel:
@@ -247,7 +248,7 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
           ? editedCharacter.magic.ariaMagicLevel
           : 1,
     };
-  
+
     const mergedBaseSkills = baseSkills.map((defaultSkill) => {
       const existing = editedCharacter.baseSkills?.find(
         (skill) => skill.name === defaultSkill.name
@@ -256,13 +257,13 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
         ? { ...defaultSkill, bonusMalus: existing.bonusMalus }
         : defaultSkill;
     });
-  
+
     try {
       let response;
-  
+
       if (hasImageFile) {
         const formData = new FormData();
-  
+
         for (const [key, value] of Object.entries(editedCharacter)) {
           if (key === "image" && value instanceof File) {
             formData.append("image", value);
@@ -273,10 +274,10 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
             );
           }
         }
-  
+
         formData.set("magic", JSON.stringify(updatedMagic));
         formData.set("baseSkills", JSON.stringify(mergedBaseSkills));
-  
+
         response = await fetch(`${API_URL}/api/characters/aria/${id}`, {
           method: "PUT",
           body: formData,
@@ -294,15 +295,15 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
           }),
         });
       }
-  
+
       if (!response.ok) throw new Error("Erreur lors de la mise à jour");
-  
+
       const updatedCharacter = await response.json();
-  
+
       // ✅ Mise à jour locale
       setCharacter(updatedCharacter);
       setIsEditing(false);
-  
+
       // ✅ Evite de garder un File après l'upload
       setEditedCharacter({
         ...updatedCharacter,
@@ -444,7 +445,6 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
   };
   return (
     <div className="character-details">
-      <ChooseBannerFrame/>
       {/*Barres contenant les boutons*/}
       <div className="character-details--button-list">
         <button onClick={toggleSkills}>
@@ -464,42 +464,61 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
       <div className="content-wrapper">
         <div className="character-details__content">
           <div className="character-details__identity">
-            <div className="character-details__identity--image">
-             {/*} <CharacterFrame/>*/}
-              <img
-                className="character-portrait"
-                src={
-                  editedCharacter?.image
-                    ? typeof editedCharacter.image === "string"
-                      ? editedCharacter.image
-                      : URL.createObjectURL(editedCharacter.image)
-                    : defaultImg
-                }
-                alt={character.name}
-                width={260}
-                height={260}
-                onError={(e) => {
-                  e.currentTarget.src = defaultImg;
-                }}
-              />
-
-              {isEditing && (
-                <label>
-                  <i className="fa-solid fa-pen-to-square"></i>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        setEditedCharacter((prev) =>
-                          prev ? { ...prev, image: file } : null
-                        );
-                      }
-                    }}
-                  />
-                </label>
+            <div className="character-details__identity--image"> 
+            
+              {isEditing && user?.isPremium === true && (
+                <ChooseBannerFrame
+                  selectedFrame={selectedFrame}
+                  setSelectedFrame={setSelectedFrame}
+                />
               )}
+<div className="character-details__identity--image frame-wrapper">
+  <img
+    className="character-portrait"
+    src={
+      editedCharacter?.image
+        ? typeof editedCharacter.image === "string"
+          ? editedCharacter.image
+          : URL.createObjectURL(editedCharacter.image)
+        : defaultImg
+    }
+    alt={character.name}
+    width={260}
+    height={260}
+    onError={(e) => {
+      e.currentTarget.src = defaultImg;
+    }}
+  />
+
+  {isEditing && user?.isPremium === true && selectedFrame && (
+    <img
+      className="frame-overlay"
+      src={selectedFrame}
+      alt="Cadre sélectionné"
+      width={260}
+      height={260}
+    />
+  )}
+
+  {isEditing && (
+    <label>
+      <i className="fa-solid fa-pen-to-square"></i>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) {
+            setEditedCharacter((prev) =>
+              prev ? { ...prev, image: file } : null
+            );
+          }
+        }}
+      />
+    </label>
+  )}
+</div>
+
             </div>
 
             {/* Statistiques du personnage */}
