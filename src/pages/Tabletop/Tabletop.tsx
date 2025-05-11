@@ -381,7 +381,6 @@ export default function TableComponent() {
   gameMaster={table.gameMaster}
   selectedCharacterId={selectedCharacterId}
   game={table.game}
-  selectedFrame={selectedCharacter?.selectedFrame || ""} 
 />
 
           </div>

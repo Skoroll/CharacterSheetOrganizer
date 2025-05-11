@@ -23,14 +23,12 @@ interface PlayerAtTableProps {
   gameMaster: string;
   selectedCharacterId: string | null;
   game: string;
-  selectedFrame?: string;
 }
 
 const PlayerAtTable: React.FC<PlayerAtTableProps> = ({
   tableId,
   API_URL,
   game,
-  selectedFrame,
 }) => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -77,18 +75,18 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({
 
   useEffect(() => {
     if (!tableId) return;
-  
+
     const handleRefreshPlayers = () => {
       console.log("[SOCKET] refreshPlayers reçu → rafraîchir les joueurs");
       fetchPlayers();
     };
-  
+
     socket.on("refreshPlayers", handleRefreshPlayers);
-  
+
     return () => {
       socket.off("refreshPlayers", handleRefreshPlayers);
     };
-  }, [tableId]); 
+  }, [tableId]);
 
   const fetchPlayers = async () => {
     if (!tableId) return;
@@ -152,8 +150,6 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({
     (player) => !player.isGameMaster && player.userId !== currentUserId
   );
 
-  
-
   const currentPlayer = players.find(
     (player) => !player.isGameMaster && player.userId === currentUserId
   );
@@ -182,8 +178,12 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({
                     </p>
                     {typeof selectedCharacter.image === "string" && (
                       <ToolTip text={selectedCharacter.name} position="bottom">
-                        {selectedFrame !== "" && (
-                          <img src={selectedFrame} alt="" />
+                        {selectedCharacter.selectedFrame && (
+                          <img
+                            src={selectedCharacter.selectedFrame}
+                            alt="Cadre"
+                            className="frame-overlay frame-overlay--game"
+                          />
                         )}
                         <img
                           src={selectedCharacter.image}
@@ -258,13 +258,22 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({
                 </p>
                 {typeof currentCharacter.image === "string" && (
                   <ToolTip text={currentCharacter.name} position="bottom">
-                    <img
-                      src={currentCharacter.image}
-                      alt={currentCharacter.name}
-                      onError={(e) => {
-                        e.currentTarget.src = defaultImg;
-                      }}
-                    />
+                    <>
+                      {currentCharacter.selectedFrame && (
+                        <img
+                          src={currentCharacter.selectedFrame}
+                          alt="Cadre"
+                          className="frame-overlay frame-overlay--game"
+                        />
+                      )}
+                      <img
+                        src={currentCharacter.image}
+                        alt={currentCharacter.name}
+                        onError={(e) => {
+                          e.currentTarget.src = defaultImg;
+                        }}
+                      />
+                    </>
                   </ToolTip>
                 )}
               </div>
