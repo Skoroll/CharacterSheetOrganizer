@@ -1,19 +1,10 @@
 import React, { useState, useEffect, createContext, useContext } from "react";
 import { loginUser, api } from "../utils/authService"; // <-- Assure toi que api est bien importé
-
-interface User {
-  _id?: string;
-  userPseudo: string;
-  isAuthenticated: boolean;
-  token?: string;
-  selectedCharacterName?: string;
-  isAdmin?: boolean;
-  isPremium?: boolean;
-}
+import { AppUser } from "../types/AppUser";
 
 interface UserContextProps {
-  user: User;
-  setUser: React.Dispatch<React.SetStateAction<User>>;
+  user: AppUser;
+  setUser: React.Dispatch<React.SetStateAction<AppUser>>;
   login: (name: string, password: string) => Promise<boolean>;
   logout: () => void;
 }
@@ -21,7 +12,7 @@ interface UserContextProps {
 const UserContext = createContext<UserContextProps | null>(null);
 
 const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User>({
+  const [user, setUser] = useState<AppUser>({
     userPseudo: "",
     isAuthenticated: false,
     token: undefined,

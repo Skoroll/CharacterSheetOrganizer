@@ -3,7 +3,6 @@ import { Character, EditableCharacter } from "../../../types/Character";
 import { BeatLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../../Context/UserContext";
-//import CharacterFrame from "../../Premium/CharacterFrame/CharacterFrame";
 import ChooseBannerFrame from "../../Premium/ChooseBannerFrame/ChooseBannerFrame";
 import Modal from "../../../components/Modal/Modal";
 import defaultImg from "../../../assets/person-placeholder-5.webp";
@@ -127,7 +126,9 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
         tableId: character.tableId,
         magic: normalizeMagic(character.magic),
       });
+      setSelectedFrame(character.selectedFrame || "");
     }
+    
   }, [character]);
 
   const API_URL = import.meta.env.VITE_API_URL;
@@ -277,6 +278,7 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
 
         formData.set("magic", JSON.stringify(updatedMagic));
         formData.set("baseSkills", JSON.stringify(mergedBaseSkills));
+        formData.append("selectedFrame", selectedFrame);
 
         response = await fetch(`${API_URL}/api/characters/aria/${id}`, {
           method: "PUT",
@@ -292,6 +294,7 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
             ...editedCharacter,
             baseSkills: mergedBaseSkills,
             magic: updatedMagic,
+            selectedFrame,
           }),
         });
       }
@@ -473,6 +476,15 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
                 />
               )}
 <div className="character-details__identity--image frame-wrapper">
+{!isEditing && character.selectedFrame && (
+  <img
+    className="frame-overlay frame-overlay--edit"
+    src={character.selectedFrame}
+    alt="Cadre sélectionné"
+    width={260}
+    height={260}
+  />
+)}
   <img
     className="character-portrait"
     src={
@@ -492,7 +504,7 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
 
   {isEditing && user?.isPremium === true && selectedFrame && (
     <img
-      className="frame-overlay"
+      className="frame-overlay frame-overlay--edit"
       src={selectedFrame}
       alt="Cadre sélectionné"
       width={260}

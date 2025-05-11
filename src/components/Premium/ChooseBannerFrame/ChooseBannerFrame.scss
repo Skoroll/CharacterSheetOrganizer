@@ -1,11 +1,14 @@
 .choose-frame {
     @include flex-row;
-    gap: $spacing-small;
-    
-    label {
-        @include flex-row;
+    &__form {
+        position: absolute;
+        display: flex;
+        flex-direction: row !important;
         z-index: 300;
         margin-bottom: $spacing-large;
+        gap: $spacing-small;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.26);
     }
 
     .frame-preview {
@@ -20,8 +23,28 @@
 
 .frame-overlay {
     position: absolute;
-    width: 326px;
+    width: 315px;
     height: 315px;
-    top: -27px;
-    left: -15px;
+    padding: 0 !important;
+    z-index: 200;
+
+
+    &--creation {
+        width: 325px;
+        height: 325px;
+        bottom: 11px;
+        left: -10px;
+
+    }
+
+    &--edit {
+        top: 0px;
+        left: -15px;
+    }
+
+    &--small {
+        z-index: 801;
+    width: 101%;
+    height: 101%;
+    }
 }

@@ -22,7 +22,7 @@ export default function ChooseBannerFrame({
 
   return (
     <div className="choose-frame">
-      <label>
+      <label className="choose-frame__form">
         Cadre
         <select value={selectedFrame || ""} onChange={handleChange}>
   <option value="">-- Aucun cadre --</option>

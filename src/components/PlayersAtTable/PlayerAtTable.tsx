@@ -23,12 +23,14 @@ interface PlayerAtTableProps {
   gameMaster: string;
   selectedCharacterId: string | null;
   game: string;
+  selectedFrame?: string;
 }
 
 const PlayerAtTable: React.FC<PlayerAtTableProps> = ({
   tableId,
   API_URL,
   game,
+  selectedFrame,
 }) => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -180,6 +182,9 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({
                     </p>
                     {typeof selectedCharacter.image === "string" && (
                       <ToolTip text={selectedCharacter.name} position="bottom">
+                        {selectedFrame !== "" && (
+                          <img src={selectedFrame} alt="" />
+                        )}
                         <img
                           src={selectedCharacter.image}
                           alt={selectedCharacter.name}

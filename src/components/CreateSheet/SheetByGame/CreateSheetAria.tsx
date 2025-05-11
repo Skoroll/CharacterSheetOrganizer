@@ -11,9 +11,13 @@ import weaponsTooltip from "../../../assets/Help/Aria/FR/weapons.json";
 import placeholderImage from "../../../assets/placeholder-image.webp";
 import ariaLogo from "../../../assets/Aria_logo_large.webp";
 import { BeatLoader } from "react-spinners";
+import ChooseBannerFrame from "../../Premium/ChooseBannerFrame/ChooseBannerFrame";
+import { useUser } from "../../../Context/UserContext";
+import { AppUser } from "../../../types/AppUser";
 
 interface CreateSheetAriaProps {
   game: string;
+  user: AppUser;
 }
 
 interface Weapon {
@@ -42,6 +46,8 @@ interface Magic {
 }
 
 export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
+  const { user } = useUser();
+  const [selectedFrame, setSelectedFrame] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const navigate = useNavigate();
@@ -204,6 +210,7 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
     formData.append("gold", gold.toString());
     formData.append("origin", origin);
     formData.append("game", game);
+    formData.append("selectedFrame", selectedFrame);
     formData.append("weapons", JSON.stringify(weapons));
     formData.append("skills", JSON.stringify(updatedSkills));
     formData.append("inventory", JSON.stringify(inventory));
@@ -251,6 +258,24 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
         <div className="character-identity">
           <div className="character-identity--img">
             <h3>Image du personnage</h3>
+            {user?.isPremium === true && (
+  <>
+    <ChooseBannerFrame
+      selectedFrame={selectedFrame}
+      setSelectedFrame={setSelectedFrame}
+    />
+    {selectedFrame && (
+      <img
+        className="frame-overlay frame-overlay--creation"
+        src={selectedFrame}
+        alt="Cadre sélectionné"
+        width={260}
+        height={260}
+      />
+    )}
+  </>
+)}
+
             <label>
               <input
                 type="file"

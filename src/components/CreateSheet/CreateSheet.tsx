@@ -2,11 +2,9 @@ import { useState } from "react";
 import { useUser } from "../../Context/UserContext";
 import CreateSheetAria from "./SheetByGame/CreateSheetAria";
 import CreateSheetVtm from "./SheetByGame/CreateSheetVtm";
-import ChooseBannerFrame from "../Premium/ChooseBannerFrame/ChooseBannerFrame";
 
 export default function CreateSheet() {
   const [selectedGame, setSelectedGame] = useState("");
-  const [selectedFrame, setSelectedFrame] = useState<string>(""); 
 
   const { user } = useUser(); 
 
@@ -27,16 +25,9 @@ export default function CreateSheet() {
             </select>
           </label>
         </div>
-
-        {user?.isPremium === true && (
-          <ChooseBannerFrame
-            selectedFrame={selectedFrame}
-            setSelectedFrame={setSelectedFrame}
-          />
-        )}
       </div>
 
-      {selectedGame === "Aria" && <CreateSheetAria game="Aria" />}
+      {selectedGame === "Aria" && user && <CreateSheetAria game="Aria" user={user} />}
       {selectedGame === "VTM" && <CreateSheetVtm />}
     </div>
   );

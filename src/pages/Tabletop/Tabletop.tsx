@@ -12,6 +12,7 @@ import SidePanel from "../../components/SidePannel/SidePannel";
 import SoundPlayer from "../../components/SoundPlayer/SoundPlayer";
 import { useUser } from "../../Context/UserContext";
 import { io } from "socket.io-client";
+import { Character } from "../../types/Character";
 import "./Tabletop.scss";
 
 interface Table {
@@ -58,6 +59,7 @@ export default function TableComponent() {
     (player) => player.userId === user._id
   );
   const selectedCharacterId = currentPlayer?.selectedCharacter || null;
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [activePanel, setActivePanel] = useState<
     | "npcs"
     | "sendDocs"
@@ -73,6 +75,18 @@ export default function TableComponent() {
       window.scrollTo(0, 0);
     }, 1000);
   }, []);
+
+  useEffect(() => {
+    const fetchCharacter = async () => {
+      if (selectedCharacterId) {
+        const res = await fetch(`${API_URL}/api/characters/${selectedCharacterId}`);
+        const data = await res.json();
+        setSelectedCharacter(data);
+      }
+    };
+  
+    fetchCharacter();
+  }, [selectedCharacterId]);
 
   useEffect(() => {
     // On considère que la vérification est terminée une fois que user est défini (même si vide)
@@ -298,7 +312,7 @@ export default function TableComponent() {
       );
     if (error) return <p>Erreur : {error}</p>;
     if (!table) return <p>Table non trouvée.</p>;
-
+    console.log("Cadre pour", selectedCharacter?.name, ":", selectedCharacter?.selectedFrame);
     return (
       <div className="table">
         <div className="table__content">
@@ -362,12 +376,14 @@ export default function TableComponent() {
               />
             </div>
             <PlayerAtTable
-              tableId={table._id}
-              API_URL={API_URL}
-              gameMaster={table.gameMaster}
-              selectedCharacterId={selectedCharacterId}
-              game={table.game}
-            />
+  tableId={table._id}
+  API_URL={API_URL}
+  gameMaster={table.gameMaster}
+  selectedCharacterId={selectedCharacterId}
+  game={table.game}
+  selectedFrame={selectedCharacter?.selectedFrame || ""} 
+/>
+
           </div>
         </div>
         <div className="table__low-bar">
