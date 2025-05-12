@@ -18,9 +18,11 @@ interface DiceRollerProps {
   userCharacterName: string;
   userPseudo: string;
   socket: any;
+  user: any;
+  isPremium: boolean;
 }
 
-function DiceRoller({ tableId, userCharacterName, userPseudo, socket }: DiceRollerProps) {
+function DiceRoller({ tableId, userCharacterName, userPseudo, socket, isPremium }: DiceRollerProps) {
   const [diceType, setDiceType] = useState("d6"); // Valeur initiale du type de dé
   const [numDice, setNumDice] = useState(1); // Nombre de dés
 
@@ -43,6 +45,7 @@ function DiceRoller({ tableId, userCharacterName, userPseudo, socket }: DiceRoll
       senderName: userPseudo,
       tableId: tableId,
       messageType: "diceRoll",
+      isPremium: isPremium,
     };
   
     if (socket) {

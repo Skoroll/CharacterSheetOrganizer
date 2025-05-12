@@ -1,6 +1,7 @@
 import Chat from "../Chat/Chat";
 import DiceRoller from "../DiceRoller/DiceRoller";
 import { MessageType } from "../../types/Messages";
+import { useUser } from "../../Context/UserContext";
 import "./SidePannel.scss"
 
 interface SidePanelProps {
@@ -9,6 +10,7 @@ interface SidePanelProps {
     userCharacterName: string;
     userPseudo: string;
     isGameMaster: boolean;
+    isPremium: boolean;
     messages: MessageType[];
     setMessages: React.Dispatch<React.SetStateAction<MessageType[]>>;
   }
@@ -23,25 +25,32 @@ interface SidePanelProps {
     messages,
     setMessages,
   }: SidePanelProps) {
+    const { user } = useUser();
+    const isPremium = user?.isPremium || false;
   
-  return (
-    <div className="table-side-pannel">
-      <DiceRoller
-        socket={socket}
-        tableId={tableId}
-        userCharacterName={userCharacterName}
-        userPseudo={userPseudo}
-      />
-<Chat
-  messages={messages}
-  setMessages={setMessages}
-  tableId={tableId}
-  socket={socket}
-  userCharacterName={userCharacterName}
-  userPseudo={userPseudo}
-  isGameMaster={isGameMaster}
-/>
-
-    </div>
-  );
-} 
+    return (
+      <div className="table-side-pannel">
+        <DiceRoller
+          socket={socket}
+          tableId={tableId}
+          userCharacterName={userCharacterName}
+          userPseudo={userPseudo}
+          user={user}
+          isPremium={isPremium}
+        />
+        <Chat
+          messages={messages}
+          setMessages={setMessages}
+          tableId={tableId}
+          socket={socket}
+          userCharacterName={userCharacterName}
+          userPseudo={userPseudo}
+          isGameMaster={isGameMaster}
+          user={user}
+          isPremium={isPremium} 
+        />
+      </div>
+    );
+  }
+  
+  

@@ -395,6 +395,7 @@ export default function TableComponent() {
             <SidePanel
               socket={socket}
               tableId={table._id}
+              isPremium={user.isPremium || false}
               userCharacterName={
                 isGameMaster ? "Maître du jeu" : user.selectedCharacterName!
               }

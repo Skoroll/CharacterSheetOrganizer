@@ -1,15 +1,13 @@
+import SelectTheme from "../../SelectTheme/SelectTheme";
 
-import SelectTheme from '../../SelectTheme/SelectTheme';
+interface SettingsProps {
+  isPremium: boolean;
+}
 
-
-
-const Settings = () => {
-
-
-
+const Settings = ({ isPremium }: SettingsProps) => {
   return (
     <div className="settings">
-      <SelectTheme/>
+      <SelectTheme isPremium={isPremium} />
     </div>
   );
 };

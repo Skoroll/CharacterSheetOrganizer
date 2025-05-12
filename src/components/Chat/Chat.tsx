@@ -7,13 +7,17 @@ interface ChatProps {
   userPseudo: string;
   tableId: string;
   messages: ChatMessage[];
-  setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;  
+  setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
   socket: any;
   isGameMaster: boolean;
+  user: any;
+  isPremium: boolean;
 }
 
-
-type ChatMessage = MessageType & { animate?: boolean };
+type ChatMessage = MessageType & { 
+  animate?: boolean,
+  isPremium?: boolean; 
+};
 
 const Chat = ({
   userCharacterName,
@@ -23,6 +27,7 @@ const Chat = ({
   setMessages,
   isGameMaster,
   socket,
+  user
 }: ChatProps) => {
   const [inputValue, setInputValue] = useState("");
   const [chatOpen, setChatOpen] = useState(true);
@@ -30,8 +35,8 @@ const Chat = ({
   const hasFetchedMessages = useRef(false);
   const API_URL = import.meta.env.VITE_API_URL;
 
-  
-  // ✅ Vérifier si l'utilisateur est en bas avant d'ajouter un message
+
+  // Vérifier si l'utilisateur est en bas avant d'ajouter un message
   useEffect(() => {
     if (!chatMessagesRef.current) return;
     const chatContainer = chatMessagesRef.current;
@@ -40,7 +45,7 @@ const Chat = ({
     }, 0);
   }, [messages]);
 
-  // ✅ Récupération des derniers messages via API sans duplication
+  // Récupération des derniers messages via API sans duplication
   useEffect(() => {
     if (hasFetchedMessages.current) return;
     hasFetchedMessages.current = true;
@@ -55,25 +60,23 @@ const Chat = ({
 
         const data: MessageType[] = await response.json();
 
-        
-        // ✅ TRIER du plus ancien au plus récent
+        // TRIER du plus ancien au plus récent
         const sortedMessages = [...data].sort((a, b) => {
           const dateA = new Date(a.createdAt ?? 0); // 0 = timestamp 1970
           const dateB = new Date(b.createdAt ?? 0);
           return dateA.getTime() - dateB.getTime();
         });
-        
-        
+
         setMessages((prevMessages) => {
-          const existingMessageIds = new Set(prevMessages.map((msg) => msg._id));
+          const existingMessageIds = new Set(
+            prevMessages.map((msg) => msg._id)
+          );
           const newMessages = sortedMessages.filter(
             (msg) => !existingMessageIds.has(msg._id)
           );
-        
 
           return [...prevMessages, ...newMessages];
         });
-        
       } catch (error) {
         console.error("❌ Erreur lors du chargement des messages:", error);
       }
@@ -82,40 +85,39 @@ const Chat = ({
     fetchMessages();
   }, [tableId, setMessages, API_URL]);
 
-  // ✅ Gestion de l'input utilisateur
+  // Gestion de l'input utilisateur
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
 
   useEffect(() => {
     const handleNewMessage = (msg: MessageType) => {
-
       setMessages((prev) => [...prev, { ...msg, animate: true }]);
     };
-  
+
     if (!socket.hasListeners || !socket.hasListeners("newMessage")) {
       socket.on("newMessage", handleNewMessage);
     }
-  
+
     return () => {
       socket.off("newMessage", handleNewMessage);
     };
   }, []);
-  
-  
 
-  // ✅ Envoi d'un message et affichage immédiat sans duplication
+  // Envoi d'un message et affichage immédiat sans duplication
   const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
 
-    const newMessage: Omit<MessageType, "_id"> = {
+    const newMessage: Omit<MessageType, "_id"> & { isPremium?: boolean } = {
       message: inputValue,
       characterName: isGameMaster ? "Maître du jeu" : userCharacterName,
       senderName: userPseudo,
       tableId,
+      isPremium: user?.isPremium,
     };
     
+
     try {
       const response = await fetch(`${API_URL}/api/chat/postChat`, {
         method: "POST",
@@ -129,10 +131,10 @@ const Chat = ({
 
       const savedMessage: MessageType = await response.json();
 
-      // ✅ Ajoute directement le message valide renvoyé par l'API
+      // Ajoute directement le message valide renvoyé par l'API
       setMessages((prevMessages) => [...prevMessages, savedMessage]);
 
-      // ✅ Envoie le message via WebSocket
+      // Envoie le message via WebSocket
       socket.emit("newMessage", savedMessage);
 
       setInputValue("");
@@ -144,15 +146,12 @@ const Chat = ({
   useEffect(() => {
     const timeout = setTimeout(() => {
       setMessages((prev) =>
-        prev.map((msg) =>
-          msg.animate ? { ...msg, animate: false } : msg
-        )
+        prev.map((msg) => (msg.animate ? { ...msg, animate: false } : msg))
       );
     }, 1000);
-  
+
     return () => clearTimeout(timeout);
   }, [messages, setMessages]);
-  
 
   return (
     <div className={`chat ${chatOpen ? "chat--open" : ""}`}>
@@ -166,36 +165,33 @@ const Chat = ({
       {chatOpen && (
         <>
           <div ref={chatMessagesRef} className="chat__messages">
-{messages.map((msg: ChatMessage, index) => {
-  const key = msg._id ?? `diceRoll-${index}-${msg.message}-${Math.random()}`;
+            {messages.map((msg: ChatMessage, index) => {
+              const key =
+                msg._id ?? `diceRoll-${index}-${msg.message}-${Math.random()}`;
 
-  const animationClass =
-  msg.messageType === "diceRoll" && msg.animate
-    ? "chat__messages--diceRoll popIn"
-    : msg.messageType === "diceRoll"
-    ? "chat__messages--diceRoll"
-    : "";
+              const animationClass =
+                msg.messageType === "diceRoll" && msg.animate
+                  ? "chat__messages--diceRoll popIn"
+                  : msg.messageType === "diceRoll"
+                  ? "chat__messages--diceRoll"
+                  : "";
 
-    
-
-  return (
-    <p
-      key={key}
-      className={`chat__messages-item 
+              return (
+                <p
+                  key={key}
+                  className={`chat__messages-item 
         ${msg.senderName === "Système" ? "chat__messages--system" : ""} 
         ${animationClass}`}
-    >
+                >
 <span className="chat__messages--player">
+  {msg.isPremium && <i className="fa-solid fa-crown" style={{ marginRight: "4px", color: "gold" }}></i>}
   {msg.characterName || msg.senderName || "Nom du personnage non défini"}
 </span>
-<br />
-<span>{msg.message || msg.content || "[Message vide]"}</span>
-
-
-    </p>
-  );
-})}
-
+                  <br />
+                  <span>{msg.message || msg.content || "[Message vide]"}</span>
+                </p>
+              );
+            })}
           </div>
           <form
             className="chat__box"

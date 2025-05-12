@@ -14,6 +14,8 @@ import { BeatLoader } from "react-spinners";
 import ChooseBannerFrame from "../../Premium/ChooseBannerFrame/ChooseBannerFrame";
 import { useUser } from "../../../Context/UserContext";
 import { AppUser } from "../../../types/AppUser";
+import { frameOptions } from "../../Premium/ChooseBannerFrame/ChooseBannerFrame"
+
 
 interface CreateSheetAriaProps {
   game: string;
@@ -264,15 +266,14 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
       selectedFrame={selectedFrame}
       setSelectedFrame={setSelectedFrame}
     />
-    {selectedFrame && (
-      <img
-        className="frame-overlay frame-overlay--creation"
-        src={selectedFrame}
-        alt="Cadre sélectionné"
-        width={260}
-        height={260}
-      />
-    )}
+{selectedFrame && (
+  <img
+    className="frame-overlay frame-overlay--creation"
+    src={frameOptions[selectedFrame]}
+    alt={`Cadre ${selectedFrame}`}
+  />
+)}
+
   </>
 )}
 

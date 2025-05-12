@@ -1,17 +1,30 @@
 import { useEffect, useState } from "react";
 import useStyleStore, { ThemeName } from "../../utils/useStyleStore";
 
-const SelectTheme = () => {
+interface SelectThemeProps {
+  isPremium: boolean;
+}
+
+const SelectTheme = ({ isPremium }: SelectThemeProps) => {
   const { setTheme, theme } = useStyleStore();
   const [selectedTheme, setSelectedTheme] = useState<ThemeName>("dark");
 
-  // Appliquer le thème depuis localStorage au premier rendu
+  const themes: { value: ThemeName; label: string; premium: boolean }[] = [
+    { value: "light", label: "Clair", premium: false },
+    { value: "dark", label: "Sombre", premium: false },
+    { value: "royal", label: "Royal", premium: false },
+    { value: "forest", label: "Forêt", premium: true },
+    { value: "vampire", label: "Vampirique", premium: true },
+    { value: "steampunk", label: "Steampunk", premium: true },
+    { value: "ironclad", label: "Blindé", premium: true },
+    { value: "arcane", label: "Arcanique", premium: true },
+    { value: "void", label: "Vide", premium: true },
+    { value: "pastoral", label: "Pastoral", premium: true },
+    { value: "sandsOfTime", label: "Sables du Temps", premium: true },
+  ];
+
   useEffect(() => {
-    const savedTheme = localStorage.getItem("selectedTheme") as
-      | "light"
-      | "dark"
-      | "royal"
-      | null;
+    const savedTheme = localStorage.getItem("selectedTheme") as ThemeName | null;
     if (savedTheme) {
       setSelectedTheme(savedTheme);
       setTheme(savedTheme);
@@ -19,10 +32,13 @@ const SelectTheme = () => {
   }, [setTheme]);
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const newTheme = event.target.value as "light" | "dark" | "royal";
+    const newTheme = event.target.value as ThemeName;
+    const isPremiumTheme = themes.find((t) => t.value === newTheme)?.premium;
+
+    if (isPremiumTheme && !isPremium) return; // Bloquer la sélection
     setSelectedTheme(newTheme);
     setTheme(newTheme);
-    localStorage.setItem("selectedTheme", newTheme); // ⬅️ Enregistrement
+    localStorage.setItem("selectedTheme", newTheme);
   };
 
   return (
@@ -37,17 +53,16 @@ const SelectTheme = () => {
         Choisir un thème :
       </label>
       <select id="theme-select" value={selectedTheme} onChange={handleChange}>
-        <option value="light">Clair</option>
-        <option value="dark">Sombre</option>
-        <option value="royal">Royal</option>
-        <option value="forest">Forêt</option>
-        <option value="vampire">Vampirique</option>
-        <option value="steampunk">Steampunk</option>
-        <option value="ironclad">Blindé</option>
-        <option value="arcane">Arcanique</option>
-        <option value="void">Vide</option>
-        <option value="pastoral">Pastoral</option>
-        <option value="sandsOfTime">Sables du Temps</option>
+        {themes.map((themeOption) => (
+          <option
+            key={themeOption.value}
+            value={themeOption.value}
+            disabled={themeOption.premium && !isPremium}
+          >
+            {themeOption.premium && !isPremium ? " 🔒" : ""}
+            {themeOption.label}
+          </option>
+        ))}
       </select>
     </div>
   );

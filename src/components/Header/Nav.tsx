@@ -60,7 +60,7 @@ export default function Nav({ className, toggleNav }: NavProps) {
 
   const userOptions: Option[] = [
     { label: "Gérer le compte", component: <ManageAccount /> },
-    { label: "Thèmes", component: <Settings /> },
+    { label: "Thèmes", component: <Settings isPremium={user?.isPremium === true} /> },
     { label: "Se déconnecter", action: handleLogout },
   ];
 
