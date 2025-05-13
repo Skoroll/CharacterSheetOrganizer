@@ -345,7 +345,7 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
           <div className="character-stats">
             <h3>
               Caractéristiques
-              <ToolTip text={statsTooltip} position="left">
+              <ToolTip text={statsTooltip} position="left" widthProp="150px">
                 <span className="tooltip-ancor">?</span>
               </ToolTip>
             </h3>
@@ -398,7 +398,7 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
         <div className="character__equipment">
           <h3>
             Armes
-            <ToolTip text={weaponsTooltip} position="left">
+            <ToolTip text={weaponsTooltip} position="left" widthProp="150px">
               <span className="tooltip-ancor">?</span>
             </ToolTip>
           </h3>
@@ -434,7 +434,7 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
         <div className="character-points">
           <h3>
             Physique
-            <ToolTip text={healthTooltip} position="left">
+            <ToolTip text={healthTooltip} position="left" widthProp="150px">
               <span className="tooltip-ancor">?</span>
             </ToolTip>
           </h3>
@@ -473,7 +473,7 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
         <div className="sheet__bottom--fixed">
           <h3>
             Compétences
-            <ToolTip text={baseSkillsTooltip} position="right">
+            <ToolTip text={baseSkillsTooltip} position="right" widthProp="150px">
               <span className="tooltip-ancor">?</span>
             </ToolTip>
           </h3>
@@ -529,7 +529,7 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
         <form className="sheet__bottom--skills">
           <h3>
             Vos compétences spéciales
-            <ToolTip text={sepcialSkillsTooltip} position="left">
+            <ToolTip text={sepcialSkillsTooltip} position="left" widthProp="150px">
               <span className="tooltip-ancor">?</span>
             </ToolTip>
           </h3>
@@ -718,6 +718,7 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
         <div className="sheet__background">
           {/* Background */}
           <div className="sheet__background--pros-and-cons">
+            
             <label>
               Vos qualités :
               <textarea

@@ -8,40 +8,72 @@ interface NpcDetailsModalProps {
   npc: Npc;
   onClose: () => void;
   isGameMaster?: boolean;
+  onSave?: () => void;
 }
 
 export default function NpcDetailsModal({
   npc,
   onClose,
   isGameMaster,
+  onSave
 }: NpcDetailsModalProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedNpc, setEditedNpc] = useState<Npc>(npc);
+  const [editedNpc, setEditedNpc] = useState<Npc>({
+    ...npc,
+    specialSkills: npc.specialSkills || [],
+    inventory: npc.inventory || [],
+  });
   const API_URL = import.meta.env.VITE_API_URL;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setEditedNpc((prev) => ({ ...prev, [name]: value }));
+    setEditedNpc((prev) => ({
+      ...prev,
+      [name]: name === "age" ? Number(value) : value,
+    }));
   };
 
   const handleSave = async () => {
     try {
+      const formData = new FormData();
+      for (const key in editedNpc) {
+        if (key === "specialSkills" || key === "inventory") {
+          formData.append(key, JSON.stringify((editedNpc as any)[key]));
+        } else if (key === "image" && editedNpc.image instanceof File) {
+          formData.append("image", editedNpc.image);
+        } else if ((editedNpc as any)[key] !== undefined) {
+          formData.append(key, String((editedNpc as any)[key]));
+        }
+      }
+
       const res = await fetch(`${API_URL}/api/npcs/${npc._id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editedNpc),
+        body: formData,
       });
 
       if (!res.ok) throw new Error("Erreur lors de la mise à jour du PNJ");
 
       setIsEditing(false);
-      onClose(); // Optionnel : recharger les données parent si besoin
+      onClose();
+      onSave?.();
     } catch (err) {
       alert("Erreur lors de l'enregistrement.");
       console.error(err);
     }
+  };
+
+  const updateSpecialSkill = (index: number, key: string, value: string | number) => {
+    const updated = [...editedNpc.specialSkills];
+    updated[index] = { ...updated[index], [key]: value };
+    setEditedNpc({ ...editedNpc, specialSkills: updated });
+  };
+
+  const updateInventoryItem = (index: number, key: string, value: string | number) => {
+    const updated = [...editedNpc.inventory];
+    updated[index] = { ...updated[index], [key]: value };
+    setEditedNpc({ ...editedNpc, inventory: updated });
   };
 
   return (
@@ -60,22 +92,34 @@ export default function NpcDetailsModal({
               }}
             />
           )}
+          {isEditing && (
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  setEditedNpc((prev) => ({ ...prev, image: file }));
+                }
+              }}
+            />
+          )}
           <ul>
-            <li>
-              <strong>Force :</strong> {editedNpc.strength}
-            </li>
-            <li>
-              <strong>Dextérité :</strong> {editedNpc.dexterity}
-            </li>
-            <li>
-              <strong>Intelligence :</strong> {editedNpc.intelligence}
-            </li>
-            <li>
-              <strong>Charisme :</strong> {editedNpc.charisma}
-            </li>
-            <li>
-              <strong>Endurance :</strong> {editedNpc.endurance}
-            </li>
+            {["strength", "dexterity", "intelligence", "charisma", "endurance"].map((stat) => (
+              <li key={stat}>
+                <strong>{stat.charAt(0).toUpperCase() + stat.slice(1)} :</strong>{" "}
+                {isEditing ? (
+                  <input
+                    type="number"
+                    name={stat}
+                    value={(editedNpc as any)[stat]}
+                    onChange={handleChange}
+                  />
+                ) : (
+                  (editedNpc as any)[stat]
+                )}
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -111,26 +155,108 @@ export default function NpcDetailsModal({
             id="0"
             title="Compétences spéciales"
             content={
-              <ul>
-                {editedNpc.specialSkills.map((skill, index) => (
-                  <li key={index}>
-                    {skill.name} ({skill.score})
-                  </li>
-                ))}
-              </ul>
+              isEditing ? (
+                <>
+                  {editedNpc.specialSkills.map((skill, index) => (
+                    <div key={index}>
+                      <input
+                        type="text"
+                        placeholder="Nom"
+                        value={skill.name}
+                        onChange={(e) => updateSpecialSkill(index, "name", e.target.value)}
+                      />
+                      <input
+                        type="number"
+                        placeholder="Score"
+                        value={skill.score}
+                        onChange={(e) => updateSpecialSkill(index, "score", Number(e.target.value))}
+                      />
+                      <button
+                        onClick={() => {
+                          const updated = [...editedNpc.specialSkills];
+                          updated.splice(index, 1);
+                          setEditedNpc({ ...editedNpc, specialSkills: updated });
+                        }}
+                      >
+                        ❌
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    onClick={() =>
+                      setEditedNpc({
+                        ...editedNpc,
+                        specialSkills: [...editedNpc.specialSkills, { name: "", score: 0 }],
+                      })
+                    }
+                  >
+                    + Ajouter une compétence
+                  </button>
+                </>
+              ) : (
+                <ul>
+                  {editedNpc.specialSkills.map((skill, index) => (
+                    <li key={index}>
+                      {skill.name} ({skill.score})
+                    </li>
+                  ))}
+                </ul>
+              )
             }
           />
           <Collapse
             id="1"
             title="Inventaire"
             content={
-              <ul>
-                {editedNpc.inventory.map((item, index) => (
-                  <li key={index}>
-                    {item.item} × {item.quantity}
-                  </li>
-                ))}
-              </ul>
+              isEditing ? (
+                <>
+                  {editedNpc.inventory.map((item, index) => (
+                    <div key={index}>
+                      <input
+                        type="text"
+                        placeholder="Objet"
+                        value={item.item}
+                        onChange={(e) => updateInventoryItem(index, "item", e.target.value)}
+                      />
+                      <input
+                        type="number"
+                        placeholder="Quantité"
+                        value={item.quantity}
+                        onChange={(e) =>
+                          updateInventoryItem(index, "quantity", Number(e.target.value))
+                        }
+                      />
+                      <button
+                        onClick={() => {
+                          const updated = [...editedNpc.inventory];
+                          updated.splice(index, 1);
+                          setEditedNpc({ ...editedNpc, inventory: updated });
+                        }}
+                      >
+                        ❌
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    onClick={() =>
+                      setEditedNpc({
+                        ...editedNpc,
+                        inventory: [...editedNpc.inventory, { item: "", quantity: 1 }],
+                      })
+                    }
+                  >
+                    + Ajouter un objet
+                  </button>
+                </>
+              ) : (
+                <ul>
+                  {editedNpc.inventory.map((item, index) => (
+                    <li key={index}>
+                      {item.item} × {item.quantity}
+                    </li>
+                  ))}
+                </ul>
+              )
             }
           />
           <Collapse

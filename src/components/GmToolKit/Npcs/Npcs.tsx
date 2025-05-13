@@ -112,8 +112,8 @@ export default function Npcs({ tableId, isGameMaster }: NpcsProps) {
 
       if (!response.ok) throw new Error("Erreur lors de la suppression");
 
-      alert("✅ PNJ supprimé !");
-      fetchNpcs(); // 🔄 Met à jour la liste des PNJs
+      alert("PNJ supprimé !");
+      fetchNpcs(); // Met à jour la liste des PNJs
     } catch (error) {
       console.error("Erreur suppression PNJ :", error);
       alert("Erreur lors de la suppression du PNJ.");
@@ -328,8 +328,8 @@ export default function Npcs({ tableId, isGameMaster }: NpcsProps) {
                     <label>{label} :</label>
                     <input
                       type="number"
-                      name={key} // ✅ Associe la clé correcte
-                      value={typeof statValue === "number" ? statValue : 0} // ✅ Vérifie et force un number
+                      name={key} // Associe la clé correcte
+                      value={typeof statValue === "number" ? statValue : 0} // Vérifie et force un number
                       onChange={(e) =>
                         setNpcData({
                           ...npcData,
@@ -408,7 +408,7 @@ export default function Npcs({ tableId, isGameMaster }: NpcsProps) {
           </button>
         </div>
       )}
-      {/* ✅ Affichage des PNJs Amicaux ou Hostiles */}
+      {/* Affichage des PNJs Amicaux ou Hostiles */}
       {selectedCategory && (
         <div className="npcs__list">
           <h3>
@@ -490,6 +490,7 @@ export default function Npcs({ tableId, isGameMaster }: NpcsProps) {
           npc={selectedNpc}
           onClose={() => setSelectedNpc(null)}
           isGameMaster={isGameMaster}
+          onSave={fetchNpcs} 
         />
       )}
     </div>

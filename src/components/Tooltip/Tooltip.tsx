@@ -6,9 +6,10 @@ interface ToolTipProps {
   position?: "top" | "bottom" | "left" | "right";
   children: React.ReactNode;
   classTooltip?: string;
+  widthProp?: string;
 }
 
-const ToolTip: React.FC<ToolTipProps> = ({ text, position = "top", children, classTooltip }) => {
+const ToolTip: React.FC<ToolTipProps> = ({ text, position = "top", children, classTooltip, widthProp }) => {
   const tooltipRef = useRef<HTMLSpanElement | null>(null);
   const [shouldFlip, setShouldFlip] = useState(false);
 
@@ -23,10 +24,13 @@ const ToolTip: React.FC<ToolTipProps> = ({ text, position = "top", children, cla
   }, []);
 
   return (
-    <div className={`tooltip-wrapper tooltip-${position} ${classTooltip}`}>
+    <div 
+      className={`tooltip-wrapper tooltip-${position} ${classTooltip}`}
+    >
       {children}
       <span
         ref={tooltipRef}
+              style={{width: widthProp}}
         className={`tooltip-text ${shouldFlip ? "tooltip--flipped" : ""}`}
       >
         {Array.isArray(text) ? (
