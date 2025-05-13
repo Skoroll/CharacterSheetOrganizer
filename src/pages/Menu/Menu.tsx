@@ -5,8 +5,7 @@ import { Character } from "../../types/Character";
 import defaultImg from "../../assets/person-placeholder-5.webp";
 import "../../components/ModalContent/Character/CharacterList.scss";
 import "./Menu.scss";
-
-
+import { frameOptions } from "../../components/Premium/ChooseBannerFrame/ChooseBannerFrame";
 
 export default function Menu() {
   const [characters, setCharacters] = useState<Character[]>([]);
@@ -107,7 +106,9 @@ export default function Menu() {
             <i className="fa-solid fa-plus"></i>
             <p
               className={
-                ["ironclad", "steampunk", "sandsOfTime"].includes(currentTheme || "")
+                ["ironclad", "steampunk", "sandsOfTime"].includes(
+                  currentTheme || ""
+                )
                   ? "small-text"
                   : ""
               }
@@ -134,13 +135,15 @@ export default function Menu() {
                 <div className="character__inside">
                   <div className="character__inside--stats"></div>
                   <div className="character__inside--image">
-                    {character.selectedFrame !== "" && (
-                      <img 
-                        src={character.selectedFrame} 
-                        alt="Cadre" 
-                        className="frame-overlay frame-overlay--small"
-                      />
-                    ) }
+                  {character.selectedFrame && frameOptions[character.selectedFrame] && (
+  <img 
+    src={frameOptions[character.selectedFrame]} 
+    alt={`Cadre ${character.selectedFrame}`} 
+    className="frame-overlay frame-overlay--small"
+  />
+)}
+
+
                     <img
                       className="character-portrait"
                       src={

@@ -21,7 +21,6 @@ import ResetPassword from "./components/ResetPassword/ResetPassword.js";
 import { UserProvider } from "./Context/UserContext";
 import { ModalProvider } from "./Context/ModalContext.js";
 import { refreshAccessToken } from "./utils/authService";
-import Settings from "./components/ModalContent/Account/Settings";
 import GlobalStyle from "./style/GlobalStyle.js";
 import { BeatLoader } from "react-spinners";
 import "./App.scss";
@@ -38,7 +37,7 @@ function App() {
     refreshToken();
   }, []);
 
-  if (loading) return <BeatLoader />; // ✅ Empêche un écran blanc au chargement
+  if (loading) return <BeatLoader />; //  Empêche un écran blanc au chargement
 
   return (
     <ThemeProvider theme={theme}>
@@ -55,7 +54,6 @@ function App() {
                   <Route path="/reset-password/:token" element={<ResetPassword />}/>
                   <Route path="/personnage/:id" element={<CharacterDetails />}/>
                   <Route path="/table/:id" element={<Tabletop />} />
-                  <Route path="/settings" element={<Settings />} />
                   <Route path="/mentions-legales" element={<Legal />} />
                   <Route path="*" element={<NotFound />} />
                   <Route path="/news" element={<NewsPage />} />

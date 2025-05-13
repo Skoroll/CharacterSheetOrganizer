@@ -8,6 +8,7 @@ import type { Character } from "../../types/Character";
 import ToolTip from "../Tooltip/Tooltip";
 import defaultImg from "../../assets/person-placeholder-5.webp";
 import "./PlayersAtTable.scss";
+import { frameOptions } from "../Premium/ChooseBannerFrame/ChooseBannerFrame";
 
 interface Player {
   playerId: string;
@@ -180,11 +181,12 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({
                       <ToolTip text={selectedCharacter.name} position="bottom">
                         {selectedCharacter.selectedFrame && (
                           <img
-                            src={selectedCharacter.selectedFrame}
+                            src={frameOptions[selectedCharacter.selectedFrame]}
                             alt="Cadre"
                             className="frame-overlay frame-overlay--game"
                           />
                         )}
+
                         <img
                           src={selectedCharacter.image}
                           alt={selectedCharacter.name}
@@ -261,11 +263,12 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({
                     <>
                       {currentCharacter.selectedFrame && (
                         <img
-                          src={currentCharacter.selectedFrame}
+                          src={frameOptions[currentCharacter.selectedFrame]}
                           alt="Cadre"
                           className="frame-overlay frame-overlay--game"
                         />
                       )}
+
                       <img
                         src={currentCharacter.image}
                         alt={currentCharacter.name}
@@ -289,7 +292,7 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({
           title="Fiche du personnage"
           onClose={() => {
             setIsModalOpen(false);
-            fetchPlayers(); // ✅ Refresh général des joueurs et personnages
+            fetchPlayers(); // Refresh général des joueurs et personnages
           }}
         >
           <EditableSheet id={modalCharacter._id} tableId={tableId} />

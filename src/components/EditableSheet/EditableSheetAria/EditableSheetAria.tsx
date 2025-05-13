@@ -7,6 +7,7 @@ import ChooseBannerFrame from "../../Premium/ChooseBannerFrame/ChooseBannerFrame
 import Modal from "../../../components/Modal/Modal";
 import defaultImg from "../../../assets/person-placeholder-5.webp";
 import "./EditableSheetAria.scss";
+import { frameOptions } from "../../Premium/ChooseBannerFrame/ChooseBannerFrame";
 
 interface BaseSkill {
   name: string;
@@ -128,7 +129,6 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
       });
       setSelectedFrame(character.selectedFrame || "");
     }
-    
   }, [character]);
 
   const API_URL = import.meta.env.VITE_API_URL;
@@ -467,70 +467,68 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
       <div className="content-wrapper">
         <div className="character-details__content">
           <div className="character-details__identity">
-            <div className="character-details__identity--image"> 
-            
+            <div className="character-details__identity--image">
               {isEditing && user?.isPremium === true && (
                 <ChooseBannerFrame
                   selectedFrame={selectedFrame}
                   setSelectedFrame={setSelectedFrame}
                 />
               )}
-<div className="character-details__identity--image frame-wrapper">
-{!isEditing && character.selectedFrame && (
-  <img
-    className="frame-overlay frame-overlay--edit"
-    src={character.selectedFrame}
-    alt="Cadre sélectionné"
-    width={260}
-    height={260}
-  />
-)}
-  <img
-    className="character-portrait"
-    src={
-      editedCharacter?.image
-        ? typeof editedCharacter.image === "string"
-          ? editedCharacter.image
-          : URL.createObjectURL(editedCharacter.image)
-        : defaultImg
-    }
-    alt={character.name}
-    width={260}
-    height={260}
-    onError={(e) => {
-      e.currentTarget.src = defaultImg;
-    }}
-  />
+              <div className="character-details__identity--image frame-wrapper">
+                {!isEditing && character.selectedFrame && (
+                  <img
+                    className="frame-overlay frame-overlay--edit"
+                    src={frameOptions[character.selectedFrame]}
+                    alt="Cadre sélectionné"
+                    width={260}
+                    height={260}
+                  />
+                )}
+                <img
+                  className="character-portrait"
+                  src={
+                    editedCharacter?.image
+                      ? typeof editedCharacter.image === "string"
+                        ? editedCharacter.image
+                        : URL.createObjectURL(editedCharacter.image)
+                      : defaultImg
+                  }
+                  alt={character.name}
+                  width={260}
+                  height={260}
+                  onError={(e) => {
+                    e.currentTarget.src = defaultImg;
+                  }}
+                />
 
-  {isEditing && user?.isPremium === true && selectedFrame && (
-    <img
-      className="frame-overlay frame-overlay--edit"
-      src={selectedFrame}
-      alt="Cadre sélectionné"
-      width={260}
-      height={260}
-    />
-  )}
+                {isEditing && user?.isPremium === true && selectedFrame && (
+                  <img
+                    className="frame-overlay frame-overlay--edit"
+                    src={frameOptions[selectedFrame]}
+                    alt="Cadre sélectionné"
+                    width={260}
+                    height={260}
+                  />
+                )}
 
-  {isEditing && (
-    <label>
-      <i className="fa-solid fa-pen-to-square"></i>
-      <input
-        type="file"
-        accept="image/*"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) {
-            setEditedCharacter((prev) =>
-              prev ? { ...prev, image: file } : null
-            );
-          }
-        }}
-      />
-    </label>
-  )}
-</div>
-
+                {isEditing && (
+                  <label>
+                    <i className="fa-solid fa-pen-to-square"></i>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setEditedCharacter((prev) =>
+                            prev ? { ...prev, image: file } : null
+                          );
+                        }
+                      }}
+                    />
+                  </label>
+                )}
+              </div>
             </div>
 
             {/* Statistiques du personnage */}
