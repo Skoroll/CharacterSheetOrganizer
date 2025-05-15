@@ -97,13 +97,16 @@
 
       .fa-pen-to-square {
         position: absolute;
-        left: $spacing-small;
-        bottom: $spacing-small;
+        width: 20px;
+        right: 0;
+        bottom: 0;
+
         font-size: 20px;
       }
 
       input {
         position: absolute;
+        top: 10px;
         left: 0;
         border: 1px solid;
         width: 100%;
@@ -113,6 +116,7 @@
         border: 1px solid transparent;
         transition: all 0.3s;
         border-radius: 7px;
+        z-index: 500;
 
         &:hover {
           border: 1px solid;

@@ -15,6 +15,7 @@ import ChooseBannerFrame from "../../Premium/ChooseBannerFrame/ChooseBannerFrame
 import { useUser } from "../../../Context/UserContext";
 import { AppUser } from "../../../types/AppUser";
 import { frameOptions } from "../../Premium/ChooseBannerFrame/ChooseBannerFrame"
+import FrameOverlay from "../../Premium/FrameOverlay/FrameOverlay";
 
 
 interface CreateSheetAriaProps {
@@ -267,12 +268,14 @@ export default function CreateSheetAria({ game }: CreateSheetAriaProps) {
       setSelectedFrame={setSelectedFrame}
     />
 {selectedFrame && (
-  <img
+  <FrameOverlay
+    frameSrc={frameOptions[selectedFrame]}
+    width="325px"
+    height="325px"
     className="frame-overlay frame-overlay--creation"
-    src={frameOptions[selectedFrame]}
-    alt={`Cadre ${selectedFrame}`}
   />
 )}
+
 
   </>
 )}

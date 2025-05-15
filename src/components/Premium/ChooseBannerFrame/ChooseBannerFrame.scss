@@ -1,11 +1,11 @@
 .choose-frame {
     @include flex-row;
+    position: absolute;
+    bottom: 0;
     &__form {
-        position: absolute;
         display: flex;
         flex-direction: row !important;
         z-index: 300;
-        margin-bottom: $spacing-large;
         gap: $spacing-small;
         align-items: center;
         background: rgba(0, 0, 0, 0.26);
@@ -23,15 +23,11 @@
 
 .frame-overlay {
     position: absolute;
-    width: 315px;
-    height: 315px;
     padding: 0 !important;
     z-index: 200;
 
 
     &--creation {
-        width: 325px;
-        height: 325px;
         bottom: 11px;
         left: -10px;
 
@@ -39,7 +35,7 @@
 
     &--edit {
         top: 0px;
-        left: -15px;
+        left: -10px;
     }
 
     &--small {

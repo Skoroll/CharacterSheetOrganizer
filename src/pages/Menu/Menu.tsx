@@ -6,6 +6,7 @@ import defaultImg from "../../assets/person-placeholder-5.webp";
 import "../../components/ModalContent/Character/CharacterList.scss";
 import "./Menu.scss";
 import { frameOptions } from "../../components/Premium/ChooseBannerFrame/ChooseBannerFrame";
+import FrameOverlay from "../../components/Premium/FrameOverlay/FrameOverlay";
 
 export default function Menu() {
   const [characters, setCharacters] = useState<Character[]>([]);
@@ -135,14 +136,16 @@ export default function Menu() {
                 <div className="character__inside">
                   <div className="character__inside--stats"></div>
                   <div className="character__inside--image">
-                  {character.selectedFrame && frameOptions[character.selectedFrame] && (
-  <img 
-    src={frameOptions[character.selectedFrame]} 
-    alt={`Cadre ${character.selectedFrame}`} 
-    className="frame-overlay frame-overlay--small"
-  />
-)}
-
+{character.selectedFrame &&
+  frameOptions[character.selectedFrame] && (
+    <FrameOverlay
+      frameSrc={frameOptions[character.selectedFrame]}
+      alt={`Cadre ${character.selectedFrame}`}
+      className="frame-overlay frame-overlay--small"
+      width="101%"
+      height="101%"
+    />
+  )}
 
                     <img
                       className="character-portrait"

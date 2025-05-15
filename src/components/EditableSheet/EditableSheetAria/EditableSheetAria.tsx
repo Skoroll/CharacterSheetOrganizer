@@ -8,6 +8,7 @@ import Modal from "../../../components/Modal/Modal";
 import defaultImg from "../../../assets/person-placeholder-5.webp";
 import "./EditableSheetAria.scss";
 import { frameOptions } from "../../Premium/ChooseBannerFrame/ChooseBannerFrame";
+import FrameOverlay from "../../Premium/FrameOverlay/FrameOverlay";
 
 interface BaseSkill {
   name: string;
@@ -278,7 +279,9 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
 
         formData.set("magic", JSON.stringify(updatedMagic));
         formData.set("baseSkills", JSON.stringify(mergedBaseSkills));
-        formData.append("selectedFrame", selectedFrame);
+        if (selectedFrame) {
+  formData.append("selectedFrame", selectedFrame);
+}
 
         response = await fetch(`${API_URL}/api/characters/aria/${id}`, {
           method: "PUT",
@@ -467,23 +470,17 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
       <div className="content-wrapper">
         <div className="character-details__content">
           <div className="character-details__identity">
-            <div className="character-details__identity--image">
-              {isEditing && user?.isPremium === true && (
-                <ChooseBannerFrame
-                  selectedFrame={selectedFrame}
-                  setSelectedFrame={setSelectedFrame}
-                />
-              )}
+
               <div className="character-details__identity--image frame-wrapper">
-                {!isEditing && character.selectedFrame && (
-                  <img
-                    className="frame-overlay frame-overlay--edit"
-                    src={frameOptions[character.selectedFrame]}
-                    alt="Cadre sélectionné"
-                    width={260}
-                    height={260}
-                  />
-                )}
+{!isEditing && character.selectedFrame && (
+  <FrameOverlay
+    frameSrc={frameOptions[selectedFrame]}
+    className="frame-overlay frame-overlay--edit"
+    width="315px"
+    height="315px"
+  />
+)}
+
                 <img
                   className="character-portrait"
                   src={
@@ -501,15 +498,15 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
                   }}
                 />
 
-                {isEditing && user?.isPremium === true && selectedFrame && (
-                  <img
-                    className="frame-overlay frame-overlay--edit"
-                    src={frameOptions[selectedFrame]}
-                    alt="Cadre sélectionné"
-                    width={260}
-                    height={260}
-                  />
-                )}
+{isEditing && user?.isPremium === true && selectedFrame && (
+  <FrameOverlay
+    frameSrc={frameOptions[selectedFrame]}
+    className="frame-overlay frame-overlay--edit"
+    width="315px"
+    height="315px"
+  />
+)}
+
 
                 {isEditing && (
                   <label>
@@ -528,8 +525,14 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
                     />
                   </label>
                 )}
+                              {isEditing && user?.isPremium === true && (
+                <ChooseBannerFrame
+                  selectedFrame={selectedFrame}
+                  setSelectedFrame={setSelectedFrame}
+                />
+              )}
               </div>
-            </div>
+
 
             {/* Statistiques du personnage */}
             <div className="character-details__identity--stats">

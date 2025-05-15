@@ -9,6 +9,7 @@ import ToolTip from "../Tooltip/Tooltip";
 import defaultImg from "../../assets/person-placeholder-5.webp";
 import "./PlayersAtTable.scss";
 import { frameOptions } from "../Premium/ChooseBannerFrame/ChooseBannerFrame";
+import FrameOverlay from "../Premium/FrameOverlay/FrameOverlay";
 
 interface Player {
   playerId: string;
@@ -180,10 +181,14 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({
                     {typeof selectedCharacter.image === "string" && (
                       <ToolTip text={selectedCharacter.name} position="bottom">
                         {selectedCharacter.selectedFrame && (
-                          <img
-                            src={frameOptions[selectedCharacter.selectedFrame]}
+                          <FrameOverlay
+                            frameSrc={
+                              frameOptions[selectedCharacter.selectedFrame]
+                            }
                             alt="Cadre"
-                            className="frame-overlay frame-overlay--game"
+                            className="frame-overlay--game"
+                            width="100%"
+                            height="100%"
                           />
                         )}
 
@@ -262,10 +267,14 @@ const PlayerAtTable: React.FC<PlayerAtTableProps> = ({
                   <ToolTip text={currentCharacter.name} position="bottom">
                     <>
                       {currentCharacter.selectedFrame && (
-                        <img
-                          src={frameOptions[currentCharacter.selectedFrame]}
+                        <FrameOverlay
+                          frameSrc={
+                            frameOptions[currentCharacter.selectedFrame]
+                          }
                           alt="Cadre"
-                          className="frame-overlay frame-overlay--game"
+                          className="frame-overlay--game"
+                          width="100%"
+                          height="100%"
                         />
                       )}
 
