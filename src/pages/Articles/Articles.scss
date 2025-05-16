@@ -4,12 +4,12 @@
     @include flex-col;
     padding: $spacing-small;
     gap: $spacing-small;
-    width: max( 75%, 250px);
+    width: 100%;
     margin: auto;
     justify-content: center;
+    background: $background-secondary-color;
 
     h2 {
-        text-align: center;
         margin: 0;
     }
 

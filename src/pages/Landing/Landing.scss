@@ -1,3 +1,9 @@
 .landing {
     width: 100%;
+
+    &__top {
+        @include flex-row;
+        justify-content: space-between;
+        margin-bottom: $spacing-small;
+    }
 }

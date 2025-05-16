@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import "./Landing.scss";
 import News from "../Articles/News";
 import Welcome from "../../components/Welcome/Welcome";
+import HomePromoSide from "../../components/HomePromo/HomePromoSide/HomePromoSide";
 
 
 export default function Landing () {
@@ -14,7 +15,10 @@ export default function Landing () {
 
     return (
         <div className="landing">
+          <div className="landing__top">
             <Welcome />
+            <HomePromoSide/>
+          </div>
             <News />
         </div>
     )

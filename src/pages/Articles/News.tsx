@@ -18,8 +18,8 @@ export default function NewsDisplay() {
 
   return (
     <>
-      <h2>Quoi de neuf ?</h2>
     <div className="news">
+      <h2>Quoi de neuf ?</h2>
       {news.map((article, index) => (
         <div
           className="news__article"
