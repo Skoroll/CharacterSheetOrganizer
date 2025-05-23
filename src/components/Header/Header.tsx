@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import AuthForm from "../../components/AuthForm/AuthForm";
 import NewGame from "./NewGame/NewGame";
 import UnfoldingMenu from "./UnfoldingMenu/UnfoldingMenu";
-/*import logoCSO from "../../assets/logo_critroller.png";*/
+import GoPremiumBtn from "../Premium/GoPremiumBtn/GoPremiumBtn";
 import Nav from "./Nav";
 import "./Header.scss";
 
@@ -25,17 +25,12 @@ export default function Header() {
 
   return (
     <header className="header">
-      {/*<img
-        onClick={() => navigate("/")}
-        role="button"
-        tabIndex={0}
-        src={logoCSO}
-        alt="Crit Roller logo"
-      />*/}
-
       <a className="logo" href="/">
         <p>
-          <span className="logo--main"><span className="bold">C</span>rit <span className="bold">R</span>oller</span>
+          <span className="logo--main">
+            <span className="bold">C</span>rit <span className="bold">R</span>
+            oller
+          </span>
           <span className="logo--subtitle">Plateforme de JDR</span>
         </p>
       </a>
@@ -116,13 +111,11 @@ export default function Header() {
           >
             <button>Obtenir Aria</button>
           </a>
+           <GoPremiumBtn user={user}/>
+
 
           {user.isAdmin && (
-            <button
-              onClick={() => navigate("/admin")}           
-            >
-              Administrateur
-            </button>
+            <button onClick={() => navigate("/admin")}>Administrateur</button>
           )}
         </nav>
       </div>

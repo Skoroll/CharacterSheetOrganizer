@@ -8,7 +8,8 @@
   }
   
   .go-premium {
-    @include flex-col;
+    @include flex-row;
+    gap: $spacing-small;
     @include button;
     border: 1px solid;
   
@@ -24,4 +25,19 @@
       }
     }
   }
+
+  .premium-badge {
+  padding: $spacing-small $spacing-medium !important;
+  background: #ffd700 !important;
+  color: black !important;
+  font-weight: bold !important;
+  border-radius: $spacing-small !important;
+  font-size: 0.8rem;
+  border: none !important;
+
+  &:hover {
+    background: #c2aa20 !important;
+    color: white !important;
+  }
+}
   

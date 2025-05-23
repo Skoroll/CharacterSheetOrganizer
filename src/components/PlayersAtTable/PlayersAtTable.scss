@@ -19,15 +19,21 @@
     flex-direction: column-reverse;
     gap: $spacing-small;
     margin: auto 0 auto auto;
+    height: 180px;
 
     @include media-query($breakpoint-sm, "max") {
       flex-direction: row;
+      justify-content: right;
     }
     
     .player {
       position: relative;
       @include flex-row;
       margin: auto 0 auto auto;
+
+          @include media-query($breakpoint-sm, "max") {
+            margin: 0
+    }
 
       &__easy-access {
         @include flex-col;
@@ -44,6 +50,8 @@
         border-radius: $spacing-small;
         border: 1px solid;
 
+
+
         &--buttons {
           @include flex-row;
           justify-content: space-between;
@@ -56,7 +64,9 @@
           height: 95px;
           background: none;
           padding: $spacing-small;
-
+            @include media-query($breakpoint-sm, "max") {
+              height: inherit
+    }
 
           button {
             background: none;

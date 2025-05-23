@@ -4,6 +4,7 @@ import { BeatLoader } from "react-spinners";
 import { Character } from "../../types/Character";
 import defaultImg from "../../assets/person-placeholder-5.webp";
 import "../../components/ModalContent/Character/CharacterList.scss";
+import { useUser } from "../../Context/UserContext";
 import "./Menu.scss";
 import { frameOptions } from "../../components/Premium/ChooseBannerFrame/ChooseBannerFrame";
 import FrameOverlay from "../../components/Premium/FrameOverlay/FrameOverlay";
@@ -15,6 +16,7 @@ export default function Menu() {
   const currentTheme = localStorage.getItem("selectedTheme");
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
+  const { user } = useUser();
 
   useEffect(() => {
     async function fetchCharacters() {
@@ -96,27 +98,36 @@ export default function Menu() {
       </div>
     );
 
+    const maxCharacters = user?.isPremium ? 6 : 3;
+    const canCreateCharacter = characters.length < maxCharacters;
+
+
   return (
     <div className="menu">
       <div className="character-list">
         <ul>
-          <li
-            className="character-list__create-new"
-            onClick={() => navigate("/creation-de-personnage")}
-          >
-            <i className="fa-solid fa-plus"></i>
-            <p
-              className={
-                ["ironclad", "steampunk", "sandsOfTime"].includes(
-                  currentTheme || ""
-                )
-                  ? "small-text"
-                  : ""
-              }
-            >
-              Créer un personnage
-            </p>
-          </li>
+<li
+  className={`character-list__create-new ${!canCreateCharacter ? "disabled" : ""}`}
+  onClick={() => {
+    if (canCreateCharacter) {
+      navigate("/creation-de-personnage");
+    }
+  }}
+  style={{ cursor: canCreateCharacter ? "pointer" : "not-allowed", opacity: canCreateCharacter ? 1 : 0.5 }}
+>
+  <i className="fa-solid fa-plus"></i>
+  <p
+    className={
+      ["ironclad", "steampunk", "sandsOfTime"].includes(currentTheme || "")
+        ? "small-text"
+        : ""
+    }
+  >
+    {canCreateCharacter ? "Créer un personnage" : `Limite atteinte (${maxCharacters})`}
+  </p>
+</li>
+
+
           {characters.map((character) => (
             <li key={character._id}>
               <div

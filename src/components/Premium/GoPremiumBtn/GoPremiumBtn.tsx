@@ -1,18 +1,27 @@
 import { useNavigate } from "react-router-dom";
-import "./GoPremiumBtn.scss"
+import "./GoPremiumBtn.scss";
+import type { AppUser } from "../../../types/AppUser"; 
 
-export default function GoPremiumBtn () {
-    const navigate = useNavigate();
+interface GoPremiumBtnProps {
+  user: AppUser;
+}
 
-    return(
-        <button 
-            onClick={() => navigate("/premium")}
-            className="go-premium"
-        >
-            <i className="fa-solid fa-crown"/>
-            Passez premium
+export default function GoPremiumBtn({ user }: GoPremiumBtnProps) {
+  const navigate = useNavigate();
 
-
-        </button>
-    )
+  return (
+    <button onClick={() => navigate("/premium")} className={` ${user.isPremium ? "premium-badge" : "go-premium"}`} >
+      
+      {user?.isPremium ? (
+        <span className="" title="Membre Premium">
+          <i className="fa-solid fa-crown" /> Premium
+        </span>
+      ) : (
+        <>
+        <i className="fa-solid fa-crown" />
+        "Passez premium"
+        </>
+      )}
+    </button>
+  );
 }
