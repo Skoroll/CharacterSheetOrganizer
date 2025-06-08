@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import DeleteTable from "../DeleteTable/DeleteTable";
+import QuestLibrary from "../QuestLibrary/QuestLibrary";
 import ItemListing from "../ItemListing/ItemListing";
 import Npcs from "../Npcs/Npcs";
 import PlayerList from "../PlayerList/PlayerList";
@@ -28,6 +29,7 @@ interface GmToolBarProps {
     | "soundBoard"
     | "tableStyle"
     | "itemListing"
+    | "questLibrary"
     | null;
   togglePanel: (
     panel:
@@ -37,6 +39,7 @@ interface GmToolBarProps {
       | "soundBoard"
       | "tableStyle"
       | "itemListing"
+      | "questLibrary"
       | null
   ) => void;
   onStyleUpdate: () => void;
@@ -130,20 +133,27 @@ const GmToolBar: React.FC<GmToolBarProps> = ({
           <i className="fa-solid fa-brush" /> <span>Personnalisation</span>
         </button>
 
-        {/* ✅ L'icône ouvre directement la modale de suppression */}
-        <button onClick={() => setIsDeleteModalOpen(true)}>
+        <button onClick={() => togglePanel("questLibrary")}>
+          {" "}
+          <i className="fa-solid fa-exclamation"/> <span>Quêtes</span>
+        </button>
+
+        {/* L'icône ouvre directement la modale de suppression */}
+        <button className="delete-btn" onClick={() => setIsDeleteModalOpen(true)}>
           {" "}
           <i className="fa-solid fa-trash"></i>
         </button>
+
+
       </div>
 
-      {/* ✅ Affichage de la modale de suppression */}
+      {/* Affichage de la modale de suppression */}
       {isDeleteModalOpen && (
         <DeleteTable
           tableId={tableId}
           API_URL={API_URL}
           onTableDeleted={refreshTables}
-          closeModal={() => setIsDeleteModalOpen(false)} // ✅ Permet de fermer la modale
+          closeModal={() => setIsDeleteModalOpen(false)} // Permet de fermer la modale
         />
       )}
 
@@ -169,6 +179,9 @@ const GmToolBar: React.FC<GmToolBarProps> = ({
       )}
       {activePanel === "itemListing" && (
         <ItemListing tableId={tableId} game={game} />
+      )}
+      {activePanel === "questLibrary" && (
+        <QuestLibrary />
       )}
     </div>
   );

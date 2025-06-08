@@ -136,7 +136,12 @@
   }
 }
 
-
+.admin-btn {
+  position: absolute;
+  top: $spacing-small;
+  right: 55px;
+  @include button;
+}
 
 
 @include media-query($breakpoint-md, "max") {

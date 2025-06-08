@@ -3,7 +3,7 @@
 
   p {
     margin: 0;
-    margin-left: 10px;
+
   }
 
   .gm-toolbar__heading {
@@ -27,6 +27,10 @@
     button {
       @include button;
       background: none;
+    }
+
+    .delete-btn {
+      margin-left: auto;
     }
   }
 

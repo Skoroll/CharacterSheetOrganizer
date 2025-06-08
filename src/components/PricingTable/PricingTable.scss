@@ -1,0 +1,53 @@
+.pricing-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: $spacing-large;
+  font-family: $font-family;
+  font-size: $font-size-base;
+  background-color: rgba($background-color, 0.95); // légèrement transparent si fond visible
+  color: $text-color;
+  border-radius: $border-radius;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(black, 0.2);
+
+  th,
+  td {
+    padding: $spacing-medium;
+    text-align: center;
+    border: 1px solid $background-dark;
+  }
+
+  th {
+    background-color: $background-secondary-color;
+    color: $primary-color;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  tr:nth-child(even) {
+    background-color: $background-light;
+  }
+
+  tr:nth-child(odd) {
+    background-color: $background-secondary-color;
+  }
+
+  td:first-child {
+    text-align: left;
+    font-weight: 600;
+    color: $text-secondColor;
+  }
+
+  i.fa-check {
+    color: green;
+  }
+
+  i.fa-x {
+    color: $danger-color;
+  }
+
+  td:contains("A venir") {
+    font-style: italic;
+    color: $text-muted;
+  }
+}

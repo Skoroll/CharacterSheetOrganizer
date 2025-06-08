@@ -2,6 +2,7 @@
     @include flex-row;
     position: absolute;
     bottom: 0;
+    z-index: 501;
     &__form {
         display: flex;
         flex-direction: row !important;

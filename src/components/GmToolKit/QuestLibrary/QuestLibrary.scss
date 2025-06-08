@@ -1,0 +1,70 @@
+.quest-library {
+    width: 100%;
+    max-height: 600px;
+    @include flex-col;
+    gap: $spacing-small;
+
+    &__tabs {
+        @include flex-row;
+        gap: $spacing-small;
+        padding: $spacing-small 0;
+
+        button {
+            @include button;
+        }
+    }
+
+
+    &__filters {
+        @include flex-wrap;
+        gap: $spacing-small;
+
+        select {
+
+            @include button;
+        }
+    }
+
+    &__list {
+        padding: $spacing-medium 0;
+    }
+
+
+    &__form {
+        @include flex-col;
+        gap: $spacing-small;
+        height: 100%;
+        overflow: auto;
+
+        label {
+            @include flex-col;
+            gap: 2px;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        button {
+            @include button;
+            height: 32px;
+            width: 160px;
+        }
+    }
+}
+
+.quest-branch-builder {
+    height: 100%;
+
+    &__choice {
+        @include flex-col;
+        gap: $spacing-small;
+        padding: $spacing-small;
+  
+        &--input {
+            @include flex-row;
+            gap: $spacing-small;
+            align-items: center;
+        }
+    }
+}

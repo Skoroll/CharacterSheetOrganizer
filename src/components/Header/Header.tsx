@@ -25,6 +25,9 @@ export default function Header() {
 
   return (
     <header className="header">
+                {user.isAdmin && (
+            <button className="admin-btn" onClick={() => navigate("/admin")}>Administrateur</button>
+          )}
       <a className="logo" href="/">
         <p>
           <span className="logo--main">
@@ -114,9 +117,7 @@ export default function Header() {
            <GoPremiumBtn user={user}/>
 
 
-          {user.isAdmin && (
-            <button onClick={() => navigate("/admin")}>Administrateur</button>
-          )}
+
         </nav>
       </div>
       {/* Bouton pour le menu utilisateur (si connecté) */}
