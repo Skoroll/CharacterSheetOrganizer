@@ -55,6 +55,12 @@
         margin: 25px auto auto auto;
       }
     }
+
+    &--cta {
+      @include flex-row;
+      margin: auto;
+      gap: $spacing-large;
+    }
   }
 
   &__logged {
@@ -67,6 +73,8 @@
     padding: $spacing-small;
     justify-content: center;
     gap: $spacing-medium;
+
+
 
     &--desc {
       @include flex-row;
@@ -150,4 +158,18 @@
   }
 }
 
+}
+@media (max-width: $breakpoint-sm) {
+  .pricing-table {
+    font-size: 0.9rem;
+
+    th,
+    td {
+      padding: $spacing-small;
+    }
+
+    td:first-child {
+      min-width: 120px;
+    }
+  }
 }

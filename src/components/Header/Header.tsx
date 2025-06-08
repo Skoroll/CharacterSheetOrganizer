@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useUser } from "../../Context/UserContext";
 import { useNavigate } from "react-router-dom";
-import AuthForm from "../../components/AuthForm/AuthForm";
+
 import NewGame from "./NewGame/NewGame";
 import UnfoldingMenu from "./UnfoldingMenu/UnfoldingMenu";
 import GoPremiumBtn from "../Premium/GoPremiumBtn/GoPremiumBtn";
@@ -11,7 +11,6 @@ import "./Header.scss";
 export default function Header() {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isPartyMenuOpen, setIsPartyMenuOpen] = useState(false);
   const [isTutorialMenuOpen, setIsTutorialMenuOpen] = useState(false);
 
@@ -21,7 +20,6 @@ export default function Header() {
     setIsTutorialMenuOpen(false);
     setIsOpen((prev) => !prev);
   };
-  const toggleAuth = () => setIsAuthOpen((prev) => !prev);
 
   return (
     <header className="header">
@@ -138,20 +136,8 @@ export default function Header() {
       {/* Navigation utilisateur (dans le menu déroulant) */}
       {isOpen && (
         <Nav className="main-menu" toggleNav={toggleNav} role="navigation" />
-      )}
-      {/* Bouton de connexion si l'utilisateur n'est pas connecté */}
-      {!user?.isAuthenticated && (
-        <button
-          className="auth-btn"
-          aria-label="Formulaire d'authentification"
-          aria-expanded={isAuthOpen}
-          onClick={toggleAuth}
-        >
-          Se connecter | S'inscrire
-        </button>
-      )}
-      {/* Formulaire d'authentification */}
-      {isAuthOpen && <AuthForm />}
+      )}     
+
     </header>
   );
 }

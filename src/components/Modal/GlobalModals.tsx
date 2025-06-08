@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import AuthForm from "../AuthForm/AuthForm";
 import Modal from "../Modal/Modal";
 import TableTopBrowse from "../ModalContent/ModalTabletop/TableTopBrowse/TableTopBrowse";
 import TabletopCreation from "../ModalContent/ModalTabletop/TabletopCreation/TabletopCreation";
@@ -9,6 +10,9 @@ import { Table } from "../../types/Table";
 
 export default function GlobalModals() {
   const { 
+    showAuthModal, 
+    closeAuthModal, 
+    isSignUpMode,
     showLeaveModal, 
     closeLeaveModal, 
     showJoinTableModal, 
@@ -95,6 +99,12 @@ export default function GlobalModals() {
     <TabletopCreation onCreated={closeCreateTableModal} />
   </Modal>
 )}
+
+      {showAuthModal && (
+        <Modal title={isSignUpMode ? "": ""} onClose={closeAuthModal}>
+          <AuthForm forceSignUp={isSignUpMode} />
+        </Modal>
+      )}
     </>
   );
 }

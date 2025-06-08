@@ -4,59 +4,83 @@ import React, { createContext, useContext, useState } from "react";
 interface ModalContextProps {
   showLeaveModal: boolean;
   showCreateTableModal: boolean;
-  showJoinTableModal: boolean; // ✅ AJOUT
+  showJoinTableModal: boolean;
   joinTableData: { tableId: string; gameMasterId: string; game: string } | null;
+
   openJoinTableModal: (data: { tableId: string; gameMasterId: string; game: string }) => void;
   closeJoinTableModal: () => void;
   openLeaveModal: () => void;
   closeLeaveModal: () => void;
   openCreateTableModal: () => void;
   closeCreateTableModal: () => void;
-}
 
+  // Auth modal
+  showAuthModal: boolean;
+  isSignUpMode: boolean;
+  openAuthModal: (isSignUp: boolean) => void;
+  closeAuthModal: () => void;
+}
 
 // Création du contexte
 const ModalContext = createContext<ModalContextProps | undefined>(undefined);
 
 // Provider
 export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // === Modales existantes ===
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [showCreateTableModal, setShowCreateTableModal] = useState(false);
-  const openLeaveModal = () => setShowLeaveModal(true);
-  const closeLeaveModal = () => setShowLeaveModal(false);
   const [showJoinTableModal, setShowJoinTableModal] = useState(false);
   const [joinTableData, setJoinTableData] = useState<ModalContextProps["joinTableData"]>(null);
-  const openCreateTableModal = () => setShowCreateTableModal(true); // ✅ AJOUT
-  const closeCreateTableModal = () => setShowCreateTableModal(false); // ✅ AJOUT
+
+  const openLeaveModal = () => setShowLeaveModal(true);
+  const closeLeaveModal = () => setShowLeaveModal(false);
+
+  const openCreateTableModal = () => setShowCreateTableModal(true);
+  const closeCreateTableModal = () => setShowCreateTableModal(false);
+
   const openJoinTableModal = (data: { tableId: string; gameMasterId: string; game: string }) => {
     setJoinTableData(data);
     setShowJoinTableModal(true);
   };
-  
-  
   const closeJoinTableModal = () => {
     setJoinTableData(null);
     setShowJoinTableModal(false);
   };
 
-  return (
-<ModalContext.Provider
-  value={{
-    showLeaveModal,
-    showCreateTableModal,
-    showJoinTableModal,
-    joinTableData,
-    openLeaveModal,
-    closeLeaveModal,
-    openCreateTableModal,
-    closeCreateTableModal,
-    openJoinTableModal,
-    closeJoinTableModal
-  }}
->
-  {children}
-</ModalContext.Provider>
+  // === Nouvelle modale d'authentification ===
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [isSignUpMode, setIsSignUpMode] = useState(false);
 
+  const openAuthModal = (isSignUp: boolean) => {
+    setIsSignUpMode(isSignUp);
+    setShowAuthModal(true);
+  };
+
+  const closeAuthModal = () => {
+    setShowAuthModal(false);
+  };
+
+  return (
+    <ModalContext.Provider
+      value={{
+        showLeaveModal,
+        showCreateTableModal,
+        showJoinTableModal,
+        joinTableData,
+        openLeaveModal,
+        closeLeaveModal,
+        openCreateTableModal,
+        closeCreateTableModal,
+        openJoinTableModal,
+        closeJoinTableModal,
+        showAuthModal,
+        isSignUpMode,
+        openAuthModal,
+        closeAuthModal,
+      }}
+    >
+      {children}
+    </ModalContext.Provider>
   );
 };
 

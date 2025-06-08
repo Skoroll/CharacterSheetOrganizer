@@ -3,8 +3,8 @@ import { useUser } from "../../Context/UserContext";
 import Modal from "../Modal/Modal";
 import "./AuthForm.scss";
 
-export default function AuthForm() {
-  const [isSignUp, setIsSignUp] = useState(false);
+export default function AuthForm({forceSignUp = false}: {forceSignUp?: boolean}) {
+  const [isSignUp, setIsSignUp] = useState(forceSignUp);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMessage, setAuthModalMessage] = useState("");
   const [isResetPassword, setIsResetPassword] = useState(false);

@@ -1,14 +1,14 @@
 
 .auth-container {
-  position: absolute;
+
   top: 65px;
   right: 15px;
+  height: 285px;
   
     @include flex-col;
     margin: auto;
     padding: $spacing-small $spacing-medium;
     text-align: center;
-    border: 1px solid #ddd;
     border-radius: 8px;
     width: 350px;
     min-height: 250px;
@@ -20,7 +20,8 @@
 
     &__btns {
       @include flex-row;
-      align-items: baseline;
+      flex-direction: row-reverse;
+      align-items: center;
       gap: $spacing-small;
       justify-content: center;
       background: none ;
