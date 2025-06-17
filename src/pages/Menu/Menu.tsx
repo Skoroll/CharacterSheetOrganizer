@@ -98,7 +98,7 @@ export default function Menu() {
       </div>
     );
 
-    const maxCharacters = user?.isPremium ? 6 : 3;
+    const maxCharacters = user?.isPremium ? 6 : 1;
     const canCreateCharacter = characters.length < maxCharacters;
 
 

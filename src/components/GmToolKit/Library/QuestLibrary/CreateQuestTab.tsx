@@ -1,18 +1,23 @@
 import { useState } from "react";
 import QuestBranchBuilder from "./QuestBranchBuilder";
 
+interface Choice {
+  id: string;
+  text: string;
+  subChoices?: Choice[];
+}
+
 export default function CreateQuestTab() {
   const [questName, setQuestName] = useState("");
   const [questType, setQuestType] = useState("Combat");
   const [questDetails, setQuestDetails] = useState("");
   const [rewards, setRewards] = useState("");
-  const [branches, setBranches] = useState([]);
+  const [branches, setBranches] = useState<Choice[]>([]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const newQuest = { questName, questType, questDetails, rewards, branches };
     console.log("Création de la quête :", newQuest);
-    // Ajout logique API ici
   };
 
   return (

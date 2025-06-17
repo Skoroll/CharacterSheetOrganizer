@@ -60,15 +60,17 @@ export default function TableComponent() {
   );
   const selectedCharacterId = currentPlayer?.selectedCharacter || null;
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
-  const [activePanel, setActivePanel] = useState<
-    | "npcs"
-    | "sendDocs"
-    | "playerList"
-    | "soundBoard"
-    | "tableStyle"
-    | "itemListing"
-    | null
-  >(null);
+const [activePanel, setActivePanel] = useState<
+  | "npcs"
+  | "sendDocs"
+  | "playerList"
+  | "soundBoard"
+  | "tableStyle"
+  | "itemListing"
+  | "library"
+  | null
+>(null);
+
 
   useEffect(() => {
     setTimeout(() => {
@@ -201,6 +203,7 @@ export default function TableComponent() {
         | "soundBoard"
         | "tableStyle"
         | "itemListing"
+        | "library" 
         | null
     ) => {
       setActivePanel(activePanel === panel ? null : panel);

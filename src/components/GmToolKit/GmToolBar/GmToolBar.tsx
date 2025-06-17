@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import DeleteTable from "../DeleteTable/DeleteTable";
-import QuestLibrary from "../QuestLibrary/QuestLibrary";
+import QuestLibrary from "../Library/QuestLibrary/QuestLibrary";
 import ItemListing from "../ItemListing/ItemListing";
 import Npcs from "../Npcs/Npcs";
 import PlayerList from "../PlayerList/PlayerList";
@@ -11,7 +11,7 @@ import "./GmToolBar.scss";
 
 interface GmToolBarProps {
   tableId: string;
-  game: string; // ✅ ajoute cette ligne
+  game: string; 
   API_URL: string;
   refreshTables: () => void;
   players: {
@@ -29,7 +29,7 @@ interface GmToolBarProps {
     | "soundBoard"
     | "tableStyle"
     | "itemListing"
-    | "questLibrary"
+    | "library"
     | null;
   togglePanel: (
     panel:
@@ -39,7 +39,7 @@ interface GmToolBarProps {
       | "soundBoard"
       | "tableStyle"
       | "itemListing"
-      | "questLibrary"
+      | "library"
       | null
   ) => void;
   onStyleUpdate: () => void;
@@ -133,9 +133,9 @@ const GmToolBar: React.FC<GmToolBarProps> = ({
           <i className="fa-solid fa-brush" /> <span>Personnalisation</span>
         </button>
 
-        <button onClick={() => togglePanel("questLibrary")}>
+        <button onClick={() => togglePanel("library")}>
           {" "}
-          <i className="fa-solid fa-exclamation"/> <span>Quêtes</span>
+          <i className="fa-solid fa-book"/> <span>Bibliothèque</span>
         </button>
 
         {/* L'icône ouvre directement la modale de suppression */}
@@ -180,7 +180,7 @@ const GmToolBar: React.FC<GmToolBarProps> = ({
       {activePanel === "itemListing" && (
         <ItemListing tableId={tableId} game={game} />
       )}
-      {activePanel === "questLibrary" && (
+      {activePanel === "library" && (
         <QuestLibrary />
       )}
     </div>

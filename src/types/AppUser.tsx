@@ -6,5 +6,7 @@ export interface AppUser {
     selectedCharacterName?: string;
     isAdmin?: boolean;
     isPremium?: boolean;
+    stripeCustomerId?: string;
   }
+  
   

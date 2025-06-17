@@ -1,53 +1,55 @@
-.pricing-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: $spacing-large;
-  font-family: $font-family;
-  font-size: $font-size-base;
-  background-color: rgba($background-color, 0.95); // légèrement transparent si fond visible
-  color: $text-color;
-  border-radius: $border-radius;
-  overflow: hidden;
-  box-shadow: 0 4px 8px rgba(black, 0.2);
+.premium-tables {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
 
-  th,
-  td {
-    padding: $spacing-medium;
+
+}
+
+.comparative-table {
+  background: rgba(255, 255, 255, 0.03);
+  padding: $spacing-medium;
+  border-radius: 8px;
+
+  h2 {
+    font-size: 1.4rem;
+    margin: 0 0 $spacing-small 0 !important;
+    display: flex;
+    align-items: center;
+    gap: $spacing-small;
+
+    i {
+      color: #f0c000;
+    }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #444;
     text-align: center;
-    border: 1px solid $background-dark;
-  }
 
-  th {
-    background-color: $background-secondary-color;
-    color: $primary-color;
-    font-weight: bold;
-    text-transform: uppercase;
-  }
+    th, td {
+      padding: 0.75rem;
+      border: 1px solid #444;
+    }
 
-  tr:nth-child(even) {
-    background-color: $background-light;
-  }
+    th {
+      background-color: rgba(255, 255, 255, 0.07);
+    }
 
-  tr:nth-child(odd) {
-    background-color: $background-secondary-color;
-  }
+    td:first-child {
+      text-align: left;
+    }
 
-  td:first-child {
-    text-align: left;
-    font-weight: 600;
-    color: $text-secondColor;
-  }
+    .icon-cell i.fa-check {
+      color: #4caf50;
+    }
 
-  i.fa-check {
-    color: green;
-  }
-
-  i.fa-x {
-    color: $danger-color;
-  }
-
-  td:contains("A venir") {
-    font-style: italic;
-    color: $text-muted;
+    .icon-cell i.fa-xmark {
+      color: #f44336;
+    }
   }
 }
