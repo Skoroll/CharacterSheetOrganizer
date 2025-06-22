@@ -4,24 +4,29 @@ import Modal from "../Modal/Modal";
 import TableTopBrowse from "../ModalContent/ModalTabletop/TableTopBrowse/TableTopBrowse";
 import TabletopCreation from "../ModalContent/ModalTabletop/TabletopCreation/TabletopCreation";
 import TableTopLeave from "../ModalContent/ModalTabletop/TableTopLeave/TableTopLeave";
+import UserProfileModal from "./UserProfileModal/UserProfileModal";
+
 import { useModal } from "../../Context/ModalContext";
 import { useUser } from "../../Context/UserContext";
 import { Table } from "../../types/Table";
 
 export default function GlobalModals() {
-  const { 
-    showAuthModal, 
-    closeAuthModal, 
+  const {
+    showAuthModal,
+    closeAuthModal,
     isSignUpMode,
-    showLeaveModal, 
-    closeLeaveModal, 
-    showJoinTableModal, 
-    joinTableData, 
+    showLeaveModal,
+    closeLeaveModal,
+    showJoinTableModal,
+    joinTableData,
     closeJoinTableModal,
-    showCreateTableModal,      
-    closeCreateTableModal  
+    showCreateTableModal,
+    closeCreateTableModal,
+    showUserProfileModal,
+    userProfileData,
+    closeUserProfileModal,
   } = useModal();
-  
+
   const { user } = useUser();
   const [tables, setTables] = useState<Table[]>([]);
   const [loading, setLoading] = useState(true);
@@ -85,26 +90,34 @@ export default function GlobalModals() {
           />
         </Modal>
       )}
+
       {showJoinTableModal && joinTableData && (
-  <Modal title="Rejoindre une partie" onClose={closeJoinTableModal}>
-    <TableTopBrowse
+        <Modal title="Rejoindre une partie" onClose={closeJoinTableModal}>
+          <TableTopBrowse />
+        </Modal>
+      )}
 
-
-
-    />
-  </Modal>
-)}
-{showCreateTableModal && (
-  <Modal title="Créer une table" onClose={closeCreateTableModal}>
-    <TabletopCreation onCreated={closeCreateTableModal} />
-  </Modal>
-)}
+      {showCreateTableModal && (
+        <Modal title="Créer une table" onClose={closeCreateTableModal}>
+          <TabletopCreation onCreated={closeCreateTableModal} />
+        </Modal>
+      )}
 
       {showAuthModal && (
-        <Modal title={isSignUpMode ? "": ""} onClose={closeAuthModal}>
+        <Modal title={isSignUpMode ? "Créer un compte" : "Connexion"} onClose={closeAuthModal}>
           <AuthForm forceSignUp={isSignUpMode} />
         </Modal>
       )}
+
+{showUserProfileModal && userProfileData && (
+  <UserProfileModal
+    user={userProfileData}
+    isOwner={user._id === userProfileData._id}
+    characters={userProfileData.characters || []}
+    onClose={closeUserProfileModal}
+  />
+)}
+
     </>
   );
 }

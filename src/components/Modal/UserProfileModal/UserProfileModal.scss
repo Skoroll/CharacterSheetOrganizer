@@ -1,0 +1,48 @@
+.profile {
+  width: 350px;
+  @include flex-col;
+  &--picture {
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+    border: 1px solid red;
+  }
+
+  &__main {
+    @include flex-row;
+    gap: $spacing-medium;
+
+    &--content {
+      @include flex-col;
+      gap: $spacing-medium;
+      * {
+        margin: 0;
+      }
+
+      .on-column {
+        @include flex-col;
+      }
+    }
+  }
+
+  &__stats {
+    @include flex-row;
+    justify-content: space-between;
+  }
+
+  &__tables-joined {
+    @include flex-col;
+    gap: $spacing-medium;
+    padding: $spacing-small;
+    ul {
+      @include ul-base;
+      @include flex-col;
+      gap: $spacing-small;
+    }
+  }
+
+  hr {
+    width: 100%;
+    margin:  $spacing-small 0;
+  }
+}

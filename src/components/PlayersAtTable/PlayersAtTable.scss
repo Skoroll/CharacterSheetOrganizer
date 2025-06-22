@@ -19,7 +19,6 @@
     flex-direction: column-reverse;
     gap: $spacing-small;
     margin: auto 0 auto auto;
-    height: 180px;
 
     @include media-query($breakpoint-sm, "max") {
       flex-direction: row;

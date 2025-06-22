@@ -1,6 +1,8 @@
 export interface Character {
   _id: string;
   selectedFrame: string;
+  ownerName?: string;
+  ownerId?: string;
   game: string;
   name: string;
   className: string;

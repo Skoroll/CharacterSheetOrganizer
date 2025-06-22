@@ -1,6 +1,5 @@
 .header {
   @include flex-row;
-  position: fixed;
   justify-content: center;
   backdrop-filter: blur(5px);
   z-index: 999;
@@ -147,6 +146,7 @@
 @include media-query($breakpoint-md, "max") {
   .header {
     @include flex-col;
+    min-height: 150px;
 
     img, .logo {
       position: relative;

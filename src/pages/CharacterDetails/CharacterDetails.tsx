@@ -16,7 +16,6 @@ export default function CharacterPage() {
 
   return (
     <div>
-      <h1>Fiche du personnage</h1>
       <EditableSheet id={id} />
     </div>
   );

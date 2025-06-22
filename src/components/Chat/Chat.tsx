@@ -12,11 +12,12 @@ interface ChatProps {
   isGameMaster: boolean;
   user: any;
   isPremium: boolean;
+  onOpenUserProfile: (userId: string) => void;
 }
 
-type ChatMessage = MessageType & { 
-  animate?: boolean,
-  isPremium?: boolean; 
+type ChatMessage = MessageType & {
+  animate?: boolean;
+  isPremium?: boolean;
 };
 
 const Chat = ({
@@ -27,7 +28,8 @@ const Chat = ({
   setMessages,
   isGameMaster,
   socket,
-  user
+  user,
+  onOpenUserProfile,
 }: ChatProps) => {
   const [inputValue, setInputValue] = useState("");
   const [chatOpen, setChatOpen] = useState(true);
@@ -35,8 +37,6 @@ const Chat = ({
   const hasFetchedMessages = useRef(false);
   const API_URL = import.meta.env.VITE_API_URL;
 
-
-  // Vérifier si l'utilisateur est en bas avant d'ajouter un message
   useEffect(() => {
     if (!chatMessagesRef.current) return;
     const chatContainer = chatMessagesRef.current;
@@ -45,7 +45,6 @@ const Chat = ({
     }, 0);
   }, [messages]);
 
-  // Récupération des derniers messages via API sans duplication
   useEffect(() => {
     if (hasFetchedMessages.current) return;
     hasFetchedMessages.current = true;
@@ -60,9 +59,8 @@ const Chat = ({
 
         const data: MessageType[] = await response.json();
 
-        // TRIER du plus ancien au plus récent
         const sortedMessages = [...data].sort((a, b) => {
-          const dateA = new Date(a.createdAt ?? 0); // 0 = timestamp 1970
+          const dateA = new Date(a.createdAt ?? 0);
           const dateB = new Date(b.createdAt ?? 0);
           return dateA.getTime() - dateB.getTime();
         });
@@ -85,7 +83,6 @@ const Chat = ({
     fetchMessages();
   }, [tableId, setMessages, API_URL]);
 
-  // Gestion de l'input utilisateur
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
@@ -104,7 +101,6 @@ const Chat = ({
     };
   }, []);
 
-  // Envoi d'un message et affichage immédiat sans duplication
   const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
@@ -113,10 +109,10 @@ const Chat = ({
       message: inputValue,
       characterName: isGameMaster ? "Maître du jeu" : userCharacterName,
       senderName: userPseudo,
+      senderId: user._id,
       tableId,
       isPremium: user?.isPremium,
     };
-    
 
     try {
       const response = await fetch(`${API_URL}/api/chat/postChat`, {
@@ -131,10 +127,7 @@ const Chat = ({
 
       const savedMessage: MessageType = await response.json();
 
-      // Ajoute directement le message valide renvoyé par l'API
       setMessages((prevMessages) => [...prevMessages, savedMessage]);
-
-      // Envoie le message via WebSocket
       socket.emit("newMessage", savedMessage);
 
       setInputValue("");
@@ -183,10 +176,30 @@ const Chat = ({
         ${msg.senderName === "Système" ? "chat__messages--system" : ""} 
         ${animationClass}`}
                 >
-<span className="chat__messages--player">
-  {msg.isPremium && <i className="fa-solid fa-crown" style={{ marginRight: "4px", color: "gold" }}></i>}
-  {msg.characterName || msg.senderName || "Nom du personnage non défini"}
-</span>
+                  <span
+                    className="chat__messages--player"
+                    onClick={() =>
+                      msg.senderName !== "Système" &&
+                      msg.senderId &&
+                      onOpenUserProfile(msg.senderId)
+                    }
+                    style={{
+                      cursor:
+                        msg.senderName !== "Système" && msg.senderId
+                          ? "pointer"
+                          : "default",
+                    }}
+                  >
+                    {msg.isPremium && (
+                      <i
+                        className="fa-solid fa-crown"
+                        style={{ marginRight: "4px", color: "gold" }}
+                      ></i>
+                    )}
+                    {msg.characterName ||
+                      msg.senderName ||
+                      "Nom du personnage non défini"}
+                  </span>
                   <br />
                   <span>{msg.message || msg.content || "[Message vide]"}</span>
                 </p>

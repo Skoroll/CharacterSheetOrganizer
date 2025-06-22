@@ -114,8 +114,20 @@ export default function Home() {
             <div className="home__tables-options">
               <div className="home-wrapper__container">
                 <Welcome/>
+                <div className="box">
                 <div className="home__tables-options--div">
                   <PreviousGame tables={tables} loading={loading} error={error} API_URL={API_URL} />
+                </div>
+                  <div className="premium-box">
+                    Passez premium !
+                    <img src={""} alt="premium-box" />
+                    <p>
+                      3€ par mois
+                      <br/>
+                      <i>Sans engagement</i>
+                    </p>
+
+                  </div>
                 </div>
               </div>
             </div>

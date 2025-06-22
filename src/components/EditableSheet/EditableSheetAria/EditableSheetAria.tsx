@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useModal } from "../../../Context/ModalContext";
 import { Character, EditableCharacter } from "../../../types/Character";
 import { BeatLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +24,7 @@ interface EditableSheetProps {
 }
 
 export default function EditableSheetAria({ id }: EditableSheetProps) {
+  const { openUserProfileModal } = useModal();
   const { user } = useUser();
   const [selectedFrame, setSelectedFrame] = useState<string>("");
   const [isSaving, setIsSaving] = useState(false);
@@ -73,6 +75,28 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
     { name: "Survie", link1: "endurance", link2: "intelligence" },
     { name: "Voler", link1: "intelligence", link2: "charisma" },
   ];
+
+  const handleOpenOwnerProfile = async () => {
+    if (!character || !character.ownerId) return;
+    const ownerId = character.ownerId;
+    console.log("➡️ handleOpenOwnerProfile appelé avec ownerId =", ownerId);
+    if (!ownerId) {
+      console.warn("❌ ownerId manquant, la requête ne part pas.");
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/users/profile/${ownerId}`
+      );
+
+      if (!res.ok) throw new Error("Impossible de récupérer le profil");
+      const data = await res.json();
+      openUserProfileModal(data.user);
+    } catch (err) {
+      console.error("Erreur de récupération :", err);
+    }
+  };
 
   const normalizeMagic = (
     magic: Partial<Character["magic"]> = {}
@@ -280,8 +304,8 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
         formData.set("magic", JSON.stringify(updatedMagic));
         formData.set("baseSkills", JSON.stringify(mergedBaseSkills));
         if (selectedFrame) {
-  formData.append("selectedFrame", selectedFrame);
-}
+          formData.append("selectedFrame", selectedFrame);
+        }
 
         response = await fetch(`${API_URL}/api/characters/aria/${id}`, {
           method: "PUT",
@@ -451,6 +475,18 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
   };
   return (
     <div className="character-details">
+      <h1>{character.name}</h1>
+      <div className="character-details__owner">
+        <span>Propriétaire :</span>{" "}
+        <span
+          className="character-details__owner--name clickable"
+          onClick={() => handleOpenOwnerProfile()}
+        >
+          {character.ownerName ?? "Inconnu"}{" "}
+          {/* ou "Nom à récupérer" si vide */}
+        </span>
+      </div>
+
       {/*Barres contenant les boutons*/}
       <div className="character-details--button-list">
         <button onClick={toggleSkills}>
@@ -470,69 +506,66 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
       <div className="content-wrapper">
         <div className="character-details__content">
           <div className="character-details__identity">
-
-              <div className="character-details__identity--image frame-wrapper">
-{!isEditing && character.selectedFrame && (
-  <FrameOverlay
-    frameSrc={frameOptions[selectedFrame]}
-    className="frame-overlay frame-overlay--edit"
-    width="315px"
-    height="315px"
-  />
-)}
-
-                <img
-                  className="character-portrait"
-                  src={
-                    editedCharacter?.image
-                      ? typeof editedCharacter.image === "string"
-                        ? editedCharacter.image
-                        : URL.createObjectURL(editedCharacter.image)
-                      : defaultImg
-                  }
-                  alt={character.name}
-                  width={260}
-                  height={260}
-                  onError={(e) => {
-                    e.currentTarget.src = defaultImg;
-                  }}
+            <div className="character-details__identity--image frame-wrapper">
+              {!isEditing && character.selectedFrame && (
+                <FrameOverlay
+                  frameSrc={frameOptions[selectedFrame]}
+                  className="frame-overlay frame-overlay--edit"
+                  width="315px"
+                  height="315px"
                 />
+              )}
 
-{isEditing && user?.isPremium === true && selectedFrame && (
-  <FrameOverlay
-    frameSrc={frameOptions[selectedFrame]}
-    className="frame-overlay frame-overlay--edit"
-    width="315px"
-    height="315px"
-  />
-)}
+              <img
+                className="character-portrait"
+                src={
+                  editedCharacter?.image
+                    ? typeof editedCharacter.image === "string"
+                      ? editedCharacter.image
+                      : URL.createObjectURL(editedCharacter.image)
+                    : defaultImg
+                }
+                alt={character.name}
+                width={260}
+                height={260}
+                onError={(e) => {
+                  e.currentTarget.src = defaultImg;
+                }}
+              />
 
+              {isEditing && user?.isPremium === true && selectedFrame && (
+                <FrameOverlay
+                  frameSrc={frameOptions[selectedFrame]}
+                  className="frame-overlay frame-overlay--edit"
+                  width="315px"
+                  height="315px"
+                />
+              )}
 
-                {isEditing && (
-                  <label>
-                    <i className="fa-solid fa-pen-to-square"></i>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          setEditedCharacter((prev) =>
-                            prev ? { ...prev, image: file } : null
-                          );
-                        }
-                      }}
-                    />
-                  </label>
-                )}
-                              {isEditing && user?.isPremium === true && (
+              {isEditing && (
+                <label>
+                  <i className="fa-solid fa-pen-to-square"></i>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setEditedCharacter((prev) =>
+                          prev ? { ...prev, image: file } : null
+                        );
+                      }
+                    }}
+                  />
+                </label>
+              )}
+              {isEditing && user?.isPremium === true && (
                 <ChooseBannerFrame
                   selectedFrame={selectedFrame}
                   setSelectedFrame={setSelectedFrame}
                 />
               )}
-              </div>
-
+            </div>
 
             {/* Statistiques du personnage */}
             <div className="character-details__identity--stats">
@@ -1287,6 +1320,7 @@ export default function EditableSheetAria({ id }: EditableSheetProps) {
           </ul>
         </Modal>
       )}
+
     </div>
   );
 }

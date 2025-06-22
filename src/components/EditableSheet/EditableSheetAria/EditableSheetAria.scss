@@ -5,6 +5,24 @@
   display: flex;
   flex-direction: column;
 
+  h1 {
+    margin: 0
+  }
+
+  &__owner {
+    font-style: italic;
+
+    &--name{
+      cursor: pointer;
+      border-bottom: 1px solid;
+      transition: all 0.3s;
+
+      &:hover {
+      border-bottom: transparent;
+      }
+    }
+  }
+
   .content-wrapper {
     @include flex-row;
     gap: $spacing-medium;

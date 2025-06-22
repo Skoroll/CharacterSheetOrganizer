@@ -8,6 +8,8 @@ export interface MessageType {
   isSystem?: boolean;
   createdAt?: string;
   messageType?: "diceRoll" | "text" | string;
+  senderId: string;
+
 }
 
   

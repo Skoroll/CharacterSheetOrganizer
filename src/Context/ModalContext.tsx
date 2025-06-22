@@ -1,6 +1,14 @@
 import React, { createContext, useContext, useState } from "react";
+import { Character } from "../types/Character";
+import { AppUser } from "../types/AppUser";
 
-// Déclare les modales que tu veux contrôler globalement
+interface UserProfileData {
+  user: AppUser;
+  characters: Character[];
+  featuredCharacter?: Character;
+  randomCharacterImage?: string;
+}
+
 interface ModalContextProps {
   showLeaveModal: boolean;
   showCreateTableModal: boolean;
@@ -14,19 +22,21 @@ interface ModalContextProps {
   openCreateTableModal: () => void;
   closeCreateTableModal: () => void;
 
-  // Auth modal
   showAuthModal: boolean;
   isSignUpMode: boolean;
   openAuthModal: (isSignUp: boolean) => void;
   closeAuthModal: () => void;
+
+  showUserProfileModal: boolean;
+  userProfileData: UserProfileData | null;
+  openUserProfileModal: (data: UserProfileData) => void;
+  closeUserProfileModal: () => void;
+  handleOpenUserProfile: (userId: string) => void;
 }
 
-// Création du contexte
 const ModalContext = createContext<ModalContextProps | undefined>(undefined);
 
-// Provider
 export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // === Modales existantes ===
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [showCreateTableModal, setShowCreateTableModal] = useState(false);
   const [showJoinTableModal, setShowJoinTableModal] = useState(false);
@@ -47,7 +57,6 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setShowJoinTableModal(false);
   };
 
-  // === Nouvelle modale d'authentification ===
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isSignUpMode, setIsSignUpMode] = useState(false);
 
@@ -55,9 +64,30 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setIsSignUpMode(isSignUp);
     setShowAuthModal(true);
   };
+  const closeAuthModal = () => setShowAuthModal(false);
 
-  const closeAuthModal = () => {
-    setShowAuthModal(false);
+  const [showUserProfileModal, setShowUserProfileModal] = useState(false);
+  const [userProfileData, setUserProfileData] = useState<UserProfileData | null>(null);
+
+  const openUserProfileModal = (data: UserProfileData) => {
+    setUserProfileData(data);
+    setShowUserProfileModal(true);
+  };
+
+  const closeUserProfileModal = () => {
+    setUserProfileData(null);
+    setShowUserProfileModal(false);
+  };
+
+  const handleOpenUserProfile = async (userId: string) => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/profile/${userId}`);
+      if (!res.ok) throw new Error("Impossible de récupérer le profil");
+      const data: UserProfileData = await res.json();
+      openUserProfileModal(data);
+    } catch (error) {
+      console.error("Erreur récupération profil :", error);
+    }
   };
 
   return (
@@ -67,16 +97,21 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         showCreateTableModal,
         showJoinTableModal,
         joinTableData,
+        openJoinTableModal,
+        closeJoinTableModal,
         openLeaveModal,
         closeLeaveModal,
         openCreateTableModal,
         closeCreateTableModal,
-        openJoinTableModal,
-        closeJoinTableModal,
         showAuthModal,
         isSignUpMode,
         openAuthModal,
         closeAuthModal,
+        showUserProfileModal,
+        userProfileData,
+        openUserProfileModal,
+        closeUserProfileModal,
+        handleOpenUserProfile,
       }}
     >
       {children}
@@ -84,7 +119,6 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   );
 };
 
-// Hook personnalisé
 export const useModal = () => {
   const context = useContext(ModalContext);
   if (!context) {

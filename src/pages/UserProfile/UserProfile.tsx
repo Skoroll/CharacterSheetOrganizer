@@ -62,7 +62,7 @@ export default function UserProfile() {
 
   return (
     <div className="profile">
-      <h2>Profil de {profile.name}</h2>
+      
       <p><strong>Nom :</strong> {profile.name}</p>
       <p><strong>Inscrit depuis :</strong> {new Date(profile.createdAt).toLocaleDateString()}</p>
 
