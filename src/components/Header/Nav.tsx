@@ -5,6 +5,7 @@ import CharacterList from "../ModalContent/Character/CharacterList";
 import ManageAccount from "../ModalContent/Account/ManageAccount";
 import Modal from "../Modal/Modal";
 import Settings from "../ModalContent/Account/Settings";
+import UserProfileModal from "../Modal/UserProfileModal/UserProfileModal";
 import TableTopBrowse from "../ModalContent/ModalTabletop/TableTopBrowse/TableTopBrowse";
 import TabletopCreation from "../ModalContent/ModalTabletop/TabletopCreation/TabletopCreation";
 import { BeatLoader } from "react-spinners";
@@ -60,13 +61,12 @@ export default function Nav({ className, toggleNav }: NavProps) {
 
   const userOptions: Option[] = [
     { label: "Gérer le compte", component: <ManageAccount /> },
+    { label: "Mon profil", component: <UserProfileModal/> },
     { label: "Thèmes", component: <Settings isPremium={user?.isPremium === true} /> },
+    { label: "Vos personnages", component: <CharacterList /> },
     { label: "Se déconnecter", action: handleLogout },
   ];
 
-  const characterOptions: Option[] = [
-    { label: "Vos personnages", component: <CharacterList /> },
-  ];
 
   const tableOptions: Option[] = [
     { label: "Créer une table de jeu", component: <TabletopCreation onCreated={() => {}} /> },
@@ -75,7 +75,6 @@ export default function Nav({ className, toggleNav }: NavProps) {
 
   const menuSections = [
     { title: "Votre compte", options: userOptions },
-    { title: "Personnages", options: characterOptions },
     { title: "Jouer", options: tableOptions },
   ];
 

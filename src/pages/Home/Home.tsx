@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Landing from "../Landing/Landing";
 import Menu from "../Menu/Menu";
 import NewsPanel from "../../components/NewsPanel/NewsPanel";
+import PremiumBanner from "../../assets/095c36e7-22d7-4101-a31e-a0edc28291d5.png"
 import PreviousGame from "../../components/PreviousGame/PreviousGame";
 import Welcome from "../../components/Welcome/Welcome";
 import { useUser } from "../../Context/UserContext";
@@ -120,7 +121,7 @@ export default function Home() {
                 </div>
                   <div className="premium-box">
                     Passez premium !
-                    <img src={""} alt="premium-box" />
+                    <img src={PremiumBanner} alt="premium-box" />
                     <p>
                       3€ par mois
                       <br/>

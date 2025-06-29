@@ -10,6 +10,15 @@ export interface AppUser {
   stripeCustomerId?: string;
   selectedCharacter?: string;
   characters?: Character[];
+  questsCreated?: number;
+  tablesJoined?: {
+  _id: string;
+  name: string;
+  banner?: string;
+  gameMaster?: string;
+}[];
+
+  friendList?: string;
 
   // Ajouts pour affichage du profil
   name?: string;

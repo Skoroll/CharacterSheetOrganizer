@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import Modal from "../Modal";
 import { AppUser } from "../../../types/AppUser";
 import { Character } from "../../../types/Character";
+import defaultPicture from "../../../assets/person-placeholder-5.webp";
 import "./UserProfileModal.scss";
+import { Table } from "../../../types/Table";
 
 interface UserProfileModalProps {
   user: AppUser;
@@ -18,13 +20,15 @@ export default function UserProfileModal({
   characters: initialCharacters = [],
 }: UserProfileModalProps) {
   const [characters, setCharacters] = useState<Character[]>(initialCharacters);
-  const [featuredCharacterId, setFeaturedCharacterId] = useState<string | null>(
+  const [featuredCharacterId] = useState<string | null>(
     user.selectedCharacter || null
   );
-  const [isSaving, setIsSaving] = useState(false);
+  const [tables, setTables] = useState<Table[]>([]);
+  const [tablesLoading, setTablesLoading] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const resolveImageUrl = (img?: string | File): string => {
-    if (!img) return "/assets/default-user.png";
+    if (!img) return defaultPicture;
     return typeof img === "string" ? img : URL.createObjectURL(img);
   };
 
@@ -41,8 +45,31 @@ export default function UserProfileModal({
       charactersWithImage[
         Math.floor(Math.random() * charactersWithImage.length)
       ];
-    return resolveImageUrl(random?.image);
+    if (random?.image) return resolveImageUrl(random.image);
+
+    return "/assets/default-user.png";
   };
+
+useEffect(() => {
+  const fetchTables = async () => {
+    if (!user._id || !API_URL) return;
+    setTablesLoading(true);
+
+    try {
+      const res = await fetch(`${API_URL}/api/users/${user._id}/tables-detailed`);
+      if (!res.ok) throw new Error("Erreur lors du chargement des tables");
+      const data: Table[] = await res.json();
+      setTables(data);
+    } catch (error) {
+      console.error("❌ Erreur chargement tables :", error);
+    } finally {
+      setTablesLoading(false);
+    }
+  };
+
+  fetchTables();
+}, [user._id, API_URL]);
+
 
   const fetchCharacters = async () => {
     try {
@@ -51,31 +78,6 @@ export default function UserProfileModal({
       setCharacters(data);
     } catch (error) {
       console.error("Erreur lors du chargement des personnages :", error);
-    }
-  };
-
-  const handleCharacterSelect = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedId = event.target.value;
-    setFeaturedCharacterId(selectedId);
-    setIsSaving(true);
-
-    try {
-      const res = await fetch(`/api/users/${user._id}/selected-character`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ characterId: selectedId }),
-      });
-
-      if (!res.ok)
-        throw new Error("Échec de la mise à jour du personnage mis en avant");
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsSaving(false);
     }
   };
 
@@ -93,52 +95,92 @@ export default function UserProfileModal({
             src={getProfileImage()}
             alt={user.name}
             className="profile--picture"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = defaultPicture;
+            }}
           />
+
           <div className="profile__main--content">
-            <h2 className=""> {user.isPremium && <span className="">👑</span>}{user.name}</h2>
+            <h2>
+              {user.isPremium && <span>👑</span>} {user.name}
+            </h2>
             <p>
-              Crée le :<span>Test</span>
+              Crée le :&nbsp;
+              <span>
+                {user.createdAt
+                  ? new Date(user.createdAt).toLocaleDateString()
+                  : "Pionnier"}
+              </span>
             </p>
+
             <p className="on-column">
-              Personnage principal : <span>Test</span>
+              Personnage principal :{" "}
+              <span>
+                {characters.find((c) => c._id === featuredCharacterId)?.name ||
+                  "Aucun"}
+              </span>
             </p>
           </div>
         </div>
-        <hr/>
+        <hr />
         <div className="profile__stats">
-          <p className="on-column">Quêtes crée : <span>Test</span></p>
-          <p className="on-column">Table en cours : <span>Test</span></p>
-          <p className="on-column">Amis : <span>Test</span></p>
+          <div className="profile__stats">
+            <p className="on-column">
+              Quêtes créées : <span>{user.questsCreated ?? 0}</span>
+            </p>
+            <p className="on-column">
+              Tables en cours : <span>{user.tablesJoined?.length ?? 0}</span>
+            </p>
+            <p className="on-column">
+              Amis : <span>{user.friendList?.length ?? 0}</span>
+            </p>
+          </div>
         </div>
-        <hr/>
+        <hr />
         <div className="profile__tables-joined">
           Tables de jeu :
-            <div className="profile__tables-joined--list">
-              <ul>
-                <li><img className="table--img" src={""} alt="Table" /> <span className="table-title">Titre table</span> <span className="table-status">MJ</span> </li>
-                <li><img className="table--img" src={""} alt="Table" /> <span className="table-title">Titre table</span> <span className="table-status">Joueur</span> </li>
-              </ul>
-            </div>
+          <div className="profile__tables-joined--list">
+<ul>
+  {tablesLoading && <li>Chargement...</li>}
+  {!tablesLoading && tables.length === 0 && <li>Aucune table</li>}
+  {!tablesLoading && tables.map((table) => (
+    <li key={table._id}>
+      <img
+        className="table--img"
+        src={
+          table.bannerImage
+            ? table.bannerImage.startsWith("http")
+              ? table.bannerImage
+              : `${API_URL}${table.bannerImage}`
+            : "/assets/default-table.png"
+        }
+        alt={table.name}
+        onError={(e) => {
+          e.currentTarget.src = "/assets/default-table.png";
+        }}
+      />
+      <span className="table-title">{table.name}</span>
+      <span className="table-status">
+        {table.gameMaster === user._id ? "MJ" : "Joueur"}
+      </span>
+    </li>
+  ))}
+</ul>
+
+          </div>
         </div>
-        <hr/>
-        {!isOwner && <button>Ajouter en ami</button>}
-        {isOwner && (
-          <div className="">
-            <label className="">Personnage mis en avant</label>
-            <select
-              value={featuredCharacterId || ""}
-              onChange={handleCharacterSelect}
-              className=""
-              disabled={isSaving}
-            >
-              <option value="">-- Aucun --</option>
-              {characters.map((char) => (
-                <option key={char._id} value={char._id}>
-                  {char.name}
-                </option>
-              ))}
-            </select>
-            {isSaving && <p className="">Sauvegarde en cours...</p>}
+        <hr />
+        {!isOwner && (
+          <div className="profile__actions">
+            <button>
+              <i className="fa-solid fa-user-plus"></i>
+            </button>
+            <button>
+              <i className="fa-solid fa-user-minus"></i>
+            </button>
+            <button>
+              <i className="fa-solid fa-triangle-exclamation"></i>
+            </button>
           </div>
         )}
       </div>
