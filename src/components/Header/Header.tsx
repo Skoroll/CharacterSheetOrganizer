@@ -13,7 +13,7 @@ export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [isPartyMenuOpen, setIsPartyMenuOpen] = useState(false);
   const [isTutorialMenuOpen, setIsTutorialMenuOpen] = useState(false);
-
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const { user } = useUser();
   const toggleNav = () => {
     setIsPartyMenuOpen(false);
@@ -23,9 +23,6 @@ export default function Header() {
 
   return (
     <header className="header">
-                {user.isAdmin && (
-            <button className="admin-btn" onClick={() => navigate("/admin")}>Administrateur</button>
-          )}
       <a className="logo" href="/">
         <p>
           <span className="logo--main">
@@ -77,7 +74,7 @@ export default function Header() {
                   <ul className="tutorial-menu">
                     <li
                       onClick={() => {
-                        navigate("/tutoriel#general"); // ✅ correspond à "L'application"
+                        navigate("/tutoriel#general"); // correspond à "L'application"
                         setIsTutorialMenuOpen(false);
                       }}
                     >
@@ -85,7 +82,7 @@ export default function Header() {
                     </li>
                     <li
                       onClick={() => {
-                        navigate("/tutoriel#player"); // ✅ correspond à "Joueur"
+                        navigate("/tutoriel#player"); // correspond à "Joueur"
                         setIsTutorialMenuOpen(false);
                       }}
                     >
@@ -93,7 +90,7 @@ export default function Header() {
                     </li>
                     <li
                       onClick={() => {
-                        navigate("/tutoriel#gm"); // ✅ correspond à "Maître de jeu"
+                        navigate("/tutoriel#gm"); // correspond à "Maître de jeu"
                         setIsTutorialMenuOpen(false);
                       }}
                     >
@@ -112,32 +109,44 @@ export default function Header() {
           >
             <button>Obtenir Aria</button>
           </a>
-           <GoPremiumBtn user={user}/>
-
-
-
+          <GoPremiumBtn user={user} />
         </nav>
       </div>
-      {/* Bouton pour le menu utilisateur (si connecté) */}
-      {user?.isAuthenticated && (
-        <button
-          id="menu-toggle"
-          className="menu-toggle"
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleNav();
-          }}
-          aria-label="Affiche la navigation"
-          aria-expanded={isOpen}
-        >
-          <i className={`fa-solid ${isOpen ? "fa-xmark" : "fa-bars"}`}></i>
-        </button>
-      )}
+      <div className="menu-wrapper">
+        {/* Panneau d'admin */}
+        {user.isAdmin && (
+          <button className="admin-btn" onClick={() => navigate("/admin")}>
+            Administrateur
+          </button>
+        )}
+        {/* Notifications */}
+        <div className="notif">
+<button onClick={() => setIsNotificationOpen(!isNotificationOpen)}>
+  <i className={`fa-solid ${isNotificationOpen ? "fa-envelope-open" : "fa-envelope"}`}></i>
+</button>
+
+        <span className="notif--number">1</span>
+</div>
+        {/* Bouton pour le menu utilisateur (si connecté) */}
+        {user?.isAuthenticated && (
+          <button
+            id="menu-toggle"
+            className="menu-toggle"
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleNav();
+            }}
+            aria-label="Affiche la navigation"
+            aria-expanded={isOpen}
+          >
+            <i className={`fa-solid ${isOpen ? "fa-xmark" : "fa-bars"}`}></i>
+          </button>
+        )}
+      </div>
       {/* Navigation utilisateur (dans le menu déroulant) */}
       {isOpen && (
         <Nav className="main-menu" toggleNav={toggleNav} role="navigation" />
-      )}     
-
+      )}
     </header>
   );
 }

@@ -7,6 +7,13 @@
     border-radius: 50%;
   }
 
+  .on-column {
+    @include flex-col;
+    span {
+      padding: $spacing-small 0;
+    }
+    }
+
   &__main {
     @include flex-row;
     gap: $spacing-medium;
@@ -16,10 +23,6 @@
       gap: $spacing-medium;
       * {
         margin: 0;
-      }
-
-      .on-column {
-        @include flex-col;
       }
     }
   }

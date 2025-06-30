@@ -6,6 +6,45 @@
   width: 100%;
   min-height: 85px;
 
+  .menu-wrapper {
+    @include flex-row;
+    align-items: center;
+
+    button {
+      top: $spacing-small;
+      background: none;
+      color: $text-color;
+      padding: 0 $spacing-medium;
+      border: none;
+      font-size: 30px;
+      cursor: pointer;
+
+      i {
+        width: 30px;
+        height: 30px;
+      }
+    }
+
+    .notif {
+      position: relative;
+
+      &--number {
+        position: absolute;
+        bottom: 0;
+        right: 10px;
+        background-color: red;
+        padding: 1px 5px;
+        border-radius: 50%;
+      }
+    }
+
+          .admin-btn {
+        @include button;
+        font-size: medium !important;
+            height: 40px
+      }
+  }
+
   .auth-btn {
     position: absolute;
     top: $spacing-small;
@@ -42,13 +81,13 @@
     height: 100%;
 
     &:visited {
-      color: inherit
+      color: inherit;
     }
     p {
       position: relative;
       @include flex-col;
       margin: auto;
-      background: rgb(29,39,54);
+      background: rgb(29, 39, 54);
       padding: $spacing-small $spacing-medium;
       border-radius: $spacing-small;
       transition: all 2s;
@@ -60,18 +99,17 @@
 
       .bold {
         font-weight: 800;
-        color: rgba(229,184,153,255);
+        color: rgba(229, 184, 153, 255);
       }
 
       .logo--main,
       .logo--subtitle {
         font-family: "MedievalSharp";
-
       }
 
       .logo--main {
         font-size: 35px;
-        color: rgb(232,220,195);
+        color: rgb(232, 220, 195);
         font-weight: 600;
       }
 
@@ -117,38 +155,15 @@
       }
     }
   }
-  .menu-toggle {
-    position: absolute;
-    right: 0;
-    top: $spacing-small;
-    background: none;
-    color: $text-color;
-    padding: 0 $spacing-medium;
-    border: none;
-    font-size: 30px;
-    cursor: pointer;
-
-    i {
-      width: 30px;
-      height: 30px;
-    }
-  }
 }
-
-.admin-btn {
-  position: absolute;
-  top: $spacing-small;
-  right: 55px;
-  @include button;
-}
-
 
 @include media-query($breakpoint-md, "max") {
   .header {
     @include flex-col;
     min-height: 150px;
 
-    img, .logo {
+    img,
+    .logo {
       position: relative;
       margin: auto;
     }

@@ -5,9 +5,9 @@ import CharacterList from "../ModalContent/Character/CharacterList";
 import ManageAccount from "../ModalContent/Account/ManageAccount";
 import Modal from "../Modal/Modal";
 import Settings from "../ModalContent/Account/Settings";
-import UserProfileModal from "../Modal/UserProfileModal/UserProfileModal";
 import TableTopBrowse from "../ModalContent/ModalTabletop/TableTopBrowse/TableTopBrowse";
 import TabletopCreation from "../ModalContent/ModalTabletop/TabletopCreation/TabletopCreation";
+import { useModal } from "../../Context/ModalContext";
 import { BeatLoader } from "react-spinners";
 import "./Nav.scss";
 
@@ -37,6 +37,7 @@ export default function Nav({ className, toggleNav }: NavProps) {
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState<string | null>(null);
+  const { openUserProfileModal } = useModal();
   const [selectedContent, setSelectedContent] = useState<ReactNode | null>(
     null
   );
@@ -61,7 +62,7 @@ export default function Nav({ className, toggleNav }: NavProps) {
 
   const userOptions: Option[] = [
     { label: "Gérer le compte", component: <ManageAccount /> },
-    { label: "Mon profil", component: <UserProfileModal/> },
+    { label: "Mon profil", action: () => openUserProfileModal({ user, characters: [] }) },
     { label: "Thèmes", component: <Settings isPremium={user?.isPremium === true} /> },
     { label: "Vos personnages", component: <CharacterList /> },
     { label: "Se déconnecter", action: handleLogout },

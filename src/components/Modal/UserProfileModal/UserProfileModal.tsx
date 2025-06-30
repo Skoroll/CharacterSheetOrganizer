@@ -105,7 +105,7 @@ useEffect(() => {
               {user.isPremium && <span>👑</span>} {user.name}
             </h2>
             <p>
-              Crée le :&nbsp;
+              Création :&nbsp;
               <span>
                 {user.createdAt
                   ? new Date(user.createdAt).toLocaleDateString()
@@ -124,17 +124,17 @@ useEffect(() => {
         </div>
         <hr />
         <div className="profile__stats">
-          <div className="profile__stats">
+
             <p className="on-column">
-              Quêtes créées : <span>{user.questsCreated ?? 0}</span>
+              Quêtes créées<span>{user.questsCreated ?? 0}</span>
             </p>
             <p className="on-column">
-              Tables en cours : <span>{user.tablesJoined?.length ?? 0}</span>
+              Tables en cours<span>{user.tablesJoined?.length ?? 0}</span>
             </p>
             <p className="on-column">
-              Amis : <span>{user.friendList?.length ?? 0}</span>
+              Amis<span>{user.friendList?.length ?? 0}</span>
             </p>
-          </div>
+
         </div>
         <hr />
         <div className="profile__tables-joined">
