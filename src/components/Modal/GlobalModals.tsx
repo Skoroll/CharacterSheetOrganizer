@@ -5,7 +5,6 @@ import TableTopBrowse from "../ModalContent/ModalTabletop/TableTopBrowse/TableTo
 import TabletopCreation from "../ModalContent/ModalTabletop/TabletopCreation/TabletopCreation";
 import TableTopLeave from "../ModalContent/ModalTabletop/TableTopLeave/TableTopLeave";
 import UserProfileModal from "./UserProfileModal/UserProfileModal";
-
 import { useModal } from "../../Context/ModalContext";
 import { useUser } from "../../Context/UserContext";
 import { Table } from "../../types/Table";
@@ -23,10 +22,9 @@ export default function GlobalModals() {
     showCreateTableModal,
     closeCreateTableModal,
     showUserProfileModal,
-    userProfileData,
+userProfileData,
     closeUserProfileModal,
   } = useModal();
-
   const { user } = useUser();
   const [tables, setTables] = useState<Table[]>([]);
   const [loading, setLoading] = useState(true);
@@ -111,12 +109,15 @@ export default function GlobalModals() {
 
 {showUserProfileModal && userProfileData && (
   <UserProfileModal
-    user={userProfileData}
-    isOwner={user._id === userProfileData._id}
-    characters={userProfileData.characters || []}
+    user={userProfileData} 
+    isOwner={user?._id === userProfileData._id} 
+    characters={userProfileData.characters} 
     onClose={closeUserProfileModal}
   />
 )}
+
+
+
 
     </>
   );

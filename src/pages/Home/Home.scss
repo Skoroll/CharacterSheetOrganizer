@@ -101,7 +101,7 @@
   width: 100%;
   
   .divide {
-    @include flex-row;
+    @include flex-col;
     width: 100%;
     gap: $spacing-small;
   }

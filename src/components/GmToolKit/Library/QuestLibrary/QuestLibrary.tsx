@@ -40,6 +40,7 @@ export default function QuestLibrary() {
           className={activeTab === "create" ? "active" : ""}
           onClick={() => setActiveTab("create")}
         >
+          <i className="fa-solid fa-plus"/>
           Créer quête
         </button>
         <button

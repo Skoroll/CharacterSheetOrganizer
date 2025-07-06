@@ -1,70 +1,75 @@
 .quest-library {
-    width: 100%;
-    max-height: 600px;
-    @include flex-col;
+  width: 100%;
+  max-height: 600px;
+  @include flex-col;
+  gap: $spacing-small;
+
+  &__tabs {
+    @include flex-row;
+    gap: $spacing-small;
+    padding: $spacing-small 0;
+
+    button {
+      @include button;
+      @include flex-row;
+      gap: $spacing-small;
+      align-items: center
+    }
+  }
+
+  &__filters {
+    @include flex-wrap;
     gap: $spacing-small;
 
-    &__tabs {
-        @include flex-row;
-        gap: $spacing-small;
-        padding: $spacing-small 0;
+    select {
+      @include button;
+    }
+  }
 
-        button {
-            @include button;
-        }
+  &__list {
+    padding: $spacing-medium 0;
+  }
+
+  &__form {
+    @include flex-col;
+    gap: $spacing-small;
+    height: 100%;
+    overflow: auto;
+
+    label {
+      @include flex-col;
+      gap: 2px;
     }
 
-
-    &__filters {
-        @include flex-wrap;
-        gap: $spacing-small;
-
-        select {
-
-            @include button;
-        }
+    textarea {
+      resize: none;
     }
 
-    &__list {
-        padding: $spacing-medium 0;
+    button {
+      @include button;
+      height: 32px;
+      width: 160px;
     }
-
-
-    &__form {
-        @include flex-col;
-        gap: $spacing-small;
-        height: 100%;
-        overflow: auto;
-
-        label {
-            @include flex-col;
-            gap: 2px;
-        }
-
-        textarea {
-            resize: none;
-        }
-
-        button {
-            @include button;
-            height: 32px;
-            width: 160px;
-        }
-    }
+  }
 }
 
 .quest-branch-builder {
-    height: 100%;
+  height: 100%;
 
-    &__choice {
-        @include flex-col;
-        gap: $spacing-small;
-        padding: $spacing-small;
-  
-        &--input {
-            @include flex-row;
-            gap: $spacing-small;
-            align-items: center;
-        }
+  &__choice {
+    @include flex-col;
+    gap: $spacing-small;
+    padding: $spacing-small;
+
+    &--input {
+      @include flex-row;
+      gap: $spacing-small;
+      align-items: center;
     }
+  }
+
+  button {
+    width: 200px;
+    min-width: 200px;
+  }
 }

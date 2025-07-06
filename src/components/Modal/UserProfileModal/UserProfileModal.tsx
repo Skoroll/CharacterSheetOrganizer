@@ -1,17 +1,29 @@
 import { useEffect, useState } from "react";
 import Modal from "../Modal";
-import { AppUser } from "../../../types/AppUser";
 import { Character } from "../../../types/Character";
 import defaultPicture from "../../../assets/person-placeholder-5.webp";
 import "./UserProfileModal.scss";
 import { Table } from "../../../types/Table";
 
 interface UserProfileModalProps {
-  user: AppUser;
+  user: UserProfileData;
   isOwner?: boolean;
   onClose: () => void;
   characters?: Character[];
 }
+
+type UserProfileData = {
+  _id: string;
+  name?: string;
+  profilePicture?: string;
+  createdAt?: string;
+  isPremium?: boolean;
+  questsCreated?: number;
+  tablesJoined?: { _id: string; name: string; banner?: string; gameMaster?: string }[];
+  friendList?: string;
+  selectedCharacter?: string;
+  characters: Character[];
+};
 
 export default function UserProfileModal({
   user,
