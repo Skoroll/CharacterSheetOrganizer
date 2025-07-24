@@ -5,14 +5,16 @@ import defaultPicture from "../../../assets/person-placeholder-5.webp";
 import "./UserProfileModal.scss";
 import { Table } from "../../../types/Table";
 
+
 interface UserProfileModalProps {
-  user: UserProfileData;
+  user: UserProfile;
   isOwner?: boolean;
   onClose: () => void;
   characters?: Character[];
 }
 
-type UserProfileData = {
+export type UserProfile = {
+
   _id: string;
   name?: string;
   profilePicture?: string;
@@ -24,6 +26,7 @@ type UserProfileData = {
   selectedCharacter?: string;
   characters: Character[];
 };
+
 
 export default function UserProfileModal({
   user,

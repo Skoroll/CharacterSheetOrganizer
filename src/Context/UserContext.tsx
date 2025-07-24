@@ -7,11 +7,14 @@ interface UserContextProps {
   setUser: React.Dispatch<React.SetStateAction<AppUser>>;
   login: (name: string, password: string) => Promise<boolean>;
   logout: () => void;
+  isLoggingOut: boolean;
 }
 
 const UserContext = createContext<UserContextProps | null>(null);
 
-const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const UserProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<AppUser>({
     userPseudo: "",
     isAuthenticated: false,
@@ -20,8 +23,9 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     isAdmin: false,
     isPremium: false,
   });
+  const [isLoggingOut] = useState(false);
 
-  // ✅ A la montée du provider → Vérifie le token et récupère les infos sécurisées
+  // A la montée du provider → Vérifie le token et récupère les infos sécurisées
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("token");
@@ -85,7 +89,15 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser, login, logout }}>
+    <UserContext.Provider
+      value={{
+        user,
+        setUser,
+        logout,
+        isLoggingOut,
+        login
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

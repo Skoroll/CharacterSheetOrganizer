@@ -1,13 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
-import { Character } from "../types/Character";
-import { AppUser } from "../types/AppUser";
 
-interface UserProfileData {
-  user: AppUser;
-  characters: Character[];
-  featuredCharacter?: Character;
-  randomCharacterImage?: string;
-}
+import type { UserProfile } from "../components/Modal/UserProfileModal/UserProfileModal";
 
 interface ModalContextProps {
   showLeaveModal: boolean;
@@ -28,8 +21,8 @@ interface ModalContextProps {
   closeAuthModal: () => void;
 
   showUserProfileModal: boolean;
-  userProfileData: UserProfileData | null;
-  openUserProfileModal: (data: UserProfileData) => void;
+  userProfileData: UserProfile | null;
+  openUserProfileModal: (data: UserProfile) => void;
   closeUserProfileModal: () => void;
   handleOpenUserProfile: (userId: string) => void;
 }
@@ -67,9 +60,9 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const closeAuthModal = () => setShowAuthModal(false);
 
   const [showUserProfileModal, setShowUserProfileModal] = useState(false);
-  const [userProfileData, setUserProfileData] = useState<UserProfileData | null>(null);
+  const [userProfileData, setUserProfileData] = useState<UserProfile | null>(null);
 
-  const openUserProfileModal = (data: UserProfileData) => {
+  const openUserProfileModal = (data: UserProfile) => {
     setUserProfileData(data);
     setShowUserProfileModal(true);
   };
@@ -83,7 +76,7 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/profile/${userId}`);
       if (!res.ok) throw new Error("Impossible de récupérer le profil");
-      const data: UserProfileData = await res.json();
+      const data: UserProfile = await res.json();
       openUserProfileModal(data);
     } catch (error) {
       console.error("Erreur récupération profil :", error);

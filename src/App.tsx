@@ -12,6 +12,7 @@ import GlobalModals from "./components/Modal/GlobalModals.js";
 import Header from "./components/Header/Header";
 import Home from "./pages/Home/Home";
 import Legal from "./pages/Legal/Legal.js";
+import LoadingComp from "./components/LoadingComp/LoadingComp.js";
 import NewsPage from "./pages/Articles/News";
 import NotFound from "./pages/NotFound/NotFound.js";
 import Premium from "./pages/Premium/Premium.js";
@@ -22,7 +23,6 @@ import { UserProvider } from "./Context/UserContext";
 import { ModalProvider } from "./Context/ModalContext.js";
 import { refreshAccessToken } from "./utils/authService";
 import GlobalStyle from "./style/GlobalStyle.js";
-import { BeatLoader } from "react-spinners";
 import "./App.scss";
 
 function App() {
@@ -37,7 +37,7 @@ function App() {
     refreshToken();
   }, []);
 
-  if (loading) return <BeatLoader />; //  Empêche un écran blanc au chargement
+  if (loading) return <LoadingComp />; //  Empêche un écran blanc au chargement
 
   return (
     <ThemeProvider theme={theme}>

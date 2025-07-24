@@ -109,12 +109,13 @@ userProfileData,
 
 {showUserProfileModal && userProfileData && (
   <UserProfileModal
-    user={userProfileData} 
-    isOwner={user?._id === userProfileData._id} 
-    characters={userProfileData.characters} 
+    user={userProfileData}
+    isOwner={user?._id === userProfileData._id}
+    characters={userProfileData.characters}
     onClose={closeUserProfileModal}
   />
 )}
+
 
 
 

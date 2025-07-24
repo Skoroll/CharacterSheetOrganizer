@@ -1,0 +1,14 @@
+.loading-component {
+    position: absolute;
+    top: 0;
+    left: 0;
+    @include flex-col;
+    background-color: green;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9998;
+  &__inside {
+    margin: auto;
+    background-color: red;
+  }
+}

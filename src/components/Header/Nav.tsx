@@ -4,18 +4,18 @@ import { useNavigate } from "react-router-dom";
 import CharacterList from "../ModalContent/Character/CharacterList";
 import ManageAccount from "../ModalContent/Account/ManageAccount";
 import Modal from "../Modal/Modal";
+import OnLoadingOverlay from "../OnLoadingOverlay/OnLoadingOverlay";
 import Settings from "../ModalContent/Account/Settings";
 import TableTopBrowse from "../ModalContent/ModalTabletop/TableTopBrowse/TableTopBrowse";
 import TabletopCreation from "../ModalContent/ModalTabletop/TabletopCreation/TabletopCreation";
 import { useModal } from "../../Context/ModalContext";
-import { BeatLoader } from "react-spinners";
 import "./Nav.scss";
 
 interface NavProps {
   className: string;
   toggleNav: () => void;
   component?: never;
-  role?: string,
+  role?: string;
 }
 
 interface ActionOption {
@@ -33,6 +33,7 @@ interface ComponentOption {
 type Option = ActionOption | ComponentOption;
 
 export default function Nav({ className, toggleNav }: NavProps) {
+  const [isLoggingOut] = useState(false);
   const { user, logout } = useUser();
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
@@ -43,34 +44,36 @@ export default function Nav({ className, toggleNav }: NavProps) {
   );
   const navRef = useRef<HTMLDivElement | null>(null);
 
-  // Vérifie si l'utilisateur est connecté
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/");
-    }
-  }, [navigate]);
-
-
+  if (isLoggingOut) {
+    return <OnLoadingOverlay message="Déconnexion..." />;
+  }
 
   // Fonction pour gérer la déconnexion
   const handleLogout = () => {
-    logout(); 
-    navigate("/"); 
-    window.location.reload();
+    logout();
+    setTimeout(() => navigate("/"), 1500); // redirige proprement après overlay
   };
 
   const userOptions: Option[] = [
     { label: "Gérer le compte", component: <ManageAccount /> },
-    { label: "Mon profil", action: () => openUserProfileModal({ user, characters: [] }) },
-    { label: "Thèmes", component: <Settings isPremium={user?.isPremium === true} /> },
+    {
+      label: "Mon profil",
+      action: () =>
+        openUserProfileModal({ ...(user as { _id: string }), characters: [] }),
+    },
+    {
+      label: "Thèmes",
+      component: <Settings isPremium={user?.isPremium === true} />,
+    },
     { label: "Vos personnages", component: <CharacterList /> },
     { label: "Se déconnecter", action: handleLogout },
   ];
 
-
   const tableOptions: Option[] = [
-    { label: "Créer une table de jeu", component: <TabletopCreation onCreated={() => {}} /> },
+    {
+      label: "Créer une table de jeu",
+      component: <TabletopCreation onCreated={() => {}} />,
+    },
     { label: "Rejoindre une table", component: <TableTopBrowse /> },
   ];
 
@@ -111,7 +114,13 @@ export default function Nav({ className, toggleNav }: NavProps) {
               <h2>{title}</h2>
               <ul>
                 {options.map((option, idx) => (
-                  <li key={idx} onClick={() => option.action?.() || handleOptionClick(option.label, option.component!)}>
+                  <li
+                    key={idx}
+                    onClick={() =>
+                      option.action?.() ||
+                      handleOptionClick(option.label, option.component!)
+                    }
+                  >
                     {option.label}
                   </li>
                 ))}
@@ -120,7 +129,8 @@ export default function Nav({ className, toggleNav }: NavProps) {
           ))}
         </nav>
       ) : (
-        <p><BeatLoader/></p>
+        <p>
+        </p>
       )}
 
       {isModalOpen && modalTitle && selectedContent && (

@@ -1,10 +1,10 @@
 import { useEffect, useState, useMemo } from "react";
 import { useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { BeatLoader } from "react-spinners";
 import { MessageType } from "../../types/Messages";
 import Banner from "../../components/Banner/Banner";
 import GmToolBar from "../../components/GmToolKit/GmToolBar/GmToolBar";
+import OnLoadingOverlay from "../../components/OnLoadingOverlay/OnLoadingOverlay";
 import MediaDisplay from "../../components/MediaDisplay/MediaDisplay";
 import NotesPanel from "../../components/NotesPanel/NotesPannel";
 import PlayerAtTable from "../../components/PlayersAtTable/PlayerAtTable";
@@ -41,6 +41,7 @@ interface Player {
 }
 
 export default function TableComponent() {
+  const [transitioning, setTransitioning] = useState(true);
   const { id } = useParams();
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -59,18 +60,19 @@ export default function TableComponent() {
     (player) => player.userId === user._id
   );
   const selectedCharacterId = currentPlayer?.selectedCharacter || null;
-  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
-const [activePanel, setActivePanel] = useState<
-  | "npcs"
-  | "sendDocs"
-  | "playerList"
-  | "soundBoard"
-  | "tableStyle"
-  | "itemListing"
-  | "library"
-  | null
->(null);
-
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(
+    null
+  );
+  const [activePanel, setActivePanel] = useState<
+    | "npcs"
+    | "sendDocs"
+    | "playerList"
+    | "soundBoard"
+    | "tableStyle"
+    | "itemListing"
+    | "library"
+    | null
+  >(null);
 
   useEffect(() => {
     setTimeout(() => {
@@ -81,12 +83,14 @@ const [activePanel, setActivePanel] = useState<
   useEffect(() => {
     const fetchCharacter = async () => {
       if (selectedCharacterId) {
-        const res = await fetch(`${API_URL}/api/characters/${selectedCharacterId}`);
+        const res = await fetch(
+          `${API_URL}/api/characters/${selectedCharacterId}`
+        );
         const data = await res.json();
         setSelectedCharacter(data);
       }
     };
-  
+
     fetchCharacter();
   }, [selectedCharacterId]);
 
@@ -203,7 +207,7 @@ const [activePanel, setActivePanel] = useState<
         | "soundBoard"
         | "tableStyle"
         | "itemListing"
-        | "library" 
+        | "library"
         | null
     ) => {
       setActivePanel(activePanel === panel ? null : panel);
@@ -307,15 +311,30 @@ const [activePanel, setActivePanel] = useState<
       };
     }, [socket, fetchTable]);
 
-    if (loading)
-      return (
-        <p>
-          <BeatLoader />
-        </p>
-      );
+    useEffect(() => {
+  if (loading === false) {
+    const timeout = setTimeout(() => {
+      setTransitioning(false);
+    }, 1000); // 1 seconde minimum d'affichage
+
+    return () => clearTimeout(timeout);
+  }
+}, [loading]);
+
+
+if (loading || transitioning) {
+  return <OnLoadingOverlay message="Connexion à la table..." />;
+}
+
+
     if (error) return <p>Erreur : {error}</p>;
     if (!table) return <p>Table non trouvée.</p>;
-    console.log("Cadre pour", selectedCharacter?.name, ":", selectedCharacter?.selectedFrame);
+    console.log(
+      "Cadre pour",
+      selectedCharacter?.name,
+      ":",
+      selectedCharacter?.selectedFrame
+    );
     return (
       <div className="table">
         <div className="table__content">
@@ -379,13 +398,12 @@ const [activePanel, setActivePanel] = useState<
               />
             </div>
             <PlayerAtTable
-  tableId={table._id}
-  API_URL={API_URL}
-  gameMaster={table.gameMaster}
-  selectedCharacterId={selectedCharacterId}
-  game={table.game}
-/>
-
+              tableId={table._id}
+              API_URL={API_URL}
+              gameMaster={table.gameMaster}
+              selectedCharacterId={selectedCharacterId}
+              game={table.game}
+            />
           </div>
         </div>
         <div className="table__low-bar">
